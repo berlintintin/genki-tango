@@ -159,13 +159,13 @@
     #entry { padding:34px 16px 48px; }
     #entry h1 { font-size:1.7rem; }
 
-    /* Fill the screen and float the play area to a calm centre — targets in one
-       row up top, doodles in one row below, within thumb reach. No scrolling,
-       nothing off-screen, so a tap always drags (never fights a scroll). */
-    #game { padding:10px 9px calc(16px + env(safe-area-inset-bottom)); }
-    #game.show { display:flex; flex-direction:column; min-height:100vh; min-height:100dvh; }
+    /* Two roomy rows each (3 + 2), sized off the available HEIGHT so the cards
+       grow to fill the screen and it never scrolls — on any phone. Trades the
+       wasted vertical space for bigger, less-cramped cards. */
+    #game { padding:8px 10px calc(10px + env(safe-area-inset-bottom)); }
+    #game.show { display:flex; flex-direction:column; height:100vh; height:100dvh; }
 
-    .topbar { margin-bottom:4px; gap:6px 8px; }
+    .topbar { margin-bottom:6px; gap:6px 8px; flex:0 0 auto; }
     .topbar .title { font-size:1rem; }
     .topbar .lessons { font-size:.78rem; }
     .topbar .ctrls { gap:6px; }
@@ -175,18 +175,26 @@
     .speed input[type=range] { width:52px; }
     .speed .spd-ico { font-size:.66rem; }
 
-    /* one tidy row of five, sized to the screen */
-    .board, .pool { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }
-    .board { margin-top:auto; }      /* auto margins top+bottom center the */
-    .pool  { margin-bottom:auto; }   /* board / divider / pool as one group */
-    .target { padding:4px; border-width:2px; box-shadow:2px 3px 0 rgba(43,58,103,.14); }
-    .target .frame { border-radius:7px; }
-    .target .cap { font-size:.6rem; min-height:2.5em; padding-top:2px; line-height:1.12; }
-    .target .en-cap { font-size:.52rem; min-height:1em; }
-    .tile { padding:4px; border-width:2px; box-shadow:2px 3px 0 rgba(43,58,103,.2); }
-    .tile .wordtile { font-size:.66rem; padding:3px; line-height:1.15; }
+    /* board + pool each grab an equal share of the leftover height; their rows
+       (1fr) fill it, so cards are as large as the screen allows. 6 columns with
+       each card spanning 2 lets the 2-card second row sit centered (3 + 2). */
+    .board, .pool {
+      display:grid; grid-template-columns:repeat(6, minmax(0,1fr));
+      grid-auto-rows:1fr; gap:8px; flex:1 1 0; min-height:0; align-content:stretch;
+    }
+    .board > .target, .pool > .tile { grid-column:span 2; }
+    .board > .target:nth-child(4), .pool > .tile:nth-child(4) { grid-column:2 / span 2; }
+    .divider { flex:0 0 auto; margin:8px 0; font-size:.7rem; letter-spacing:.16em; }
 
-    .divider { margin:18px 0; font-size:.7rem; letter-spacing:.16em; }
+    .target { padding:5px; border-width:2px; display:flex; flex-direction:column;
+      min-height:0; box-shadow:2px 3px 0 rgba(43,58,103,.14); }
+    .target .frame { flex:1 1 auto; min-height:0; border-radius:8px; }
+    .target .cap { flex:0 0 auto; min-height:0; font-size:.72rem; padding-top:3px; line-height:1.14; }
+    .target .en-cap { flex:0 0 auto; min-height:0; font-size:.6rem; line-height:1.1; }
+
+    .tile { padding:6px; border-width:2px; aspect-ratio:auto; min-height:0;
+      box-shadow:2px 3px 0 rgba(43,58,103,.2); }
+    .tile .wordtile { font-size:.82rem; }
   }
   .ticks span { min-width:1em; text-align:center; }
   /* ---------- card English translation line ---------- */
