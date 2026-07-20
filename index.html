@@ -93,6 +93,7 @@
 
   /* ---------- game screen ---------- */
   #game { display:none; max-width:1040px; margin:0 auto; padding:18px 14px 40px; }
+  #game.show { display:block; }
   .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px; flex-wrap:wrap; }
   .topbar .title { font-weight:700; }
   .topbar .title .jp { color:var(--accent); font-size:.85em; }
@@ -101,7 +102,7 @@
     font:inherit; font-size:.85rem; font-weight:700; color:var(--ink); background:var(--card);
     border:2px solid var(--ink); border-radius:8px; padding:5px 12px; cursor:pointer;
   }
-  .board { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  .board { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; }
   .target {
     background:var(--card); border:2.5px solid var(--ink); border-radius:12px;
     box-shadow:3px 4px 0 rgba(43,58,103,.15); padding:7px;
@@ -116,7 +117,7 @@
   .target .cap { text-align:center; font-weight:700; font-size:clamp(.7rem,1.6vw,.95rem); padding-top:4px; min-height:2.1em; line-height:1.15; }
   .target.solved .cap { color:var(--good); }
   .divider { text-align:center; color:var(--pencil); font-size:.8rem; letter-spacing:.2em; margin:20px 0 12px; }
-  .pool { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  .pool { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; }
   .tile {
     aspect-ratio:1/1; background:#fff; border:2.5px solid var(--ink); border-radius:12px;
     box-shadow:3px 4px 0 rgba(43,58,103,.2); padding:6px; cursor:grab;
@@ -154,25 +155,38 @@
   #win p { margin:0; color:var(--pencil); }
   #win .btn { margin:26px 6px 0; }
 
-  @media (max-width:720px) {
-    /* horizontal, drag/swipe-scrollable rows — big cards, easy on a phone */
-    .board, .pool {
-      display:flex; flex-wrap:nowrap; gap:10px;
-      overflow-x:auto; -webkit-overflow-scrolling:touch; touch-action:pan-x;
-      padding:2px 2px 9px; scroll-snap-type:x proximity;
-    }
-    .board > .target, .pool > .tile {
-      flex:0 0 auto; width:31vw; min-width:120px; max-width:150px;
-      scroll-snap-align:start;
-    }
-    .board { margin-bottom:2px; }
-    .target { padding:5px; border-width:2px; }
-    .tile { border-width:2px; }
-    .board::-webkit-scrollbar, .pool::-webkit-scrollbar { height:6px; }
-    .board::-webkit-scrollbar-thumb, .pool::-webkit-scrollbar-thumb { background:#cfc6ad; border-radius:3px; }
-    .board::-webkit-scrollbar-track, .pool::-webkit-scrollbar-track { background:transparent; }
-    .divider { margin:14px 0 10px; }
+  @media (max-width:620px) {
+    #entry { padding:34px 16px 48px; }
     #entry h1 { font-size:1.7rem; }
+
+    /* Fill the screen and float the play area to a calm centre — targets in one
+       row up top, doodles in one row below, within thumb reach. No scrolling,
+       nothing off-screen, so a tap always drags (never fights a scroll). */
+    #game { padding:10px 9px calc(16px + env(safe-area-inset-bottom)); }
+    #game.show { display:flex; flex-direction:column; min-height:100vh; min-height:100dvh; }
+
+    .topbar { margin-bottom:4px; gap:6px 8px; }
+    .topbar .title { font-size:1rem; }
+    .topbar .lessons { font-size:.78rem; }
+    .topbar .ctrls { gap:6px; }
+    .topbar .ctrls button, .speed { height:30px; }
+    .topbar .ctrls button { padding:0 10px; }
+    .speed { padding:0 8px; }
+    .speed input[type=range] { width:52px; }
+    .speed .spd-ico { font-size:.66rem; }
+
+    /* one tidy row of five, sized to the screen */
+    .board, .pool { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; }
+    .board { margin-top:auto; }      /* auto margins top+bottom center the */
+    .pool  { margin-bottom:auto; }   /* board / divider / pool as one group */
+    .target { padding:4px; border-width:2px; box-shadow:2px 3px 0 rgba(43,58,103,.14); }
+    .target .frame { border-radius:7px; }
+    .target .cap { font-size:.6rem; min-height:2.5em; padding-top:2px; line-height:1.12; }
+    .target .en-cap { font-size:.52rem; min-height:1em; }
+    .tile { padding:4px; border-width:2px; box-shadow:2px 3px 0 rgba(43,58,103,.2); }
+    .tile .wordtile { font-size:.66rem; padding:3px; line-height:1.15; }
+
+    .divider { margin:18px 0; font-size:.7rem; letter-spacing:.16em; }
   }
   .ticks span { min-width:1em; text-align:center; }
   /* ---------- card English translation line ---------- */
@@ -725,7 +739,7 @@ function startRound(a, b) {
 
   entry.style.display = "none";
   winBox.style.display = "none";
-  game.style.display = "block";
+  game.classList.add("show");
   window.scrollTo(0, 0);
 }
 
@@ -739,9 +753,9 @@ document.getElementById("start").onclick = () => {
   startRound(+lo.value, +hi.value);
   GameVoice.say("がんばって！", { rate: voiceRate });
 };
-document.getElementById("back").onclick = () => { game.style.display = "none"; entry.style.display = "block"; };
+document.getElementById("back").onclick = () => { game.classList.remove("show"); entry.style.display = "block"; };
 document.getElementById("again").onclick = () => startRound(curRange[0], curRange[1]);
-document.getElementById("tolessons").onclick = () => { winBox.style.display = "none"; game.style.display = "none"; entry.style.display = "block"; };
+document.getElementById("tolessons").onclick = () => { winBox.style.display = "none"; game.classList.remove("show"); entry.style.display = "block"; };
 
 /* ---------- pointer drag ---------- */
 function enableDrag(tile) {
