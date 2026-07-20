@@ -764,7 +764,7 @@ window.GENKI_WORDS = [
 {id:"koukou",kana:"こうこう",romaji:"koukou",en:"high school",lesson:1},
 {id:"gogo",kana:"ごご",romaji:"gogo",en:"P.M.",lesson:1},
 {id:"gozen",kana:"ごぜん",romaji:"gozen",en:"A.M.",lesson:1},
-{id:"senmon",kana:"せんもん",romaji:"senmon",en:"major",lesson:1},
+{id:"senkou",kanji:"専攻",kana:"せんこう",romaji:"senkou",en:"major",lesson:1},
 {id:"namae",kana:"なまえ",romaji:"namae",en:"name",lesson:1},
 {id:"nan",kana:"なん",romaji:"nan",en:"what",lesson:1},
 {id:"nihonjin",kana:"にほんじん",romaji:"nihonjin",en:"Japanese person",lesson:1},
