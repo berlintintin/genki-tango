@@ -445,7 +445,900 @@
   }
   // Wires up a mute button: sets its label, flips state on click.
   function bindToggle(btn, onLabel, offLabel) {
+    onLabel = onLabel || "♪ ON"; offLabel = offLabel || "♪ OFF";<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doodle Tango — らくがき単語</title>
+<style>
+  :root {
+    --paper:#f7f3e8; --card:#fffdf6; --ink:#2b3a67; --accent:#c0392b; --pencil:#8a8577; --good:#2e7d4f;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; }
+  body {
+    background:var(--paper);
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+  }
+  /* ---------- rotating line-art background ---------- */
+  #bgArt {
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.20;
+  }
+  #bgArt svg { width:100%; height:100%; }
+  #entry, #game { position:relative; z-index:1; }
+
+  /* ---------- shared SVG doodle classes ---------- */
+  .s { fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+  .t { stroke-width:2.5; }
+  .r { stroke:var(--accent); }
+  .f { fill:var(--ink); stroke:none; }
+  .fr { fill:var(--accent); stroke:none; }
+  svg { width:100%; height:100%; display:block; }
+
+  /* ---------- entry screen ---------- */
+  #entry {
+    max-width:560px; margin:0 auto; padding:48px 20px 64px; text-align:center;
+  }
+  #entry h1 { font-size:2.1rem; margin:0 0 2px; letter-spacing:.04em; }
+  #entry h1 .jp { color:var(--accent); }
+  #entry .sub { color:var(--pencil); margin:0 0 8px; }
+  .hanko {
+    display:inline-block; margin:10px 0 34px; border:3px solid var(--accent); color:var(--accent);
+    border-radius:8px; padding:4px 12px; font-weight:700; letter-spacing:.15em; transform:rotate(-4deg);
+    background:rgba(255,253,246,.7);
+  }
+  .slider-card {
+    background:var(--card); border:2.5px solid var(--ink); border-radius:14px;
+    box-shadow:4px 5px 0 rgba(43,58,103,.18); padding:26px 26px 30px; text-align:left;
+  }
+  .slider-card h2 { margin:0 0 4px; font-size:1.05rem; }
+  .slider-card p { margin:0 0 22px; font-size:.85rem; color:var(--pencil); }
+  .range-readout { text-align:center; font-size:1.35rem; font-weight:700; margin-bottom:18px; }
+  .range-readout .r-num { color:var(--accent); }
+  .dual { position:relative; height:36px; }
+  .dual .track, .dual .fill {
+    position:absolute; top:16px; height:6px; border-radius:3px; pointer-events:none;
+  }
+  .dual .track { left:0; right:0; background:#e2dbc6; }
+  .dual .fill { background:var(--accent); }
+  .dual input[type=range] {
+    position:absolute; left:0; right:0; top:0; width:100%; margin:0;
+    -webkit-appearance:none; appearance:none; background:transparent; pointer-events:none; height:36px;
+  }
+  .dual input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance:none; appearance:none; pointer-events:auto;
+    width:26px; height:26px; border-radius:50%; background:var(--card);
+    border:3px solid var(--ink); box-shadow:2px 2px 0 rgba(43,58,103,.25); cursor:grab; margin-top:0;
+  }
+  .dual input[type=range]::-moz-range-thumb {
+    pointer-events:auto; width:20px; height:20px; border-radius:50%;
+    background:var(--card); border:3px solid var(--ink); cursor:grab;
+  }
+  .ticks { display:flex; justify-content:space-between; padding:0 8px; margin-top:2px;
+    font-size:.8rem; color:var(--pencil); font-weight:700; }
+  .btn {
+    display:inline-block; font:inherit; font-weight:700; font-size:1.05rem; color:var(--card);
+    background:var(--ink); border:none; border-radius:12px; padding:12px 34px; cursor:pointer;
+    box-shadow:4px 4px 0 rgba(43,58,103,.25); margin-top:26px;
+  }
+  .btn:active { transform:translate(2px,2px); box-shadow:1px 1px 0 rgba(43,58,103,.25); }
+  .btn.red { background:var(--accent); }
+
+  /* ---------- game screen ---------- */
+  #game { display:none; max-width:1040px; margin:0 auto; padding:18px 14px 40px; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px; flex-wrap:wrap; }
+  .topbar .title { font-weight:700; }
+  .topbar .title .jp { color:var(--accent); font-size:.85em; }
+  .topbar .lessons { color:var(--pencil); font-size:.85rem; }
+  .topbar button {
+    font:inherit; font-size:.85rem; font-weight:700; color:var(--ink); background:var(--card);
+    border:2px solid var(--ink); border-radius:8px; padding:5px 12px; cursor:pointer;
+  }
+  .board { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  .target {
+    background:var(--card); border:2.5px solid var(--ink); border-radius:12px;
+    box-shadow:3px 4px 0 rgba(43,58,103,.15); padding:7px;
+  }
+  .target .frame {
+    aspect-ratio:1/1; border:2px dashed #cfc6ad; border-radius:8px; background:#fff;
+    display:flex; align-items:center; justify-content:center; overflow:hidden; transition:background .15s, border-color .15s;
+  }
+  .target.hover .frame { background:#fdf0e4; border-color:var(--accent); }
+  .target.solved { border-color:var(--good); }
+  .target.solved .frame { border-style:solid; border-color:#bfe3cd; }
+  .target .cap { text-align:center; font-weight:700; font-size:clamp(.7rem,1.6vw,.95rem); padding-top:4px; min-height:2.1em; line-height:1.15; }
+  .target.solved .cap { color:var(--good); }
+  .divider { text-align:center; color:var(--pencil); font-size:.8rem; letter-spacing:.2em; margin:20px 0 12px; }
+  .pool { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  .tile {
+    aspect-ratio:1/1; background:#fff; border:2.5px solid var(--ink); border-radius:12px;
+    box-shadow:3px 4px 0 rgba(43,58,103,.2); padding:6px; cursor:grab;
+    touch-action:none; user-select:none; -webkit-user-select:none; position:relative;
+  }
+  .tile.dragging { z-index:50; cursor:grabbing; box-shadow:8px 10px 14px rgba(43,58,103,.3); transition:none; }
+  .tile.returning { transition:transform .35s cubic-bezier(.2,.9,.3,1.3); }
+  .tile.placed { opacity:0; pointer-events:none; }
+  .tile.shake { animation:shake .35s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .pop { animation:pop .35s; }
+  @keyframes pop { 0%{transform:scale(.6)} 70%{transform:scale(1.08)} 100%{transform:scale(1)} }
+
+  /* praise bubble */
+  #bubble {
+    position:fixed; left:50%; top:14px; transform:translateX(-50%) scale(0); z-index:99;
+    background:var(--accent); color:#fff; font-weight:700; font-size:1.1rem;
+    border-radius:16px; padding:9px 24px; box-shadow:3px 4px 0 rgba(0,0,0,.15); text-align:center;
+    transition:transform .22s cubic-bezier(.2,.9,.3,1.4); pointer-events:none; line-height:1.35;
+  }
+  #bubble.show { transform:translateX(-50%) scale(1); }
+  #bubble.good { background:var(--good); }
+  #bubble .en { display:block; font-size:.72rem; font-weight:400; opacity:.9; }
+
+  /* win overlay */
+  #win {
+    display:none; position:fixed; inset:0; z-index:200; background:rgba(43,58,103,.45);
+    align-items:center; justify-content:center; padding:20px;
+  }
+  #win .panel {
+    background:var(--card); border:3px solid var(--ink); border-radius:18px;
+    box-shadow:6px 8px 0 rgba(0,0,0,.2); padding:38px 44px; text-align:center; max-width:420px;
+  }
+  #win h2 { margin:0 0 6px; font-size:1.6rem; }
+  #win p { margin:0; color:var(--pencil); }
+  #win .btn { margin:26px 6px 0; }
+
+  @media (max-width:720px) {
+    /* horizontal, drag/swipe-scrollable rows — big cards, easy on a phone */
+    .board, .pool {
+      display:flex; flex-wrap:nowrap; gap:10px;
+      overflow-x:auto; -webkit-overflow-scrolling:touch; touch-action:pan-x;
+      padding:2px 2px 9px; scroll-snap-type:x proximity;
+    }
+    .board > .target, .pool > .tile {
+      flex:0 0 auto; width:31vw; min-width:120px; max-width:150px;
+      scroll-snap-align:start;
+    }
+    .board { margin-bottom:2px; }
+    .target { padding:5px; border-width:2px; }
+    .tile { border-width:2px; }
+    .board::-webkit-scrollbar, .pool::-webkit-scrollbar { height:6px; }
+    .board::-webkit-scrollbar-thumb, .pool::-webkit-scrollbar-thumb { background:#cfc6ad; border-radius:3px; }
+    .board::-webkit-scrollbar-track, .pool::-webkit-scrollbar-track { background:transparent; }
+    .divider { margin:14px 0 10px; }
+    #entry h1 { font-size:1.7rem; }
+  }
+  .ticks span { min-width:1em; text-align:center; }
+  /* ---------- card English translation line ---------- */
+  .target .en-cap { text-align:center; font-size:clamp(.6rem,1.3vw,.78rem); color:var(--pencil); line-height:1.15; margin-top:1px; min-height:1.1em; }
+  .target.solved .en-cap { color:var(--good); opacity:.85; }
+  #game.en-off .en-cap { display:none; }
+
+  /* ---------- topbar controls ---------- */
+  .topbar .ctrls { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .speed { display:inline-flex; align-items:center; gap:6px; background:var(--card); border:2px solid var(--ink); border-radius:8px; padding:3px 9px; }
+  .speed .spd-ico { font-size:.9rem; font-weight:700; color:var(--pencil); line-height:1; }
+  .speed input[type=range] { width:78px; margin:0; -webkit-appearance:none; appearance:none; height:5px; background:#e2dbc6; border-radius:3px; }
+  .speed input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:16px; height:16px; border-radius:50%; background:var(--card); border:2.5px solid var(--ink); cursor:grab; }
+  .speed input[type=range]::-moz-range-thumb { width:14px; height:14px; border-radius:50%; background:var(--card); border:2.5px solid var(--ink); cursor:grab; }
+  #btnEn.muted { color:var(--pencil); opacity:.55; text-decoration:line-through; }
+  .tile .wordtile { width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    text-align:center; font-weight:700; font-size:clamp(.8rem,2.2vw,1.05rem); color:var(--ink);
+    padding:6px; line-height:1.2; }
+
+  /* controls: matched height + katakana speed labels */
+  .topbar .ctrls button, .speed { height:34px; box-sizing:border-box; display:inline-flex; align-items:center; }
+  .topbar .ctrls button { padding:0 12px; }
+  .speed { padding:0 10px; gap:6px; }
+  .speed .spd-ico { font-size:.72rem; letter-spacing:.02em; }
+
+  /* immediate hover tooltips on the top controls */
+  .ctrls [data-tip] { position:relative; }
+  .ctrls [data-tip]:hover::after {
+    content:attr(data-tip); position:absolute; top:calc(100% + 6px); left:50%; transform:translateX(-50%);
+    background:var(--ink); color:var(--card); font-size:.7rem; font-weight:600; white-space:nowrap;
+    padding:3px 8px; border-radius:6px; box-shadow:2px 2px 0 rgba(43,58,103,.2); pointer-events:none; z-index:140;
+  }
+  .ctrls [data-tip]:hover::before {
+    content:""; position:absolute; top:calc(100% + 1px); left:50%; transform:translateX(-50%);
+    border:5px solid transparent; border-bottom-color:var(--ink); pointer-events:none; z-index:140;
+  }
+
+  /* entry: Japanese instruction line under the English one */
+  #entry .jp-sub { color:var(--ink); font-size:.95rem; margin:0 0 26px; }
+</style>
+</head>
+<body>
+
+<div id="bgArt" aria-hidden="true"></div>
+
+<!-- ============ ENTRY ============ -->
+<div id="entry">
+  <h1>DOODLE TANGO</h1>
+  <p class="sub">Drag the doodles onto the words they're miming.</p>
+  <p class="sub jp-sub">絵が表している言葉の上に、ドラッグしてね。</p>
+
+  <div class="slider-card">
+    <h2>Lesson range</h2>
+    <p>Slide both ends to the same lesson to drill just one.</p>
+    <div class="range-readout">
+      Lesson <span class="r-num" id="lo-num">1</span> &ndash; <span class="r-num" id="hi-num">12</span>
+    </div>
+    <div class="dual">
+      <div class="track"></div>
+      <div class="fill" id="fill"></div>
+      <input type="range" id="lo" min="1" max="12" step="1" value="1">
+      <input type="range" id="hi" min="1" max="12" step="1" value="12">
+    </div>
+    <div class="ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
+  </div>
+
+  <button class="btn red" id="start">はじめ！</button>
+</div>
+
+<!-- ============ GAME ============ -->
+<div id="game">
+  <div class="topbar">
+    <span class="title">DOODLE TANGO</span>
+    <span class="lessons" id="lesson-label"></span>
+    <span class="ctrls">
+      <label class="speed" data-tip="Voice speed" aria-label="voice speed">
+        <span class="spd-ico">カメ</span>
+        <input type="range" id="spd" min="70" max="130" step="5" value="100" aria-label="voice speed">
+        <span class="spd-ico">ウサギ</span>
+      </label>
+      <button id="btnEn" data-tip="Show / hide English">ABC</button>
+      <button id="btnSound" data-tip="Sound on / off">♪ ON</button>
+      <button id="back" data-tip="Back to lessons">← Lessons</button>
+    </span>
+  </div>
+  <div class="board" id="board"></div>
+  <div class="divider">— DRAG THE DOODLES UP —</div>
+  <div class="pool" id="pool"></div>
+</div>
+
+<div id="bubble"></div>
+
+<div id="win">
+  <div class="panel">
+    <h2>ぜんぶ正解！🎉</h2>
+    <p>All ten matched. よくできました！</p>
+    <button class="btn red" id="again">もう一回</button>
+    <button class="btn" id="tolessons">Lessons</button>
+  </div>
+</div>
+
+<!-- ===== game-voice.js inlined here (self-contained; no network needed).
+     Master copy lives at https://github.com/berlintintin/game-voice
+     To update, swap the code in the following block. ===== -->
+<script>
+/* =========================================================================
+   game-voice.js — shared retro audio + Japanese voice for T-Money's games
+   =========================================================================
+   Classic script, no build step, no modules. Works from file://, GitHub
+   Pages, or any host. Include it BEFORE your game script:
+
+     <script src="../shared/game-voice.js"><\/script>
+
+   Then hit functions on window.GameVoice:
+
+     GameVoice.say("すごい！");            // 8-bit bleeps, then spoken Japanese
+     GameVoice.speak("こんにちは");        // spoken only, no bleeps
+     GameVoice.beep(880, .1);              // raw synth beep
+     GameVoice.sfx.snap();                 // preset: correct-answer arpeggio
+     GameVoice.sfx.wrong();                // preset: low buzz
+     GameVoice.sfx.fanfare();              // preset: level-clear fanfare
+     GameVoice.sfx.shoot();                // preset: pew
+     GameVoice.praise();                   // random praise -> {jp, en}, says it
+     GameVoice.oops();                     // random miss phrase -> {jp, en} (not spoken)
+     GameVoice.setEnabled(false);          // mute everything (also cancels speech)
+     GameVoice.enabled                     // current on/off state
+     GameVoice.bindToggle(buttonEl);       // wires a ♪ ON / ♪ OFF button for you
+
+   iOS/Safari note: audio contexts start SUSPENDED and only wake inside a
+   user gesture. This library self-registers unlock listeners on
+   touchstart/pointerdown/mousedown/keydown, so as long as the player has
+   tapped ANYTHING before your first sound, you're fine. For extra safety,
+   call GameVoice.unlock() inside your start-button handler.
+   ========================================================================= */
+(function () {
+  "use strict";
+
+  // ------------------------------ state ------------------------------
+  let AC = null;
+  let audioUnlocked = false;
+  let enabled = true;
+  let jaVoice = null;
+
+  // ------------------------------ unlock ------------------------------
+  // iOS/Safari start the AudioContext SUSPENDED — it only wakes inside a
+  // user gesture. (Speech synthesis is a separate system with its own rules.)
+  function unlock() {
+    try {
+      if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+      if (AC.state === "suspended") AC.resume();
+      if (!audioUnlocked) {
+        audioUnlocked = true;
+        const o = AC.createOscillator(), g = AC.createGain();
+        g.gain.value = 0.0001;
+        o.connect(g).connect(AC.destination);
+        o.start();
+        o.stop(AC.currentTime + 0.02);
+      }
+    } catch (e) { /* no audio available — degrade silently */ }
+  }
+  ["touchstart", "pointerdown", "mousedown", "keydown"].forEach(function (ev) {
+    window.addEventListener(ev, unlock, { passive: true });
+  });
+
+  // ------------------------------ synth ------------------------------
+  function beep(freq, dur, type, vol, when, slide) {
+    if (!enabled) return;
+    type = type || "square"; vol = vol == null ? 0.05 : vol;
+    when = when || 0; slide = slide || 0;
+    try {
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, AC.currentTime + when);
+      if (slide) o.frequency.exponentialRampToValueAtTime(
+        Math.max(40, freq + slide), AC.currentTime + when + dur);
+      g.gain.setValueAtTime(vol, AC.currentTime + when);
+      g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + when + dur);
+      o.connect(g).connect(AC.destination);
+      o.start(AC.currentTime + when);
+      o.stop(AC.currentTime + when + dur + 0.02);
+    } catch (e) { }
+  }
+
+  // ------------------------------ sfx presets ------------------------------
+  const sfx = {
+    snap:    function () { beep(523, .09, "square", .05); beep(659, .09, "square", .05, .08); beep(784, .14, "square", .05, .16); },
+    wrong:   function () { beep(140, .3, "sawtooth", .05, 0, -60); },
+    fanfare: function () { [523, 659, 784, 1047].forEach(function (f, i) { beep(f, .12, "square", .05, i * .09); }); },
+    shoot:   function () { beep(880, .09, "square", .04, 0, -600); },
+    chip:    function () { beep(300, .05, "square", .04); },
+    pickup:  function (n) { beep(900 + (n || 0) * 8, .06, "sine", .02); },
+  };
+
+  // ------------------------------ speech ------------------------------
+  function pickVoice() {
+    if (!window.speechSynthesis) return;
+    const vs = speechSynthesis.getVoices();
+    jaVoice = vs.find(function (v) { return v.lang === "ja-JP" && /kyoko|otoya|google/i.test(v.name); })
+           || vs.find(function (v) { return v.lang && v.lang.indexOf("ja") === 0; })
+           || null;
+  }
+  if (window.speechSynthesis) {
+    pickVoice();
+    speechSynthesis.onvoiceschanged = pickVoice; // voice list loads async
+  }
+
+  // Spoken only — no bleeps.
+  function speak(text, opts) {
+    if (!enabled || !window.speechSynthesis) return;
+    opts = opts || {};
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = opts.lang || "ja-JP";
+      u.pitch = opts.pitch == null ? 1.0 : opts.pitch;
+      u.rate = opts.rate == null ? 1.0 : opts.rate;
+      if (u.lang === "ja-JP" && jaVoice) u.voice = jaVoice;
+      speechSynthesis.speak(u);
+    } catch (e) { }
+  }
+
+  // Retro "voice": square-wave syllable bleeps (the 8-bit part), then the
+  // words spoken with a Japanese voice (the 16-bit part).
+  function say(text, opts) {
+    if (!enabled) return;
+    const sylls = Math.min(8, text.replace(/[ーっ！!。〜]/g, "").length);
+    for (let i = 0; i < sylls; i++) {
+      const f = 520 + Math.random() * 380 + (i === sylls - 1 ? -160 : 0);
+      beep(f, .08, "square", .05, i * 0.085);
+    }
+    setTimeout(function () { speak(text, opts); }, sylls * 85 + 60);
+  }
+
+  // ------------------------------ phrase banks ------------------------------
+  const PRAISE = [
+    ["すばらしい！", "Subarashii! — Magnificent!"],
+    ["いちばん！", "Ichiban! — You're number one!"],
+    ["かんぺき！", "Kanpeki! — Flawless!"],
+    ["よくできました！", "Yoku dekimashita! — Well done!"],
+    ["てんさい！", "Tensai! — Genius!"],
+    ["そのちょうし！", "Sono choushi! — Keep it up!"],
+    ["やったね！", "Yatta ne! — You did it!"],
+    ["すごい！", "Sugoi! — Incredible!"],
+    ["せいかい！", "Seikai! — Correct!"],
+    ["おみごと！", "O-migoto! — Bravo!"],
+    ["さすが！", "Sasuga! — That's the stuff!"],
+    ["いいぞ、いいぞ！", "Ii zo, ii zo! — Yeah, keep going!"],
+    ["かっこいい！", "Kakkoii! — So cool!"],
+    ["ぴったり！", "Pittari! — Perfect fit!"],
+    ["ナイスマッチ！", "Naisu macchi! — Nice match!"],
+    ["ズバリ！", "Zubari! — Nailed it!"],
+    ["大当たり！", "Ōatari! — Bullseye!"],
+    ["そのとおり！", "Sono tōri! — Exactly right!"],
+    ["しんじられない！", "Shinjirarenai! — Unbelievable!"],
+  ];
+  const OOPS = [
+    ["ちがうよ〜", "Chigau yo — not that one"],
+    ["もういちど！", "Mō ichido! — one more try!"],
+    ["おしい！", "Oshii! — so close!"],
+  ];
+  function pick(bank) { return bank[Math.floor(Math.random() * bank.length)]; }
+
+  // Random praise, spoken with bleeps. Returns {jp, en} so you can show
+  // your own bubble/toast. Pass {silent:true} to skip the voice.
+  function praise(opts) {
+    const p = pick(PRAISE);
+    if (!(opts && opts.silent)) say(p[0]);
+    return { jp: p[0], en: p[1] };
+  }
+  // Miss phrases return only — a spoken scold on every miss gets old fast.
+  // Call GameVoice.say(o.jp) yourself if a given game wants it audible.
+  function oops() {
+    const o = pick(OOPS);
+    return { jp: o[0], en: o[1] };
+  }
+
+  // ------------------------------ enable / toggle ------------------------------
+  function setEnabled(on) {
+    enabled = !!on;
+    if (!enabled && window.speechSynthesis) speechSynthesis.cancel();
+  }
+  // Wires up a mute button: sets its label, flips state on click.
+  function bindToggle(btn, onLabel, offLabel) {
     onLabel = onLabel || "♪ ON"; offLabel = offLabel || "♪ OFF";
+    btn.textContent = enabled ? onLabel : offLabel;
+    btn.addEventListener("click", function () {
+      setEnabled(!enabled);
+      btn.textContent = enabled ? onLabel : offLabel;
+    });
+  }
+
+  // ------------------------------ export ------------------------------
+  window.GameVoice = {
+    unlock: unlock,
+    beep: beep,
+    sfx: sfx,
+    speak: speak,
+    say: say,
+    praise: praise,
+    oops: oops,
+    PRAISE: PRAISE,
+    OOPS: OOPS,
+    setEnabled: setEnabled,
+    bindToggle: bindToggle,
+    get enabled() { return enabled; },
+  };
+})();
+</script>
+<script src="words.js"></script>
+<script>
+"use strict";
+/* =========================================================
+   BACKGROUND SCENES — faint Japanese line-art, one per round.
+   viewBox 0 0 960 600, stroked in ink + accent.
+   ========================================================= */
+const SCENES = [
+/* --- crane in a lake, setting sun --- */
+`<svg viewBox="0 0 960 600" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#2b3a67" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="690" cy="230" r="92" stroke="#c0392b" stroke-width="4"/>
+  <path d="M560 258 Q620 250 690 254 Q770 258 828 252" stroke="#c0392b" stroke-width="3"/>
+  <path d="M40 430 Q200 418 380 428 Q560 438 740 428 Q860 422 930 430"/>
+  <path d="M80 480 Q240 470 420 480 Q600 490 780 480 M160 530 Q340 522 520 530 Q700 538 860 530"/>
+  <path d="M300 430 L296 356 M318 430 L320 360"/>
+  <path d="M310 356 Q262 344 258 300 Q258 262 300 258 Q346 254 356 292 Q362 320 340 340"/>
+  <path d="M300 258 Q288 216 306 178 Q318 156 342 158"/>
+  <path d="M342 158 Q362 156 368 170 Q370 182 356 184 L342 178"/>
+  <path d="M368 168 L398 162" stroke="#c0392b"/>
+  <path d="M344 150 Q350 140 358 146" stroke="#c0392b"/>
+  <path d="M280 300 Q310 330 352 322" stroke-width="2"/>
+  <path d="M292 452 Q300 460 312 456 M286 470 Q302 480 322 472" stroke-width="2" opacity=".6"/>
+  <path d="M120 430 Q118 380 128 356 M140 430 Q142 386 136 360 M158 430 Q160 396 168 372" stroke-width="2.5"/>
+  <path d="M560 150 Q570 140 580 150 M584 150 Q594 140 604 150 M770 120 Q780 110 790 120 M794 120 Q804 110 814 120" stroke-width="2.5"/>
+</g></svg>`,
+/* --- torii gate in the water --- */
+`<svg viewBox="0 0 960 600" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#2b3a67" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M40 300 Q160 220 280 290 M600 280 Q740 190 920 280" stroke-width="2.5" opacity=".7"/>
+  <circle cx="180" cy="140" r="46" stroke="#c0392b" stroke-width="3.5"/>
+  <g stroke="#c0392b" stroke-width="6">
+    <path d="M330 200 Q480 176 630 200 L640 176 Q480 148 320 176 Z"/>
+    <path d="M352 232 L608 232"/>
+    <path d="M372 214 L360 470 M588 214 L600 470"/>
+    <path d="M480 200 L480 232"/>
+    <path d="M344 470 L376 470 M584 470 L616 470"/>
+  </g>
+  <path d="M60 500 Q220 490 400 500 Q580 510 760 500 Q860 494 920 500"/>
+  <path d="M140 545 Q320 537 500 545 Q680 553 860 545" stroke-width="2.5"/>
+  <path d="M340 500 Q360 508 380 502 M560 502 Q586 510 612 503" stroke-width="2" opacity=".6"/>
+</g></svg>`,
+/* --- Mt Fuji with sakura branch --- */
+`<svg viewBox="0 0 960 600" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#2b3a67" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M110 540 Q300 300 400 222 L440 200 Q480 184 520 200 L560 222 Q680 300 880 540"/>
+  <path d="M400 222 L424 250 L448 226 L474 254 L500 228 L524 252 L548 228 L560 222" stroke-width="2.5"/>
+  <circle cx="120" cy="130" r="40" stroke="#c0392b" stroke-width="3.5"/>
+  <path d="M600 120 Q660 108 720 122 M640 160 Q700 148 760 160" stroke-width="2.5" opacity=".7"/>
+  <path d="M960 60 Q860 90 780 150 Q740 182 716 220" stroke-width="4"/>
+  <path d="M840 110 Q818 132 812 156 M770 158 Q752 178 748 200"/>
+  <g stroke="#c0392b" stroke-width="2.5">
+    <circle cx="806" cy="164" r="12"/><circle cx="842" cy="118" r="11"/><circle cx="744" cy="208" r="12"/>
+    <circle cx="878" cy="92" r="9"/><circle cx="768" cy="150" r="7"/>
+    <path d="M700 250 Q696 262 700 272 M660 300 Q664 312 658 322" opacity=".7"/>
+  </g>
+  <path d="M240 560 Q480 550 720 560" stroke-width="2.5" opacity=".6"/>
+</g></svg>`,
+`<svg viewBox="0 0 960 600" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#2b3a67" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="180" cy="150" r="50" stroke="#c0392b" stroke-width="3.5"/>
+  <path d="M40 470 Q170 436 300 462 M650 452 Q790 414 940 454" stroke-width="2.5" opacity=".6"/>
+  <path d="M560 116 L560 92"/>
+  <circle cx="560" cy="86" r="7" stroke="#c0392b"/>
+  <path d="M502 150 Q560 120 618 150 L636 150 Q560 132 484 150 Z"/>
+  <path d="M510 150 L514 186 M610 150 L606 186"/>
+  <path d="M486 210 Q560 182 634 210 L656 210 Q560 190 464 210 Z"/>
+  <path d="M496 210 L500 250 M624 210 L620 250"/>
+  <path d="M468 278 Q560 248 652 278 L676 278 Q560 256 444 278 Z"/>
+  <path d="M482 278 L486 322 M638 278 L634 322"/>
+  <path d="M448 352 Q560 318 672 352 L698 352 Q560 326 422 352 Z"/>
+  <path d="M466 352 L470 402 M654 352 L650 402"/>
+  <path d="M430 438 Q560 400 690 438 L718 438 Q560 406 402 438 Z"/>
+  <path d="M470 438 L470 524 M650 438 L650 524 M470 524 L650 524"/>
+  <rect x="536" y="478" width="48" height="46" rx="2"/>
+  <path d="M120 524 Q320 506 520 516 Q720 526 900 510" stroke-width="2.5"/>
+</g></svg>`,
+`<svg viewBox="0 0 960 600" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#2b3a67" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="806" cy="140" r="46" stroke="#c0392b" stroke-width="3.5"/>
+  <path d="M120 40 L128 560 M124 150 Q140 148 156 152 M126 270 Q142 268 158 272 M128 380 Q144 378 160 382 M130 480 Q146 478 162 482"/>
+  <path d="M206 20 L212 560 M209 120 Q194 118 178 122 M210 240 Q195 238 179 242 M211 360 Q196 358 180 362 M212 470 Q197 468 181 472"/>
+  <path d="M300 62 L306 560 M303 180 Q319 178 335 182 M304 320 Q320 318 336 322 M305 450 Q321 448 337 452"/>
+  <path d="M156 152 Q186 140 214 150 M158 272 Q190 262 216 274 M335 182 Q368 172 394 186" stroke-width="2.5"/>
+  <path d="M120 40 Q98 26 80 34 M206 20 Q186 6 168 16 M300 62 Q322 48 342 56" stroke-width="2.5"/>
+  <path d="M694 560 L742 560 M700 560 L700 522 L730 522 L730 560"/>
+  <path d="M694 522 Q715 502 736 522 Z"/>
+  <rect x="700" y="474" width="30" height="48" rx="2"/>
+  <path d="M692 474 L738 474 L730 456 L700 456 Z" stroke="#c0392b" stroke-width="2.5"/>
+  <path d="M700 456 Q715 434 730 456 Z"/>
+  <circle cx="715" cy="450" r="5" stroke="#c0392b"/>
+  <path d="M40 560 Q230 544 430 556" stroke-width="2.5" opacity=".6"/>
+</g></svg>`,
+];
+const bgArt = document.getElementById("bgArt");
+let sceneIdx = Math.floor(Math.random() * SCENES.length);
+function setScene(advance) {
+  if (advance) sceneIdx = (sceneIdx + 1) % SCENES.length;
+  bgArt.innerHTML = SCENES[sceneIdx];
+}
+setScene(false);
+
+/* =========================================================
+   VOCAB — loaded from words.js (window.GENKI_WORDS).
+   Words with an `art` field render as draggable doodles;
+   words without one render as English text tiles.
+   ========================================================= */
+const WORDS = (window.GENKI_WORDS || []);
+
+/* =========================================================
+   AUDIO — inlined from berlintintin/game-voice (self-contained)
+   (8-bit bleeps + spoken Japanese). If the script failed to
+   load, install silent stubs so the game still runs.
+   ========================================================= */
+if (!window.GameVoice) {
+  const noop = () => {};
+  window.GameVoice = {
+    unlock: noop, beep: noop, speak: noop, say: noop,
+    sfx: { snap: noop, wrong: noop, fanfare: noop, shoot: noop, chip: noop, pickup: noop },
+    praise: () => ({ jp: "せいかい！", en: "Seikai! — Correct!" }),
+    oops:   () => ({ jp: "おしい！",   en: "Oshii! — so close!" }),
+    setEnabled: noop,
+    bindToggle: (btn) => { btn.style.display = "none"; },
+  };
+}
+GameVoice.bindToggle(document.getElementById("btnSound"));
+
+/* ---- voice speed slider (rate + spacing follow this) ---- */
+let voiceRate = 1.0;
+const spdEl = document.getElementById("spd");
+if (spdEl) spdEl.addEventListener("input", () => { voiceRate = +spdEl.value / 100; });
+
+/* ---- English-caption toggle (ABC button) ---- */
+let showEn = false;   // default off — you have to know the meaning; tap ABC to reveal
+const btnEn = document.getElementById("btnEn");
+function applyEn(){
+  document.getElementById("game").classList.toggle("en-off", !showEn);
+  if (btnEn) btnEn.classList.toggle("muted", !showEn);
+}
+if (btnEn) btnEn.addEventListener("click", () => { showEn = !showEn; applyEn(); });
+applyEn();
+
+/* Speak phrases in order (8-bit bleeps + Japanese voice), spaced so they
+   don't collide. Both the rate and the gap between phrases follow the
+   speed slider, so slowing down also opens up the pause between words. */
+function speakSequence(phrases){
+  let t = 0;
+  phrases.forEach(ph => {
+    setTimeout(() => GameVoice.say(ph, { rate: voiceRate }), t);
+    const sylls = Math.min(8, ph.replace(/[ーっ！!。〜]/g, "").length);
+    t += sylls * 85 + 60 + Math.round(sylls * 220 / voiceRate) + Math.round(300 / voiceRate);
+  });
+}
+
+/* =========================================================
+   ENTRY SCREEN — dual-thumb lesson slider
+   ========================================================= */
+const lo = document.getElementById("lo"), hi = document.getElementById("hi");
+const loNum = document.getElementById("lo-num"), hiNum = document.getElementById("hi-num");
+const fill = document.getElementById("fill");
+function syncSlider(moved) {
+  let a = +lo.value, b = +hi.value;
+  if (a > b) { if (moved === "lo") hi.value = a; else lo.value = b; a = +lo.value; b = +hi.value; }
+  loNum.textContent = a; hiNum.textContent = b;
+  const min = +lo.min, max = +lo.max;
+  fill.style.left  = ((a - min) / (max - min) * 100) + "%";
+  fill.style.right = (100 - (b - min) / (max - min) * 100) + "%";
+}
+lo.addEventListener("input", () => syncSlider("lo"));
+hi.addEventListener("input", () => syncSlider("hi"));
+syncSlider();
+
+/* =========================================================
+   GAME
+   ========================================================= */
+const entry = document.getElementById("entry"), game = document.getElementById("game");
+const board = document.getElementById("board"), pool = document.getElementById("pool");
+const bubble = document.getElementById("bubble"), winBox = document.getElementById("win");
+let solvedCount = 0, roundWords = [], curRange = [7, 11];
+// Deck for the current lesson range: draw each round from `unused`; once a
+// word has been shown it moves to `used`, so no repeats until the whole
+// range has been cycled through, then it reshuffles and starts over.
+let deck = { range: null, unused: [], used: [] };
+const ROUND_SIZE = 5;
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildDeck(a, b) {
+  const bank = WORDS.filter(w => w.lesson >= a && w.lesson <= b);
+  deck = { range: [a, b], unused: shuffle(bank), used: [] };
+}
+// Pull the next `n` words from the unused pile, moving them to used.
+// When the unused pile is empty, the range has been fully cycled — reshuffle.
+function drawRound(a, b, n) {
+  if (!deck.range || deck.range[0] !== a || deck.range[1] !== b) buildDeck(a, b);
+  if (deck.unused.length === 0) { deck.unused = shuffle(deck.used); deck.used = []; }
+  const take = Math.min(n, deck.unused.length);
+  const round = deck.unused.slice(0, take);
+  deck.unused = deck.unused.slice(take);
+  deck.used = deck.used.concat(round);
+  return round;
+}
+
+function startRound(a, b) {
+  curRange = [a, b];
+  setScene(true); // fresh backdrop each round
+  roundWords = drawRound(a, b, ROUND_SIZE);
+  solvedCount = 0;
+  document.getElementById("lesson-label").textContent =
+    a === b ? `Lesson ${a}` : `Lessons ${a}–${b}`;
+
+  board.innerHTML = "";
+  roundWords.forEach(w => {
+    const t = document.createElement("div");
+    t.className = "target";
+    t.dataset.id = w.id;
+    const cap = w.kanji ? `${w.kana}（${w.kanji}）` : w.kana;
+    t.innerHTML = `<div class="frame"></div><div class="cap">${cap}</div><div class="en-cap">${w.en}</div>`;
+    board.appendChild(t);
+  });
+
+  pool.innerHTML = "";
+  shuffle(roundWords).forEach(w => {
+    const tile = document.createElement("div");
+    tile.className = "tile";
+    tile.dataset.id = w.id;
+    tile.innerHTML = w.art
+      ? `<svg viewBox="0 0 200 200" role="img" aria-label="doodle">${w.art}</svg>`
+      : `<div class="wordtile">${w.en}</div>`;
+    pool.appendChild(tile);
+    enableDrag(tile);
+  });
+
+  entry.style.display = "none";
+  winBox.style.display = "none";
+  game.style.display = "block";
+  window.scrollTo(0, 0);
+}
+
+if (!WORDS.length) {
+  const e = document.getElementById("entry");
+  if (e) e.insertAdjacentHTML("beforeend",
+    '<p class="sub" style="color:var(--accent)">Couldn\'t load words.js — keep it in the same folder as this file.</p>');
+}
+document.getElementById("start").onclick = () => {
+  GameVoice.unlock(); // wake phone audio inside the tap
+  startRound(+lo.value, +hi.value);
+  GameVoice.say("がんばって！", { rate: voiceRate });
+};
+document.getElementById("back").onclick = () => { game.style.display = "none"; entry.style.display = "block"; };
+document.getElementById("again").onclick = () => startRound(curRange[0], curRange[1]);
+document.getElementById("tolessons").onclick = () => { winBox.style.display = "none"; game.style.display = "none"; entry.style.display = "block"; };
+
+/* ---------- pointer drag ---------- */
+function enableDrag(tile) {
+  // mode: null = undecided, "drag" = lifting to a target, "scroll" = panning the row
+  let sx = 0, sy = 0, dx = 0, dy = 0, mode = null, active = false, hovered = null, scrollStart = 0, pressed = false;
+
+  // Is the pool currently a horizontal scroll strip (mobile) rather than a grid?
+  function poolScrolls() { return pool.scrollWidth > pool.clientWidth + 4; }
+
+  // Lift the tile out with position:fixed so it floats above everything and
+  // isn't clipped by the scroll container's overflow.
+  function beginDrag(e) {
+    active = true;
+    tile.setPointerCapture(e.pointerId);
+    const r = tile.getBoundingClientRect();
+    tile.classList.add("dragging");
+    tile.classList.remove("returning");
+    tile.style.position = "fixed";
+    tile.style.left = r.left + "px";
+    tile.style.top = r.top + "px";
+    tile.style.width = r.width + "px";
+    tile.style.height = r.height + "px";
+    tile.style.margin = "0";
+  }
+  function clearDragStyle() {
+    tile.style.position = ""; tile.style.left = ""; tile.style.top = "";
+    tile.style.width = ""; tile.style.height = ""; tile.style.margin = "";
+    tile.style.transform = "";
+  }
+
+  tile.addEventListener("pointerdown", e => {
+    if (tile.classList.contains("placed")) return;
+    pressed = true;
+    sx = e.clientX; sy = e.clientY; dx = dy = 0; hovered = null;
+    mode = null; active = false; scrollStart = pool.scrollLeft;
+    if (!poolScrolls()) {           // grid (desktop): drag right away, old feel
+      mode = "drag";
+      beginDrag(e);
+      e.preventDefault();
+    }
+    // strip (mobile): wait for the first move to tell drag from scroll
+  });
+
+  tile.addEventListener("pointermove", e => {
+    if (!pressed) return;                       // ignore hover moves with no button down
+    dx = e.clientX - sx; dy = e.clientY - sy;
+
+    if (mode === null) {                       // decide once we've moved a little
+      if (Math.hypot(dx, dy) < 8) return;
+      if (dy < -6 || Math.abs(dy) >= Math.abs(dx)) {
+        mode = "drag"; beginDrag(e);           // moved up / mostly vertical -> place it
+      } else {
+        mode = "scroll";                        // mostly sideways -> pan the row
+        try { tile.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+    }
+
+    if (mode === "scroll") {
+      pool.scrollLeft = scrollStart - dx;
+      e.preventDefault();
+      return;
+    }
+    if (mode === "drag" && active) {
+      tile.style.transform = `translate(${dx}px, ${dy}px) scale(1.05)`;
+      const t = targetUnder(e.clientX, e.clientY);
+      if (hovered && hovered !== t) hovered.classList.remove("hover");
+      hovered = t;
+      if (hovered && !hovered.classList.contains("solved")) hovered.classList.add("hover");
+      e.preventDefault();
+    }
+  });
+
+  function finish(e) {
+    if (!pressed) return;
+    pressed = false;
+    if (mode === "scroll") { mode = null; return; }
+    if (!active) { mode = null; return; }      // a tap, nothing to do
+    active = false;
+    tile.classList.remove("dragging");
+    if (hovered) hovered.classList.remove("hover");
+    const t = targetUnder(e.clientX, e.clientY);
+    if (t && !t.classList.contains("solved") && t.dataset.id === tile.dataset.id) {
+      clearDragStyle();
+      snapIn(tile, t);
+    } else {
+      if (t && !t.classList.contains("solved")) {
+        const o = GameVoice.oops();
+        showBubble(o.jp, o.en, false);
+        GameVoice.sfx.wrong();
+        tile.classList.add("shake");
+        setTimeout(() => tile.classList.remove("shake"), 380);
+      }
+      tile.classList.add("returning");
+      tile.style.transform = "translate(0,0)";     // slide back to its slot
+      setTimeout(() => { tile.classList.remove("returning"); clearDragStyle(); }, 360);
+    }
+    hovered = null; mode = null;
+  }
+  tile.addEventListener("pointerup", finish);
+  tile.addEventListener("pointercancel", finish);
+}
+
+// Mouse drag-to-scroll for the word row (touch already pans natively).
+function attachDragScroll(el) {
+  let down = false, startX = 0, startLeft = 0;
+  el.addEventListener("pointerdown", e => {
+    if (e.pointerType !== "mouse") return;               // touch scrolls on its own
+    if (el.scrollWidth <= el.clientWidth + 4) return;    // not overflowing -> nothing to do
+    down = true; startX = e.clientX; startLeft = el.scrollLeft;
+  });
+  el.addEventListener("pointermove", e => {
+    if (!down) return;
+    el.scrollLeft = startLeft - (e.clientX - startX);
+  });
+  const up = () => { down = false; };
+  el.addEventListener("pointerup", up);
+  el.addEventListener("pointerleave", up);
+  el.addEventListener("pointercancel", up);
+}
+attachDragScroll(board);
+
+function targetUnder(x, y) {
+  const els = document.elementsFromPoint(x, y);
+  for (const el of els) {
+    const t = el.closest && el.closest(".target");
+    if (t) return t;
+  }
+  return null;
+}
+
+function snapIn(tile, target) {
+  const art = tile.querySelector("svg") || tile.querySelector(".wordtile");
+  const frame = target.querySelector(".frame");
+  if (art && frame) { frame.appendChild(art); art.classList.add("pop"); }
+  target.classList.add("solved");
+  tile.classList.add("placed");
+  tile.style.transform = "";
+  GameVoice.sfx.snap();
+  const p = GameVoice.praise({ silent: true }); // grab phrase; speak it in sequence below
+  showBubble(p.jp, p.en, true);
+  const matched = WORDS.find(x => x.id === tile.dataset.id);
+  speakSequence(matched ? [matched.kana, p.jp] : [p.jp]); // the word, then the encouragement
+  solvedCount++;
+  if (solvedCount === roundWords.length) {
+    setTimeout(() => {
+      winBox.style.display = "flex";
+      GameVoice.sfx.fanfare();
+      GameVoice.say("ぜんぶせいかい！おめでとう！", { rate: voiceRate });
+    }, 700);
+  }
+}
+
+let bubbleTimer = null;
+function showBubble(jp, en, good) {
+  bubble.innerHTML = `${jp}<span class="en">${en}</span>`;
+  bubble.classList.toggle("good", !!good);
+  bubble.classList.add("show");
+  clearTimeout(bubbleTimer);
+  bubbleTimer = setTimeout(() => bubble.classList.remove("show"), 1800);
+}
+</script>
+</body>
+</html>
     btn.textContent = enabled ? onLabel : offLabel;
     btn.addEventListener("click", function () {
       setEnabled(!enabled);
