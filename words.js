@@ -648,72 +648,366 @@ window.GENKI_WORDS = [
 <path class="s t" d="M70 58 L130 58 M70 74 L114 74 M70 90 L130 90 M70 106 L104 106"/>
 <circle class="s r" cx="100" cy="132" r="20"/>
 <path class="s t r" d="M148 46 L162 32"/>`},
-{id:"ima",kana:"いま",romaji:"ima",en:"now",lesson:1},
-{id:"eigo",kana:"えいご",romaji:"eigo",en:"English",lesson:1},
-{id:"nihongo",kana:"にほんご",romaji:"nihongo",en:"Japanese language",lesson:1},
-{id:"koukou",kana:"こうこう",romaji:"koukou",en:"high school",lesson:1},
-{id:"gogo",kana:"ごご",romaji:"gogo",en:"P.M.",lesson:1},
-{id:"gozen",kana:"ごぜん",romaji:"gozen",en:"A.M.",lesson:1},
-{id:"senkou",kanji:"専攻",kana:"せんこう",romaji:"senkou",en:"major",lesson:1},
-{id:"namae",kana:"なまえ",romaji:"namae",en:"name",lesson:1},
-{id:"nan",kana:"なん",romaji:"nan",en:"what",lesson:1},
-{id:"nihonjin",kana:"にほんじん",romaji:"nihonjin",en:"Japanese person",lesson:1},
-{id:"han",kana:"はん",romaji:"han",en:"half (o'clock)",lesson:1},
-{id:"bangou",kana:"ばんごう",romaji:"bangou",en:"number",lesson:1},
-{id:"watashi",kana:"わたし",romaji:"watashi",en:"I / me",lesson:1},
-{id:"amerika",kana:"アメリカ",romaji:"amerika",en:"U.S.A.",lesson:1},
-{id:"igirisu",kana:"イギリス",romaji:"igirisu",en:"Britain",lesson:1},
-{id:"osutoraria",kana:"オーストラリア",romaji:"osutoraria",en:"Australia",lesson:1},
-{id:"kankoku",kana:"かんこく",romaji:"kankoku",en:"Korea",lesson:1},
-{id:"chuugoku",kana:"ちゅうごく",romaji:"chuugoku",en:"China",lesson:1},
-{id:"keizai",kana:"けいざい",romaji:"keizai",en:"economics",lesson:1},
-{id:"konpyuta",kana:"コンピューター",romaji:"konpyuta",en:"computer",lesson:1},
-{id:"bijinesu",kana:"ビジネス",romaji:"bijinesu",en:"business",lesson:1},
-{id:"rekishi",kana:"れきし",romaji:"rekishi",en:"history",lesson:1},
-{id:"shigoto",kana:"しごと",romaji:"shigoto",en:"job / work",lesson:1},
-{id:"kaishain",kana:"かいしゃいん",romaji:"kaishain",en:"office worker",lesson:1},
-{id:"koukousei",kana:"こうこうせい",romaji:"koukousei",en:"high school student",lesson:1},
-{id:"shufu",kana:"しゅふ",romaji:"shufu",en:"housewife",lesson:1},
-{id:"daigakuinsei",kana:"だいがくいんせい",romaji:"daigakuinsei",en:"graduate student",lesson:1},
-{id:"daigakusei",kana:"だいがくせい",romaji:"daigakusei",en:"college student",lesson:1},
-{id:"bengoshi",kana:"べんごし",romaji:"bengoshi",en:"lawyer",lesson:1},
-{id:"okaasan",kana:"おかあさん",romaji:"okaasan",en:"mother",lesson:1},
-{id:"otousan",kana:"おとうさん",romaji:"otousan",en:"father",lesson:1},
-{id:"oneesan",kana:"おねえさん",romaji:"oneesan",en:"older sister",lesson:1},
-{id:"oniisan",kana:"おにいさん",romaji:"oniisan",en:"older brother",lesson:1},
-{id:"imouto",kana:"いもうと",romaji:"imouto",en:"younger sister",lesson:1},
-{id:"otouto",kana:"おとうと",romaji:"otouto",en:"younger brother",lesson:1},
-{id:"kagaku",kana:"かがく",romaji:"kagaku",en:"science",lesson:1},
-{id:"seiji",kana:"せいじ",romaji:"seiji",en:"politics",lesson:1},
-{id:"bungaku",kana:"ぶんがく",romaji:"bungaku",en:"literature",lesson:1},
-{id:"kore",kana:"これ",romaji:"kore",en:"this one",lesson:2},
-{id:"sore",kana:"それ",romaji:"sore",en:"that one",lesson:2},
-{id:"are",kana:"あれ",romaji:"are",en:"that one (over there)",lesson:2},
-{id:"dore",kana:"どれ",romaji:"dore",en:"which one",lesson:2},
-{id:"asoko",kana:"あそこ",romaji:"asoko",en:"over there",lesson:2},
-{id:"doko",kana:"どこ",romaji:"doko",en:"where",lesson:2},
-{id:"dare",kana:"だれ",romaji:"dare",en:"who",lesson:2},
-{id:"tonkatsu",kana:"とんかつ",romaji:"tonkatsu",en:"pork cutlet",lesson:2},
-{id:"niku",kana:"にく",romaji:"niku",en:"meat",lesson:2},
-{id:"menyu",kana:"メニュー",romaji:"menyu",en:"menu",lesson:2},
-{id:"enpitsu",kana:"えんぴつ",romaji:"enpitsu",en:"pencil",lesson:2},
-{id:"kaban",kana:"かばん",romaji:"kaban",en:"bag",lesson:2},
-{id:"jinzu",kana:"ジーンズ",romaji:"jinzu",en:"jeans",lesson:2},
-{id:"jisho",kana:"じしょ",romaji:"jisho",en:"dictionary",lesson:2},
-{id:"tepu",kana:"テープ",romaji:"tepu",en:"tape",lesson:2},
-{id:"torena",kana:"トレーナー",romaji:"torena",en:"sweatshirt",lesson:2},
-{id:"noto",kana:"ノート",romaji:"noto",en:"notebook",lesson:2},
-{id:"pen",kana:"ペン",romaji:"pen",en:"pen",lesson:2},
-{id:"otearai",kana:"おてあらい",romaji:"otearai",en:"restroom",lesson:2},
-{id:"takai",kana:"たかい",romaji:"takai",en:"expensive",lesson:2},
-{id:"kokuban",kana:"こくばん",romaji:"kokuban",en:"blackboard",lesson:2},
-{id:"keshigomu",kana:"けしゴム",romaji:"keshigomu",en:"eraser",lesson:2},
-{id:"bideo",kana:"ビデオ",romaji:"bideo",en:"VCR / video player",lesson:2},
-{id:"doa",kana:"ドア",romaji:"doa",en:"door",lesson:2},
-{id:"katen",kana:"カーテン",romaji:"katen",en:"curtain",lesson:2},
+{id:"ima",kana:"いま",romaji:"ima",en:"now",lesson:1,art:`
+<circle class="s" cx="100" cy="106" r="46"/>
+<path class="s t" d="M100 66 L100 74 M100 138 L100 146 M60 106 L68 106 M132 106 L140 106"/>
+<path class="s" d="M100 106 L100 78"/><path class="s r" d="M100 106 L122 118"/>
+<circle class="f" cx="100" cy="106" r="4"/>
+<path class="s r" d="M100 40 L100 58 M88 48 L100 58 L112 48"/>
+<path class="fr" d="M100 22 Q90 34 100 44 Q110 34 100 22 Z"/>`},
+{id:"eigo",kana:"えいご",romaji:"eigo",en:"English",lesson:1,art:`
+<path class="s" d="M40 44 L160 44 Q172 44 172 56 L172 116 Q172 128 160 128 L84 128 L58 156 L62 128 L40 128 Q28 128 28 116 L28 56 Q28 44 40 44 Z"/>
+<rect class="s r" x="66" y="66" width="68" height="42"/>
+<path class="s r" d="M66 66 L134 108 M134 66 L66 108 M100 66 L100 108 M66 87 L134 87"/>`},
+{id:"nihongo",kana:"にほんご",romaji:"nihongo",en:"Japanese language",lesson:1,art:`
+<path class="s" d="M40 44 L160 44 Q172 44 172 56 L172 116 Q172 128 160 128 L84 128 L58 156 L62 128 L40 128 Q28 128 28 116 L28 56 Q28 44 40 44 Z"/>
+<circle class="fr" cx="100" cy="86" r="20"/>`},
+{id:"koukou",kana:"こうこう",romaji:"koukou",en:"high school",lesson:1,art:`
+<rect class="s" x="52" y="72" width="96" height="88"/>
+<rect class="s t" x="66" y="88" width="20" height="20"/><rect class="s t" x="114" y="88" width="20" height="20"/>
+<rect class="s t" x="88" y="122" width="24" height="38"/>
+<path class="s" d="M100 72 L100 40"/><path class="s r" d="M100 40 L138 48 L100 60 Z"/>
+<circle class="s t r" cx="100" cy="122" r="7"/>`},
+{id:"gogo",kana:"ごご",romaji:"gogo",en:"P.M.",lesson:1,art:`
+<path class="s t" d="M28 128 L172 128"/>
+<path class="s r" d="M66 128 Q66 96 100 96 Q134 96 134 128"/>
+<path class="s r" d="M100 84 L100 70 M64 96 L54 86 M136 96 L146 86 M48 122 L34 122 M152 122 L166 122"/>
+<path class="s t" d="M100 148 L100 172 M90 162 L100 172 L110 162"/>
+<path class="s t r" d="M150 60 Q136 60 136 46 Q136 34 148 32 Q140 44 150 52 Q156 56 150 60 Z"/>`},
+{id:"gozen",kana:"ごぜん",romaji:"gozen",en:"A.M.",lesson:1,art:`
+<path class="s t" d="M28 128 L172 128"/>
+<path class="s r" d="M66 128 Q66 96 100 96 Q134 96 134 128"/>
+<path class="s r" d="M100 84 L100 70 M64 96 L54 86 M136 96 L146 86 M48 122 L34 122 M152 122 L166 122"/>
+<path class="s t" d="M100 66 L100 42 M90 52 L100 42 L110 52"/>`},
+{id:"senkou",kanji:"専攻",kana:"せんこう",romaji:"senkou",en:"major",lesson:1,art:`
+<path class="s" d="M40 78 L100 54 L160 78 L100 102 Z"/>
+<path class="s t" d="M100 102 L100 118 M70 90 L70 116 Q70 130 100 130 Q130 130 130 116 L130 90"/>
+<path class="s r" d="M148 82 L156 100"/>
+<rect class="s t r" x="76" y="150" width="48" height="14"/>
+<path class="s t r" d="M100 148 L100 132 M92 140 L100 132 L108 140"/>`},
+{id:"namae",kana:"なまえ",romaji:"namae",en:"name",lesson:1,art:`
+<rect class="s" x="44" y="60" width="112" height="80" rx="8"/>
+<circle class="s t" cx="72" cy="88" r="12"/><path class="s t" d="M56 116 Q72 100 88 116"/>
+<path class="s t r" d="M104 82 L142 82 M104 100 L142 100 M104 116 L130 116"/>
+<circle class="s r" cx="100" cy="52" r="6"/><path class="s t r" d="M100 58 L100 66"/>`},
+{id:"nan",kana:"なん",romaji:"nan",en:"what",lesson:1,art:`
+<path class="s" d="M44 52 L156 52 Q168 52 168 66 L168 118 Q168 132 156 132 L96 132 L68 160 L72 132 L44 132 Q32 132 32 118 L32 66 Q32 52 44 52 Z"/>
+<path class="s r" d="M78 82 Q78 62 100 62 Q122 62 122 82 Q122 98 100 102 L100 112"/>
+<circle class="fr" cx="100" cy="126" r="5"/>`},
+{id:"nihonjin",kana:"にほんじん",romaji:"nihonjin",en:"Japanese person",lesson:1,art:`
+<circle class="s" cx="86" cy="60" r="16"/>
+<path class="s t" d="M80 58 Q83 55 86 58 M90 58 Q93 55 96 58"/>
+<path class="s" d="M86 76 L86 128 M86 128 L74 166 M86 128 L98 166 M86 92 L64 108 M86 92 L108 106"/>
+<circle class="s" cx="140" cy="62" r="22"/><circle class="fr" cx="140" cy="62" r="11"/>`},
+{id:"han",kana:"はん",romaji:"han",en:"half (o'clock)",lesson:1,art:`
+<circle class="s" cx="100" cy="100" r="50"/>
+<path class="fr" d="M100 100 L100 50 A50 50 0 0 1 100 150 Z"/>
+<path class="s t" d="M100 56 L100 64 M100 136 L100 144 M56 100 L64 100 M136 100 L144 100"/>
+<circle class="f" cx="100" cy="100" r="4"/>`},
+{id:"bangou",kana:"ばんごう",romaji:"bangou",en:"number",lesson:1,art:`
+<rect class="s" x="60" y="40" width="80" height="120" rx="10"/>
+<circle class="f" cx="80" cy="72" r="5"/><circle class="f" cx="100" cy="72" r="5"/><circle class="f" cx="120" cy="72" r="5"/>
+<circle class="f" cx="80" cy="96" r="5"/><circle class="f" cx="100" cy="96" r="5"/><circle class="f" cx="120" cy="96" r="5"/>
+<circle class="fr" cx="80" cy="120" r="5"/><circle class="fr" cx="100" cy="120" r="5"/><circle class="fr" cx="120" cy="120" r="5"/>
+<path class="s t" d="M88 52 L112 52"/>`},
+{id:"watashi",kana:"わたし",romaji:"watashi",en:"I / me",lesson:1,art:`
+<circle class="s" cx="88" cy="52" r="16"/>
+<path class="s t" d="M82 50 Q85 47 88 50 M92 50 Q95 47 98 50"/>
+<path class="s" d="M88 68 L88 128 M88 128 L74 168 M88 128 L102 168 M88 84 L64 100"/>
+<path class="s r" d="M88 92 Q112 96 108 118 L98 116"/>
+<path class="s r" d="M98 116 L88 110"/>`},
+{id:"amerika",kana:"アメリカ",romaji:"amerika",en:"U.S.A.",lesson:1,art:`
+<rect class="s" x="44" y="58" width="112" height="76"/>
+<path class="s r" d="M44 68 L156 68 M44 80 L156 80 M44 92 L156 92 M92 104 L156 104 M92 116 L156 116 M92 128 L156 128"/>
+<rect class="fr" x="44" y="58" width="48" height="46"/>
+<circle style="fill:#fff" cx="56" cy="70" r="2"/><circle style="fill:#fff" cx="72" cy="70" r="2"/><circle style="fill:#fff" cx="88" cy="70" r="2"/><circle style="fill:#fff" cx="64" cy="82" r="2"/><circle style="fill:#fff" cx="80" cy="82" r="2"/><circle style="fill:#fff" cx="56" cy="94" r="2"/><circle style="fill:#fff" cx="72" cy="94" r="2"/><circle style="fill:#fff" cx="88" cy="94" r="2"/>`},
+{id:"igirisu",kana:"イギリス",romaji:"igirisu",en:"Britain",lesson:1,art:`
+<rect class="s" x="44" y="58" width="112" height="76"/>
+<path class="s r" d="M44 58 L156 134 M156 58 L44 134"/>
+<path class="s r" d="M100 58 L100 134 M44 96 L156 96"/>
+<path class="s" d="M100 58 L100 134 M44 96 L156 96"/>`},
+{id:"osutoraria",kana:"オーストラリア",romaji:"osutoraria",en:"Australia",lesson:1,art:`
+<rect class="s" x="44" y="58" width="112" height="76"/>
+<rect class="fr" x="44" y="58" width="52" height="38"/>
+<path style="stroke:#fff;stroke-width:2;fill:none" d="M44 58 L96 96 M96 58 L44 96 M70 58 L70 96 M44 77 L96 77"/>
+<path class="fr" d="M66 106 L69 116 L79 116 L71 122 L74 132 L66 126 L58 132 L61 122 L53 116 L63 116 Z"/>
+<circle class="fr" cx="128" cy="80" r="3"/><circle class="fr" cx="146" cy="74" r="3"/><circle class="fr" cx="141" cy="98" r="3"/><circle class="fr" cx="121" cy="104" r="3"/><circle class="fr" cx="150" cy="116" r="2"/>`},
+{id:"kankoku",kana:"かんこく",romaji:"kankoku",en:"Korea",lesson:1,art:`
+<rect class="s" x="44" y="58" width="112" height="76"/>
+<path class="fr" d="M100 74 A22 22 0 0 1 100 118 A11 11 0 0 0 100 96 A11 11 0 0 1 100 74 Z"/>
+<path class="s" d="M100 74 A22 22 0 0 0 100 118 A11 11 0 0 1 100 96 A11 11 0 0 0 100 74 Z"/>
+<path class="s t" d="M58 68 L70 68 M58 74 L70 74 M58 80 L70 80 M130 116 L142 116 M130 122 L142 122 M130 128 L142 128"/>`},
+{id:"chuugoku",kana:"ちゅうごく",romaji:"chuugoku",en:"China",lesson:1,art:`
+<rect class="fr" x="44" y="58" width="112" height="76"/>
+<path style="fill:#fff;stroke:none" d="M66 72 L70 84 L82 84 L72 92 L76 104 L66 96 L56 104 L60 92 L50 84 L62 84 Z"/>
+<circle style="fill:#fff" cx="92" cy="70" r="2.5"/><circle style="fill:#fff" cx="100" cy="80" r="2.5"/><circle style="fill:#fff" cx="100" cy="94" r="2.5"/><circle style="fill:#fff" cx="92" cy="104" r="2.5"/>`},
+{id:"keizai",kana:"けいざい",romaji:"keizai",en:"economics",lesson:1,art:`
+<path class="s" d="M40 148 L160 148 M40 148 L40 48"/>
+<path class="s r" d="M52 130 L84 100 L108 116 L156 64"/>
+<path class="s r" d="M138 64 L156 64 L156 82"/>
+<circle class="s" cx="60" cy="88" r="14"/><path class="s t" d="M60 78 L60 98 M54 84 L66 84 M54 92 L66 92"/>`},
+{id:"konpyuta",kana:"コンピューター",romaji:"konpyuta",en:"computer",lesson:1,art:`
+<rect class="s" x="52" y="52" width="96" height="66" rx="4"/>
+<rect class="s t" x="62" y="62" width="76" height="46"/>
+<path class="s" d="M36 132 L164 132 L152 118 L48 118 Z"/>
+<path class="s t r" d="M88 125 L112 125"/>
+<path class="s t" d="M74 78 L92 78 M74 90 L108 90"/>`},
+{id:"bijinesu",kana:"ビジネス",romaji:"bijinesu",en:"business",lesson:1,art:`
+<rect class="s" x="46" y="76" width="108" height="72" rx="6"/>
+<path class="s" d="M80 76 L80 60 Q80 52 88 52 L112 52 Q120 52 120 60 L120 76"/>
+<path class="s t" d="M46 100 L154 100"/>
+<path class="s r" d="M70 132 L92 112 L108 124 L134 96"/>
+<path class="s r" d="M120 96 L134 96 L134 110"/>`},
+{id:"rekishi",kana:"れきし",romaji:"rekishi",en:"history",lesson:1,art:`
+<path class="s" d="M52 60 Q40 60 40 74 Q40 88 52 88 L52 140 Q40 140 40 128"/>
+<path class="s" d="M52 60 L148 60 Q160 60 160 74 Q160 88 148 88 L64 88"/>
+<path class="s t r" d="M70 104 L142 104 M70 118 L142 118 M70 132 L120 132"/>
+<path class="s" d="M148 88 Q160 88 160 74"/>`},
+{id:"shigoto",kana:"しごと",romaji:"shigoto",en:"job / work",lesson:1,art:`
+<rect class="s" x="44" y="82" width="80" height="60" rx="6"/>
+<path class="s" d="M70 82 L70 68 Q70 60 78 60 L90 60 Q98 60 98 68 L98 82"/>
+<path class="s t" d="M44 104 L124 104"/>
+<circle class="s r" cx="150" cy="66" r="16"/><circle class="s t r" cx="150" cy="66" r="6"/>
+<path class="s t r" d="M150 44 L150 52 M150 80 L150 88 M128 66 L136 66 M164 66 L172 66 M134 50 L140 56 M166 50 L160 56"/>`},
+{id:"kaishain",kana:"かいしゃいん",romaji:"kaishain",en:"office worker",lesson:1,art:`
+<circle class="s" cx="100" cy="52" r="16"/>
+<path class="s t" d="M94 50 Q97 47 100 50 M104 50 Q107 47 110 50"/>
+<path class="s" d="M100 68 L100 128 M100 128 L86 166 M100 128 L114 166 M100 84 L78 100 M100 84 L122 100"/>
+<path class="s r" d="M100 68 L92 92 L100 100 L108 92 L100 68"/>
+<path class="s t r" d="M100 100 L100 118"/>
+<rect class="s t" x="118" y="98" width="30" height="24" rx="3"/>`},
+{id:"koukousei",kana:"こうこうせい",romaji:"koukousei",en:"high school student",lesson:1,art:`
+<circle class="s" cx="100" cy="52" r="16"/>
+<path class="s r" d="M82 46 Q100 32 118 46 L120 52 Q100 58 80 52 Z"/>
+<path class="s t" d="M94 56 Q97 53 100 56 M104 56 Q107 53 110 56"/>
+<path class="s" d="M100 68 L100 124 M100 124 L86 164 M100 124 L114 164 M100 84 L78 100"/>
+<path class="s r" d="M100 84 L128 96 L128 130 Q128 138 120 138 L108 138"/>
+<path class="s t r" d="M112 96 L112 130"/>`},
+{id:"shufu",kana:"しゅふ",romaji:"shufu",en:"housewife",lesson:1,art:`
+<circle class="s" cx="100" cy="50" r="15"/>
+<path class="s t" d="M94 48 Q97 45 100 48 M104 48 Q107 45 110 48"/>
+<path class="s" d="M100 65 L100 96 M100 96 L84 160 M100 96 L116 160 M100 74 L124 90"/>
+<path class="s r" d="M84 100 L84 150 L116 150 L116 100"/>
+<path class="s r" d="M100 76 L118 66 L142 96 M118 66 L118 96"/>
+<path class="s r" d="M124 90 L140 74"/>`},
+{id:"daigakuinsei",kana:"だいがくいんせい",romaji:"daigakuinsei",en:"graduate student",lesson:1,art:`
+<path class="s" d="M40 78 L100 54 L160 78 L100 102 Z"/>
+<path class="s t" d="M100 102 L100 118 M70 92 L70 118 Q70 132 100 132 Q130 132 130 118 L130 92"/>
+<path class="s r" d="M148 82 L156 100"/>
+<circle class="s r" cx="112" cy="146" r="16"/><path class="s r" d="M124 158 L142 176"/>`},
+{id:"daigakusei",kana:"だいがくせい",romaji:"daigakusei",en:"college student",lesson:1,art:`
+<circle class="s" cx="100" cy="52" r="16"/>
+<path class="s t" d="M94 50 Q97 47 100 50 M104 50 Q107 47 110 50"/>
+<path class="s" d="M100 68 L100 124 M100 124 L86 164 M100 124 L114 164 M100 82 L78 98"/>
+<path class="s r" d="M100 82 L126 94 L126 128 Q126 136 118 136 L108 136"/>
+<path class="s r" d="M72 130 L96 130 L96 168 L72 168 Z M78 130 Q78 118 87 118 Q96 118 96 130"/>`},
+{id:"bengoshi",kana:"べんごし",romaji:"bengoshi",en:"lawyer",lesson:1,art:`
+<path class="s" d="M100 44 L100 152 M60 152 L140 152"/>
+<path class="s" d="M60 70 L100 60 L140 70"/>
+<path class="s" d="M60 70 L46 104 L74 104 Z M60 70 L60 104"/>
+<path class="s" d="M140 70 L126 104 L154 104 Z M140 70 L140 104"/>
+<path class="s t" d="M46 104 Q60 116 74 104 M126 104 Q140 116 154 104"/>`},
+{id:"okaasan",kana:"おかあさん",romaji:"okaasan",en:"mother",lesson:1,art:`
+<circle class="s" cx="100" cy="54" r="16"/>
+<path class="s r" d="M84 54 Q84 34 100 34 Q116 34 116 54 Q116 62 108 66 L92 66 Q84 62 84 54"/>
+<path class="s t" d="M94 56 Q97 53 100 56 M104 56 Q107 53 110 56 M94 64 Q100 68 106 64"/>
+<path class="s" d="M100 70 L100 96 M100 96 L82 160 M100 96 L118 160 M100 80 L78 96 M100 80 L122 96"/>
+<path class="s r" d="M84 100 L84 150 L116 150 L116 100"/>`},
+{id:"otousan",kana:"おとうさん",romaji:"otousan",en:"father",lesson:1,art:`
+<circle class="s" cx="100" cy="46" r="16"/>
+<path class="s t" d="M94 44 Q97 41 100 44 M104 44 Q107 41 110 44"/>
+<path class="s r" d="M84 40 L116 40 L112 32 L88 32 Z"/>
+<path class="s" d="M100 62 L100 122 M100 122 L84 168 M100 122 L116 168 M100 78 L76 94 M100 78 L124 94"/>
+<path class="s r" d="M100 62 L92 86 L100 94 L108 86 L100 62"/><path class="s t r" d="M100 94 L100 112"/>`},
+{id:"oneesan",kana:"おねえさん",romaji:"oneesan",en:"older sister",lesson:1,art:`
+<circle class="s" cx="72" cy="52" r="14"/>
+<path class="s r" d="M62 44 Q58 34 66 34 Q70 40 72 46 M82 44 Q86 34 78 34 Q74 40 72 46"/>
+<path class="s" d="M72 66 L72 116 M72 116 L60 158 M72 116 L84 158 M72 80 L54 94 M72 80 L90 94"/>
+<circle class="s t" cx="128" cy="98" r="11"/>
+<path class="s t" d="M128 109 L128 140 M128 140 L118 166 M128 140 L138 166 M128 118 L114 128 M128 118 L142 128"/>
+<path class="s r" d="M60 30 L60 14 M52 22 L60 14 L68 22"/>`},
+{id:"oniisan",kana:"おにいさん",romaji:"oniisan",en:"older brother",lesson:1,art:`
+<circle class="s" cx="72" cy="52" r="14"/>
+<path class="s t" d="M66 50 Q69 47 72 50 M76 50 Q79 47 82 50"/>
+<path class="s" d="M72 66 L72 116 M72 116 L60 158 M72 116 L84 158 M72 80 L54 94 M72 80 L90 94"/>
+<circle class="s t" cx="128" cy="98" r="11"/>
+<path class="s t" d="M128 109 L128 140 M128 140 L118 166 M128 140 L138 166 M128 118 L114 128 M128 118 L142 128"/>
+<path class="s r" d="M60 30 L60 14 M52 22 L60 14 L68 22"/>`},
+{id:"imouto",kana:"いもうと",romaji:"imouto",en:"younger sister",lesson:1,art:`
+<circle class="s" cx="130" cy="56" r="14"/>
+<path class="s t" d="M124 54 Q127 51 130 54 M134 54 Q137 51 140 54"/>
+<path class="s" d="M130 70 L130 116 M130 116 L118 156 M130 116 L142 156 M130 84 L114 98 M130 84 L146 98"/>
+<circle class="s r" cx="72" cy="88" r="12"/>
+<path class="s r" d="M62 82 Q60 70 66 70 M82 82 Q84 70 78 70"/>
+<path class="s r" d="M72 100 L72 132 M72 132 L62 158 M72 132 L82 158 M72 108 L60 118 M72 108 L84 118"/>
+<path class="s r" d="M60 66 L60 50 M52 58 L60 50 L68 58"/>`},
+{id:"otouto",kana:"おとうと",romaji:"otouto",en:"younger brother",lesson:1,art:`
+<circle class="s" cx="130" cy="56" r="14"/>
+<path class="s t" d="M124 54 Q127 51 130 54 M134 54 Q137 51 140 54"/>
+<path class="s" d="M130 70 L130 116 M130 116 L118 156 M130 116 L142 156 M130 84 L114 98 M130 84 L146 98"/>
+<circle class="s r" cx="72" cy="90" r="12"/>
+<path class="s t r" d="M66 88 Q69 85 72 88 M76 88 Q79 85 82 88"/>
+<path class="s r" d="M72 102 L72 134 M72 134 L62 160 M72 134 L82 160 M72 110 L60 120 M72 110 L84 120"/>
+<path class="s r" d="M60 68 L60 52 M52 60 L60 52 L68 60"/>`},
+{id:"kagaku",kana:"かがく",romaji:"kagaku",en:"science",lesson:1,art:`
+<path class="s" d="M86 44 L86 92 L54 148 Q50 158 62 158 L138 158 Q150 158 146 148 L114 92 L114 44"/>
+<path class="s t" d="M78 44 L122 44"/>
+<path class="fr" d="M68 118 L132 118 L146 148 Q150 158 138 158 L62 158 Q50 158 54 148 Z"/>
+<circle style="fill:#fff" cx="88" cy="140" r="4"/><circle style="fill:#fff" cx="112" cy="134" r="5"/>
+<circle class="s t r" cx="126" cy="70" r="4"/><circle class="s t r" cx="80" cy="60" r="3"/>`},
+{id:"seiji",kana:"せいじ",romaji:"seiji",en:"politics",lesson:1,art:`
+<rect class="s" x="52" y="80" width="96" height="72" rx="4"/>
+<path class="s" d="M78 80 L78 68 L122 68 L122 80"/>
+<rect class="s r" x="86" y="72" width="28" height="6"/>
+<path class="s r" d="M100 44 L100 72"/>
+<path class="s t" d="M100 44 L118 52 L100 60 Z"/>
+<path class="s t" d="M70 128 Q100 118 130 128"/>`},
+{id:"bungaku",kana:"ぶんがく",romaji:"bungaku",en:"literature",lesson:1,art:`
+<path class="s" d="M100 60 Q72 46 40 54 L40 138 Q72 130 100 146 Q128 130 160 138 L160 54 Q128 46 100 60 Z"/>
+<path class="s" d="M100 60 L100 146"/>
+<path class="s t" d="M52 74 L86 68 M52 90 L86 84 M52 106 L86 100"/>
+<path class="s r" d="M150 60 L118 108 L112 128 L128 118 Z"/>
+<path class="s t r" d="M118 108 L124 112"/>`},
+{id:"kore",kana:"これ",romaji:"kore",en:"this one",lesson:2,art:`
+<circle class="s r" cx="120" cy="96" r="20"/>
+<path class="s" d="M40 128 Q56 108 76 108 L96 96 Q100 92 104 96 Q106 100 100 104 L92 110 Q104 108 112 110"/>
+<path class="s r" d="M100 96 L100 84 M92 90 L100 84 L108 90"/>`},
+{id:"sore",kana:"それ",romaji:"sore",en:"that one",lesson:2,art:`
+<rect class="s r" x="130" y="76" width="34" height="34" rx="4"/>
+<path class="s" d="M36 118 Q52 100 70 100 L86 90 Q90 86 94 90 Q96 94 90 98 L84 102 Q94 100 100 102"/>
+<path class="s r" d="M100 94 L124 90"/>
+<path class="s r" d="M118 84 L128 92 L118 98"/>`},
+{id:"are",kana:"あれ",romaji:"are",en:"that one (over there)",lesson:2,art:`
+<rect class="s r" x="152" y="60" width="22" height="22" rx="3"/>
+<path class="s" d="M32 118 Q48 100 66 100 L82 90 Q86 86 90 90 Q92 94 86 98 L80 102 Q90 100 96 102"/>
+<path class="s r" d="M96 94 L146 74"/>
+<path class="s r" d="M138 66 L150 72 L140 82"/>`},
+{id:"dore",kana:"どれ",romaji:"dore",en:"which one",lesson:2,art:`
+<rect class="s t" x="42" y="96" width="30" height="30" rx="3"/><rect class="s t" x="86" y="96" width="30" height="30" rx="3"/><rect class="s t" x="130" y="96" width="30" height="30" rx="3"/>
+<path class="s r" d="M80 66 Q80 48 100 48 Q120 48 120 66 Q120 80 100 84 L100 92"/>
+<circle class="fr" cx="100" cy="104" r="4"/>`},
+{id:"asoko",kana:"あそこ",romaji:"asoko",en:"over there",lesson:2,art:`
+<circle class="s" cx="58" cy="60" r="14"/>
+<path class="s" d="M58 74 L58 120 M58 120 L48 158 M58 120 L68 158 M58 88 L96 78"/>
+<path class="s r" d="M58 88 L150 62"/>
+<path class="s r" d="M138 54 L152 60 L142 72"/>
+<path class="s t r" d="M158 44 L166 36 M164 52 L174 50 M154 34 L152 24"/>`},
+{id:"doko",kana:"どこ",romaji:"doko",en:"where",lesson:2,art:`
+<path class="s r" d="M100 40 Q66 40 66 76 Q66 108 100 150 Q134 108 134 76 Q134 40 100 40 Z"/>
+<circle style="fill:#fff" cx="100" cy="74" r="16"/>
+<path class="s r" d="M92 70 Q92 58 100 58 Q108 58 108 68 Q108 76 100 78 L100 84"/>
+<circle class="fr" cx="100" cy="92" r="3"/>`},
+{id:"dare",kana:"だれ",romaji:"dare",en:"who",lesson:2,art:`
+<circle class="s" cx="100" cy="72" r="30"/>
+<path class="s" d="M52 150 Q52 108 100 108 Q148 108 148 150"/>
+<path class="s r" d="M88 66 Q88 52 100 52 Q112 52 112 66 Q112 78 100 82 L100 90"/>
+<circle class="fr" cx="100" cy="100" r="4"/>`},
+{id:"tonkatsu",kana:"とんかつ",romaji:"tonkatsu",en:"pork cutlet",lesson:2,art:`
+<path class="s" d="M44 120 Q44 96 72 96 L128 96 Q156 96 156 120 Q156 140 128 140 L72 140 Q44 140 44 120 Z"/>
+<path class="s t r" d="M60 100 L54 136 M78 98 L74 138 M96 98 L92 138 M114 98 L110 138 M132 100 L128 136"/>
+<path class="s r" d="M40 150 Q60 142 80 150 Q100 158 120 150 Q140 142 160 150"/>`},
+{id:"niku",kana:"にく",romaji:"niku",en:"meat",lesson:2,art:`
+<ellipse class="s" cx="112" cy="104" rx="44" ry="34"/>
+<ellipse class="fr" cx="112" cy="104" rx="22" ry="16"/>
+<path class="s" d="M74 82 L44 60 M74 82 Q60 60 44 60 M74 82 Q64 68 52 74"/>
+<path class="s t" d="M40 54 L44 60 L38 66"/>`},
+{id:"menyu",kana:"メニュー",romaji:"menyu",en:"menu",lesson:2,art:`
+<path class="s" d="M56 48 L144 48 L144 156 L56 156 Z"/>
+<path class="s" d="M100 48 L100 156"/>
+<path class="s t r" d="M66 66 L92 66 M66 80 L92 80 M66 94 L88 94"/>
+<path class="s t" d="M110 66 L136 66 M110 80 L136 80 M110 94 L132 94 M66 116 L92 116 M110 116 L136 116"/>`},
+{id:"enpitsu",kana:"えんぴつ",romaji:"enpitsu",en:"pencil",lesson:2,art:`
+<path class="s" d="M48 148 L58 138 L150 46 Q158 38 166 46 Q174 54 166 62 L74 154 L64 164 Z"/>
+<path class="s" d="M64 164 L48 148"/>
+<path class="s r" d="M58 138 L74 154"/>
+<path class="s t" d="M150 46 L166 62"/>
+<path class="f" d="M48 148 L64 164 L54 168 Z"/>`},
+{id:"kaban",kana:"かばん",romaji:"kaban",en:"bag",lesson:2,art:`
+<path class="s" d="M48 84 L152 84 L160 152 L40 152 Z"/>
+<path class="s" d="M74 84 Q74 52 100 52 Q126 52 126 84"/>
+<path class="s t r" d="M40 106 L160 106"/>
+<rect class="s t" x="90" y="112" width="20" height="14" rx="2"/>`},
+{id:"jinzu",kana:"ジーンズ",romaji:"jinzu",en:"jeans",lesson:2,art:`
+<path class="s" d="M64 44 L136 44 L142 100 L128 156 L108 156 L100 100 L92 156 L72 156 L58 100 Z"/>
+<path class="s t r" d="M64 44 L136 44"/>
+<path class="s t" d="M100 52 L100 96"/>
+<rect class="s t r" x="70" y="56" width="16" height="12" rx="2"/><rect class="s t r" x="114" y="56" width="16" height="12" rx="2"/>`},
+{id:"jisho",kana:"じしょ",romaji:"jisho",en:"dictionary",lesson:2,art:`
+<path class="s" d="M48 52 L140 52 L152 60 L152 148 L60 148 L48 140 Z"/>
+<path class="s" d="M60 148 L60 60 L152 60"/>
+<path class="s" d="M48 52 L60 60"/>
+<path class="s r" d="M152 78 L164 78 L164 92 L152 92 M152 104 L164 104 L164 118 L152 118"/>
+<path class="s t" d="M74 80 L138 80 M74 96 L138 96 M74 112 L120 112"/>`},
+{id:"tepu",kana:"テープ",romaji:"tepu",en:"tape",lesson:2,art:`
+<rect class="s" x="44" y="60" width="112" height="80" rx="8"/>
+<rect class="s t" x="58" y="78" width="84" height="34" rx="3"/>
+<circle class="s" cx="80" cy="95" r="8"/><circle class="s" cx="120" cy="95" r="8"/>
+<path class="s t r" d="M64 128 L136 128"/>`},
+{id:"torena",kana:"トレーナー",romaji:"torena",en:"sweatshirt",lesson:2,art:`
+<path class="s" d="M64 60 L52 78 L66 96 L76 88 L76 156 L124 156 L124 88 L134 96 L148 78 L136 60 Q118 74 100 74 Q82 74 64 60 Z"/>
+<path class="s t" d="M82 66 Q100 78 118 66"/>
+<path class="s t r" d="M60 148 L76 148 M124 148 L140 148 M76 150 L124 150"/>`},
+{id:"noto",kana:"ノート",romaji:"noto",en:"notebook",lesson:2,art:`
+<rect class="s" x="56" y="44" width="96" height="116" rx="4"/>
+<path class="s" d="M74 44 L74 160"/>
+<circle class="s t r" cx="64" cy="60" r="4"/><circle class="s t r" cx="64" cy="84" r="4"/><circle class="s t r" cx="64" cy="108" r="4"/><circle class="s t r" cx="64" cy="132" r="4"/>
+<path class="s t" d="M88 68 L138 68 M88 86 L138 86 M88 104 L138 104 M88 122 L120 122"/>`},
+{id:"pen",kana:"ペン",romaji:"pen",en:"pen",lesson:2,art:`
+<path class="s" d="M120 40 L150 40 L150 120 L135 148 L120 120 Z"/>
+<path class="s" d="M120 120 L150 120"/>
+<path class="s" d="M135 148 L135 160"/>
+<path class="s r" d="M150 56 L164 52 L164 72 L150 76"/>
+<path class="s t" d="M120 52 L150 52"/>`},
+{id:"otearai",kana:"おてあらい",romaji:"otearai",en:"restroom",lesson:2,art:`
+<path class="s" d="M64 68 L64 108 Q64 128 84 128 L84 152 L116 152 L116 128 Q136 128 136 108 L136 68"/>
+<path class="s" d="M56 68 L144 68"/>
+<path class="s r" d="M100 68 L100 108"/>
+<path class="s t r" d="M152 60 L172 60 L172 96 L162 96 L162 108 L152 108 Z"/>`},
+{id:"takai",kana:"たかい",romaji:"takai",en:"expensive",lesson:2,art:`
+<path class="s r" d="M44 76 L96 76 L146 126 Q154 134 146 142 L112 142 Q104 142 96 134 L44 82 Z"/>
+<circle class="f" cx="70" cy="98" r="7"/>
+<path class="s" d="M120 110 L120 100 M116 104 Q116 100 122 100 Q128 100 128 105 Q128 110 122 110 Q116 110 116 116 Q116 121 122 121 Q128 121 128 117 M120 121 L120 130 M113 108 L131 108 M113 114 L131 114"/>
+<path class="s t r" d="M100 60 L100 46 M92 54 L100 46 L108 54"/>`},
+{id:"kokuban",kana:"こくばん",romaji:"kokuban",en:"blackboard",lesson:2,art:`
+<rect class="s" x="40" y="48" width="120" height="80" rx="4"/>
+<rect class="fr" x="50" y="58" width="100" height="60"/>
+<path class="s" d="M60 128 L52 158 M140 128 L148 158"/>
+<path style="stroke:#fff;stroke-width:2;fill:none" d="M64 76 Q80 70 96 76 M64 92 L110 92"/>
+<rect class="s t" x="46" y="124" width="108" height="8"/>
+<rect class="s t r" x="112" y="126" width="18" height="5"/>`},
+{id:"keshigomu",kana:"けしゴム",romaji:"keshigomu",en:"eraser",lesson:2,art:`
+<path class="s" d="M52 96 L120 60 Q132 54 140 68 L152 90 Q160 104 148 110 L80 146 Q68 152 60 138 L48 116 Q40 102 52 96 Z"/>
+<path class="s r" d="M96 78 L124 128"/>
+<path class="s t r" d="M40 150 L34 158 M52 156 L48 166 M64 154 L62 164"/>`},
+{id:"bideo",kana:"ビデオ",romaji:"bideo",en:"VCR / video player",lesson:2,art:`
+<rect class="s" x="40" y="72" width="120" height="60" rx="6"/>
+<rect class="s t" x="52" y="86" width="60" height="14" rx="2"/>
+<circle class="s t" cx="66" cy="93" r="4"/><circle class="s t" cx="98" cy="93" r="4"/>
+<circle class="s t r" cx="132" cy="90" r="6"/>
+<path class="s t r" d="M52 116 L100 116"/>
+<path class="s r" d="M74 60 L126 60 L126 72 L74 72 Z M84 60 L84 72 M116 60 L116 72"/>`},
+{id:"doa",kana:"ドア",romaji:"doa",en:"door",lesson:2,art:`
+<rect class="s" x="60" y="40" width="80" height="120"/>
+<rect class="s t" x="72" y="54" width="56" height="40"/>
+<rect class="s t" x="72" y="104" width="56" height="44"/>
+<circle class="s r" cx="122" cy="102" r="5"/>
+<path class="s t" d="M60 60 L54 60 M60 100 L54 100 M60 140 L54 140"/>`},
+{id:"katen",kana:"カーテン",romaji:"katen",en:"curtain",lesson:2,art:`
+<path class="s" d="M40 44 L160 44"/>
+<circle class="s t" cx="48" cy="44" r="4"/><circle class="s t" cx="152" cy="44" r="4"/>
+<path class="s" d="M56 50 Q48 100 56 156 Q66 148 72 156 Q80 148 86 156 L86 50"/>
+<path class="s" d="M144 50 Q152 100 144 156 Q134 148 128 156 Q120 148 114 156 L114 50"/>
+<path class="s t r" d="M64 60 Q60 100 64 150 M78 60 Q74 100 78 150 M122 60 Q126 100 122 150 M136 60 Q140 100 136 150"/>`},
 
 /* ===== Lesson 10 — full Genki vocab (transcribed from the textbook) ===== */
-{id:"kisetsu",kanji:"季節",kana:"きせつ",romaji:"kisetsu",en:"season",lesson:10},
+{id:"kisetsu",kanji:"季節",kana:"きせつ",romaji:"kisetsu",en:"season",lesson:10,art:`
+<circle class="s" cx="100" cy="100" r="52"/>
+<path class="s" d="M100 48 L100 152 M48 100 L152 100"/>
+<circle class="fr" cx="74" cy="74" r="10"/>
+<path class="s r" d="M126 66 Q140 70 138 82 Q126 86 122 74 Z"/>
+<path class="s r" d="M74 122 L74 132 M68 126 L80 126 M62 132 L86 132 M64 132 Q64 122 74 122 Q84 122 84 132"/>
+<path class="s r" d="M126 116 L126 136 M116 126 L136 126 M119 119 L133 133 M133 119 L119 133"/>
+<path class="s t r" d="M150 74 Q158 82 150 90 M50 126 Q42 118 50 110"/>`},
 {id:"haru",kanji:"春",kana:"はる",romaji:"haru",en:"spring",lesson:10,art:`<path class="s" d="M46 152 Q80 120 108 96 Q120 86 132 84"/>
 <g class="s r"><ellipse cx="126" cy="70" rx="6" ry="10"/><ellipse cx="143" cy="82" rx="10" ry="6"/><ellipse cx="136" cy="100" rx="6" ry="10"/><ellipse cx="117" cy="98" rx="6" ry="10"/><ellipse cx="110" cy="80" rx="10" ry="6"/></g>
 <circle class="fr" cx="126" cy="84" r="3"/>`},
@@ -766,7 +1060,13 @@ window.GENKI_WORDS = [
 <path class="s t" d="M78 94 Q84 88 90 94 M110 94 Q116 88 122 94"/>
 <path class="s t" d="M96 100 L92 114 L102 114"/>
 <path class="s t" d="M82 122 Q100 136 118 122"/>`},
-{id:"toshiue",kanji:"年上",kana:"としうえ",romaji:"toshiue",en:"someone older",lesson:10},
+{id:"toshiue",kanji:"年上",kana:"としうえ",romaji:"toshiue",en:"someone older",lesson:10,art:`
+<circle class="s" cx="72" cy="50" r="16"/>
+<path class="s t" d="M64 66 Q90 78 82 66"/>
+<path class="s" d="M72 66 L72 120 M72 120 L60 164 M72 120 L84 164 M72 82 L52 98 M72 82 L92 98"/>
+<circle class="s r" cx="130" cy="94" r="12"/>
+<path class="s r" d="M130 106 L130 144 M130 144 L120 168 M130 144 L140 168 M130 114 L146 128"/>
+<path class="s r" d="M100 60 L100 46 M92 54 L100 46 L108 54"/>`},
 {id:"eki",kanji:"駅",kana:"えき",romaji:"eki",en:"station",lesson:10,art:`<rect class="s" x="50" y="88" width="100" height="62" rx="4"/>
 <path class="s" d="M46 88 L100 60 L154 88"/>
 <rect class="s t" x="86" y="112" width="28" height="38"/>
@@ -793,9 +1093,26 @@ window.GENKI_WORDS = [
 <path class="s" d="M96 110 L74 76 L92 108 M104 112 L84 146 L100 114"/>
 <path class="s" d="M152 106 L144 84 M152 116 L144 134"/>
 <circle class="s t" cx="120" cy="108" r="3"/><circle class="s t" cx="132" cy="108" r="3"/>`},
-{id:"yoyaku",kanji:"予約",kana:"よやく",romaji:"yoyaku",en:"reservation",lesson:10},
-{id:"tsua",kana:"ツアー",romaji:"tsua",en:"tour",lesson:10},
-{id:"doubutsuen",kanji:"動物園",kana:"どうぶつえん",romaji:"doubutsuen",en:"zoo",lesson:10},
+{id:"yoyaku",kanji:"予約",kana:"よやく",romaji:"yoyaku",en:"reservation",lesson:10,art:`
+<rect class="s" x="48" y="52" width="104" height="100" rx="6"/>
+<path class="s" d="M48 76 L152 76"/>
+<path class="s" d="M72 44 L72 60 M128 44 L128 60"/>
+<path class="s t" d="M64 92 L88 92 M104 92 L136 92 M64 112 L88 112 M104 112 L136 112 M64 132 L88 132"/>
+<path class="s r" d="M100 120 L112 134 L142 100"/>`},
+{id:"tsua",kana:"ツアー",romaji:"tsua",en:"tour",lesson:10,art:`
+<path class="s" d="M64 60 L64 156"/>
+<path class="s r" d="M64 60 Q100 44 136 60 Q118 74 136 88 Q100 74 64 88 Z"/>
+<circle class="s t" cx="100" cy="120" r="10"/><path class="s t" d="M100 130 L100 156 M100 138 L88 148 M100 138 L112 148"/>
+<circle class="s t" cx="132" cy="128" r="9"/><path class="s t" d="M132 137 L132 158 M132 144 L122 152 M132 144 L142 152"/>
+<circle class="s t" cx="150" cy="116" r="8"/><path class="s t" d="M150 124 L150 152"/>`},
+{id:"doubutsuen",kanji:"動物園",kana:"どうぶつえん",romaji:"doubutsuen",en:"zoo",lesson:10,art:`
+<path class="s" d="M40 60 L40 150 L160 150 L160 60 Q100 40 40 60 Z"/>
+<path class="s" d="M40 88 L160 88"/>
+<path class="s t" d="M56 88 L56 150 M72 88 L72 150 M88 88 L88 150 M104 88 L104 150 M120 88 L120 150 M136 88 L136 150"/>
+<path class="s r" d="M60 148 Q60 118 78 118 Q94 118 94 148 M62 120 L58 108 Q66 104 70 112"/>
+<circle class="f" cx="70" cy="128" r="2.5"/>
+<path class="s r" d="M116 148 L116 108 Q116 98 126 98 Q136 98 136 108 L136 118"/>
+<circle class="s r" cx="140" cy="112" r="7"/><path class="s t r" d="M146 108 L152 104"/>`},
 {id:"jikan",kanji:"時間",kana:"じかん",romaji:"jikan",en:"time",lesson:10,art:`<circle class="s" cx="100" cy="102" r="52"/>
 <path class="s t" d="M100 58 L100 66 M100 138 L100 146 M58 102 L66 102 M134 102 L142 102"/>
 <path class="s" d="M100 102 L100 74"/>
@@ -806,13 +1123,30 @@ window.GENKI_WORDS = [
 <ellipse class="s t" cx="100" cy="100" rx="24" ry="52"/>
 <path class="s t" d="M52 82 L148 82 M52 118 L148 118"/>
 <path class="s t r" d="M70 70 Q80 60 92 66 Q96 76 86 80 Q76 82 70 70 Z M116 108 Q128 102 136 110 Q134 122 122 122 Q114 118 116 108 Z"/>`},
-{id:"byouin",kanji:"美容院",kana:"びょういん",romaji:"byouin",en:"beauty parlor",lesson:10},
+{id:"byouin",kanji:"美容院",kana:"びょういん",romaji:"byouin",en:"beauty parlor",lesson:10,art:`
+<circle class="s" cx="54" cy="140" r="13"/><circle class="s" cx="82" cy="144" r="13"/>
+<path class="s" d="M62 130 L70 108 L124 56 M92 132 L70 108 L114 66"/>
+<circle class="f" cx="70" cy="108" r="3"/>
+<ellipse class="s r" cx="138" cy="82" rx="22" ry="28"/>
+<ellipse class="s t r" cx="138" cy="82" rx="13" ry="18"/>
+<path class="s r" d="M138 110 L138 158"/>
+<path class="s t r" d="M132 72 Q136 66 142 70"/>`},
 {id:"tebukuro",kanji:"手袋",kana:"てぶくろ",romaji:"tebukuro",en:"gloves",lesson:10,art:`<path class="s" d="M76 152 L72 100 Q72 86 86 86 L116 86 Q130 86 130 100 L126 152 Z"/>
 <path class="s" d="M130 108 Q150 104 152 120 Q152 132 132 130"/>
 <path class="s t" d="M88 98 L88 86 M100 98 L100 86 M112 98 L112 86"/>
 <path class="s r t" d="M74 142 L128 142"/>`},
-{id:"seikatsu",kanji:"生活",kana:"せいかつ",romaji:"seikatsu",en:"life; living",lesson:10},
-{id:"kotoshi",kanji:"今年",kana:"ことし",romaji:"kotoshi",en:"this year",lesson:10},
+{id:"seikatsu",kanji:"生活",kana:"せいかつ",romaji:"seikatsu",en:"life; living",lesson:10,art:`
+<path class="s" d="M40 100 L100 52 L160 100"/>
+<path class="s" d="M56 88 L56 156 L144 156 L144 88"/>
+<path class="s r" d="M100 118 Q92 108 84 116 Q78 122 84 130 L100 146 L116 130 Q122 122 116 116 Q108 108 100 118 Z"/>
+<circle class="s t r" cx="72" cy="46" r="8"/>
+<path class="s t" d="M140 44 Q130 40 130 30 Q130 22 138 20 Q133 28 137 36 Q141 44 148 42 Q146 46 140 44 Z"/>`},
+{id:"kotoshi",kanji:"今年",kana:"ことし",romaji:"kotoshi",en:"this year",lesson:10,art:`
+<rect class="s" x="44" y="52" width="112" height="100" rx="6"/>
+<path class="s" d="M44 78 L156 78"/>
+<path class="s" d="M68 44 L68 60 M132 44 L132 60"/>
+<path class="s t" d="M60 94 L76 94 M92 94 L108 94 M124 94 L140 94 M60 112 L76 112 M92 112 L108 112 M124 112 L140 112 M60 130 L76 130 M92 130 L108 130"/>
+<circle class="s r" cx="100" cy="100" r="42" stroke-dasharray="6 6"/>`},
 {id:"atatakai",kanji:"暖かい",kana:"あたたかい",romaji:"atatakai",en:"warm",lesson:10,art:`<circle class="s r" cx="152" cy="44" r="18"/>
 <path class="s r" d="M152 18 L152 10 M178 44 L186 44 M170 26 L176 20 M170 62 L176 68"/>
 <circle class="s" cx="88" cy="66" r="17"/>
@@ -820,7 +1154,12 @@ window.GENKI_WORDS = [
 <path class="s t r" d="M108 58 Q112 64 108 70 Q104 76 108 82"/>
 <path class="s" d="M86 83 Q82 110 84 134 M84 134 L70 168 M84 134 L98 166 M84 96 L64 108 M88 98 L108 106"/>
 <path class="s t" d="M64 52 Q60 58 64 64"/>`},
-{id:"suzushii",kanji:"涼しい",kana:"すずしい",romaji:"suzushii",en:"cool (weather)",lesson:10},
+{id:"suzushii",kanji:"涼しい",kana:"すずしい",romaji:"suzushii",en:"cool (weather)",lesson:10,art:`
+<path class="s r" d="M60 60 Q88 64 84 92 L60 148 Q56 156 52 148 Q48 112 60 60 Z"/>
+<path class="s t r" d="M60 60 L54 42 M68 64 L70 44 M76 70 L86 54"/>
+<path class="s" d="M132 52 L132 116 M120 116 Q120 132 132 132 Q144 132 144 116 L144 52 Q144 44 132 44 Q120 44 120 52 Z"/>
+<circle class="fr" cx="132" cy="122" r="8"/>
+<path class="s t r" d="M104 76 Q112 72 120 76 M104 92 Q112 88 120 92 M100 108 Q108 104 116 108"/>`},
 {id:"tsumetai",kanji:"冷たい",kana:"つめたい",romaji:"tsumetai",en:"cold (things/people)",lesson:10,art:`<circle class="s" cx="100" cy="56" r="17"/>
 <path class="s t" d="M92 52 L98 54 M102 54 L108 52 M94 66 Q100 62 106 66"/>
 <path class="s" d="M98 73 Q94 100 96 124 M96 124 L82 162 M96 124 L112 160"/>
@@ -837,29 +1176,134 @@ window.GENKI_WORDS = [
 <ellipse class="s t" cx="93" cy="132" rx="7" ry="9"/>
 <path class="s r t" d="M136 62 L158 62 L136 84 L158 84"/>
 <path class="s r t" d="M120 46 L136 46 L120 62 L136 62"/>`},
-{id:"kantan",kanji:"簡単",kana:"かんたん",romaji:"kantan",en:"easy; simple (na-adj)",lesson:10},
-{id:"kakaru",kana:"かかる",romaji:"kakaru",en:"to take (time/money)",lesson:10},
-{id:"tomaru",kanji:"泊まる",kana:"とまる",romaji:"tomaru",en:"to stay (at a hotel)",lesson:10},
-{id:"ru",kana:"なる",romaji:"ru",en:"to become",lesson:10},
-{id:"kimeru",kanji:"決める",kana:"きめる",romaji:"kimeru",en:"to decide",lesson:10},
-{id:"gorogorosuru",kana:"ごろごろする",romaji:"gorogorosuru",en:"to chill out at home",lesson:10},
-{id:"ryokousuru",kanji:"旅行する",kana:"りょこうする",romaji:"ryokousuru",en:"to travel",lesson:10},
-{id:"renshuusuru",kanji:"練習する",kana:"れんしゅうする",romaji:"renshuusuru",en:"to practice",lesson:10},
-{id:"ichiban",kanji:"一番",kana:"いちばん",romaji:"ichiban",en:"best",lesson:10},
-{id:"docchidochira",kana:"どっち／どちら",romaji:"docchidochira",en:"which",lesson:10},
-{id:"hayaku",kanji:"早く／速く",kana:"はやく",romaji:"hayaku",en:"early; fast",lesson:10},
+{id:"kantan",kanji:"簡単",kana:"かんたん",romaji:"kantan",en:"easy; simple (na-adj)",lesson:10,art:`
+<circle class="s r" cx="86" cy="90" r="42"/>
+<path class="s r" d="M66 90 L80 106 L110 72"/>
+<path class="s" d="M132 96 L132 140 Q132 148 144 148 L156 148 Q166 148 166 140 L166 118 L150 118 L150 128"/>
+<path class="s" d="M132 96 L132 84 Q132 72 144 72 Q152 72 152 82 L152 96"/>`},
+{id:"kakaru",kana:"かかる",romaji:"kakaru",en:"to take (time/money)",lesson:10,art:`
+<path class="s" d="M60 40 L140 40 M60 160 L140 160"/>
+<path class="s" d="M64 40 Q64 84 100 100 Q64 116 64 160 M136 40 Q136 84 100 100 Q136 116 136 160"/>
+<path class="fr" d="M78 52 Q100 68 122 52 L122 60 Q100 76 78 60 Z"/>
+<path class="s r" d="M100 100 L100 148"/>
+<circle class="fr" cx="152" cy="118" r="10"/><path class="s t" d="M152 110 L152 126 M148 114 L156 114 M148 122 L156 122"/>
+<path class="s t r" d="M152 96 L152 106 M146 100 L152 96 L158 100"/>`},
+{id:"tomaru",kanji:"泊まる",kana:"とまる",romaji:"tomaru",en:"to stay (at a hotel)",lesson:10,art:`
+<rect class="s" x="52" y="52" width="96" height="108" rx="4"/>
+<path class="s" d="M52 88 L148 160 M148 88 L148 160 M64 100 Q64 90 100 90 Q136 90 136 100 L136 112 L64 112 Z"/>
+<rect class="s t" x="66" y="112" width="18" height="18"/><rect class="s t" x="116" y="112" width="18" height="18"/>
+<circle class="s r" cx="100" cy="42" r="8"/><path class="s r" d="M92 42 L108 42"/>
+<path class="s t r" d="M112 36 L124 24 L124 36 L136 24"/>`},
+{id:"ru",kana:"なる",romaji:"ru",en:"to become",lesson:10,art:`
+<path class="s r" d="M36 140 Q40 118 56 118 Q72 118 74 140 Q76 118 92 118 Q104 118 104 132"/>
+<circle class="f" cx="40" cy="132" r="2.5"/>
+<path class="s t" d="M110 116 L138 88 M128 116 L138 88"/><path class="s t r" d="M126 96 L138 88 L134 100"/>
+<path class="s" d="M148 84 Q124 84 130 60 Q136 44 152 52 Q166 44 170 62 Q174 84 150 84 Z"/>
+<path class="s" d="M150 60 L150 84"/>
+<path class="s t r" d="M150 44 Q146 36 152 34 M150 44 Q154 36 148 34"/>`},
+{id:"kimeru",kanji:"決める",kana:"きめる",romaji:"kimeru",en:"to decide",lesson:10,art:`
+<rect class="s" x="60" y="122" width="80" height="18" rx="3"/>
+<path class="s" d="M74 122 L74 84 Q74 74 100 74 Q126 74 126 84 L126 122"/>
+<rect class="s r" x="86" y="60" width="28" height="20" rx="3"/>
+<path class="s r" d="M100 44 L100 60"/>
+<path class="s r" d="M84 100 L96 112 L120 84"/>`},
+{id:"gorogorosuru",kana:"ごろごろする",romaji:"gorogorosuru",en:"to chill out at home",lesson:10,art:`
+<path class="s" d="M40 108 L40 148 M160 108 L160 148"/>
+<path class="s" d="M40 130 L160 130 L160 108 Q160 96 148 96 L52 96 Q40 96 40 108 Z"/>
+<path class="s" d="M52 96 L52 84 Q52 76 60 76 L140 76 Q148 76 148 84 L148 96"/>
+<circle class="s" cx="72" cy="70" r="12"/>
+<path class="s t" d="M66 68 L72 68 M76 68 L82 68"/>
+<path class="s" d="M84 74 L130 74"/>
+<path class="s r t" d="M92 56 L104 56 L92 68 L104 68 M110 44 L120 44 L110 54 L120 54"/>`},
+{id:"ryokousuru",kanji:"旅行する",kana:"りょこうする",romaji:"ryokousuru",en:"to travel",lesson:10,art:`
+<rect class="s" x="52" y="88" width="72" height="64" rx="6"/>
+<path class="s" d="M74 88 L74 76 Q74 68 82 68 L94 68 Q102 68 102 76 L102 88"/>
+<path class="s t" d="M52 108 L124 108"/>
+<rect class="s t r" x="62" y="118" width="20" height="14" rx="2"/><rect class="s t r" x="94" y="118" width="20" height="14" rx="2"/>
+<path class="s r" d="M110 62 L172 48 Q168 60 158 62 L120 72 M138 54 L146 44 M150 51 L162 44"/>
+<circle class="s t r" cx="152" cy="96" r="14"/><path class="s t r" d="M138 96 L166 96 M152 82 L152 110"/>`},
+{id:"renshuusuru",kanji:"練習する",kana:"れんしゅうする",romaji:"renshuusuru",en:"to practice",lesson:10,art:`
+<circle class="s" cx="96" cy="96" r="48"/>
+<circle class="s r" cx="96" cy="96" r="30"/>
+<circle class="fr" cx="96" cy="96" r="12"/>
+<path class="s t r" d="M40 60 L92 92 M36 48 L46 52 L44 62"/>
+<path class="s t r" d="M60 40 L94 90 M56 34 L60 44 L50 46"/>
+<path class="s t" d="M150 44 Q170 52 170 72 Q170 88 156 92 M156 84 L156 96 L168 92"/>`},
+{id:"ichiban",kanji:"一番",kana:"いちばん",romaji:"ichiban",en:"best",lesson:10,art:`
+<path class="s" d="M60 100 L100 100 L100 156 L60 156 Z"/>
+<path class="s" d="M100 76 L140 76 L140 156 L100 156 Z"/>
+<path class="s" d="M20 122 L60 122 L60 156 L20 156 Z"/>
+<path class="s" d="M140 116 L180 116 L180 156 L140 156 Z"/>
+<path class="s r" d="M120 70 L124 58 L130 68 L142 66 L134 76 L140 88 L128 82 L118 90 L120 78 L110 72 Z"/>
+<circle class="s" cx="120" cy="46" r="10"/><path class="s" d="M120 56 L120 70"/>`},
+{id:"docchidochira",kana:"どっち／どちら",romaji:"docchidochira",en:"which",lesson:10,art:`
+<rect class="s" x="30" y="100" width="40" height="40" rx="4"/><rect class="s" x="130" y="100" width="40" height="40" rx="4"/>
+<path class="s r" d="M84 66 Q84 48 100 48 Q116 48 116 66 Q116 80 100 84 L100 92"/>
+<circle class="fr" cx="100" cy="104" r="4"/>
+<path class="s r" d="M74 120 L54 120 M62 112 L52 120 L62 128 M126 120 L146 120 M138 112 L148 120 L138 128"/>`},
+{id:"hayaku",kanji:"早く／速く",kana:"はやく",romaji:"hayaku",en:"early; fast",lesson:10,art:`
+<circle class="s" cx="112" cy="48" r="14"/>
+<path class="s" d="M112 62 Q124 84 116 104 M116 104 L96 130 L100 154 M116 104 L138 122"/>
+<path class="s" d="M114 74 L92 62 M116 78 L140 82"/>
+<path class="s r" d="M30 70 L74 70 M24 92 L64 92 M34 114 L58 114"/>
+<circle class="s t" cx="160" cy="140" r="16"/><path class="s t" d="M160 130 L160 140 L168 146"/>`},
 {id:"aruite",kanji:"歩いて",kana:"あるいて",romaji:"aruite",en:"on foot",lesson:10,art:`<circle class="s" cx="92" cy="44" r="15"/><path class="s t" d="M86 42 Q89 39 92 42 M96 42 Q99 39 102 42"/>
 <path class="s" d="M94 59 Q100 84 96 106"/>
 <path class="s" d="M96 106 L70 136 L74 158 M96 106 L120 132 L116 158"/>
 <path class="s" d="M96 72 L74 88 M98 74 L122 82"/>
 <path class="s t r" d="M46 168 Q52 164 58 168 M74 174 Q80 170 86 174 M104 168 Q110 164 116 168 M132 174 Q138 170 144 174"/>`},
-{id:"de",kana:"〜で",romaji:"de",en:"by (transportation); with (a tool)",lesson:10},
-{id:"douyatte",kana:"どうやって",romaji:"douyatte",en:"how; by what means",lesson:10},
-{id:"donogurai",kana:"どのぐらい",romaji:"donogurai",en:"how much; how long",lesson:10},
-{id:"shuukan",kanji:"〜週間",kana:"〜しゅうかん",romaji:"shuukan",en:"for ... weeks",lesson:10},
-{id:"kagetsu",kanji:"〜か月",kana:"〜かげつ",romaji:"kagetsu",en:"for ... months",lesson:10},
-{id:"nen",kanji:"〜年",kana:"〜ねん",romaji:"nen",en:"... years",lesson:10},
-{id:"konogoro",kana:"このごろ",romaji:"konogoro",en:"these days",lesson:10},
-{id:"go",kanji:"〜後",kana:"〜ご",romaji:"go",en:"in ... time; after ...",lesson:10},
-{id:"ka",kana:"〜か〜",romaji:"ka",en:"or",lesson:10}
+{id:"de",kana:"〜で",romaji:"de",en:"by (transportation); with (a tool)",lesson:10,art:`
+<path class="s" d="M40 118 L48 92 Q52 80 68 80 L112 80 Q124 80 130 92 L142 116 Q150 118 148 130 L40 130 Q36 126 40 118 Z"/>
+<path class="s t" d="M66 92 L66 110 M66 92 L104 92 L112 110"/>
+<circle class="s" cx="64" cy="136" r="11"/><circle class="s" cx="128" cy="136" r="11"/>
+<path class="s r" d="M162 56 L178 40 M170 40 L178 40 L178 48 M162 56 Q150 68 162 80 Q170 88 158 96"/>`},
+{id:"douyatte",kana:"どうやって",romaji:"douyatte",en:"how; by what means",lesson:10,art:`
+<path class="s r" d="M78 52 Q78 34 98 34 Q118 34 118 52 Q118 66 98 70 L98 78"/>
+<circle class="fr" cx="98" cy="90" r="4"/>
+<path class="s t" d="M50 118 Q56 108 66 112 M46 130 Q52 120 62 124"/>
+<rect class="s t" x="80" y="112" width="40" height="22" rx="4"/><circle class="s t" cx="90" cy="138" r="4"/><circle class="s t" cx="110" cy="138" r="4"/>
+<path class="s t" d="M138 108 L172 108 M138 108 L138 132 L172 132 M146 132 L146 108 M164 132 L164 108"/>`},
+{id:"donogurai",kana:"どのぐらい",romaji:"donogurai",en:"how much; how long",lesson:10,art:`
+<rect class="s" x="36" y="96" width="128" height="34" rx="4"/>
+<path class="s t" d="M52 96 L52 112 M68 96 L68 118 M84 96 L84 112 M100 96 L100 120 M116 96 L116 112 M132 96 L132 118 M148 96 L148 112"/>
+<path class="s r" d="M78 66 Q78 52 92 52 Q106 52 106 66 Q106 78 92 80 L92 86"/>
+<circle class="fr" cx="92" cy="94" r="3"/>`},
+{id:"shuukan",kanji:"〜週間",kana:"〜しゅうかん",romaji:"shuukan",en:"for ... weeks",lesson:10,art:`
+<rect class="s" x="40" y="52" width="120" height="100" rx="6"/>
+<path class="s" d="M40 78 L160 78"/>
+<path class="s" d="M64 44 L64 60 M136 44 L136 60"/>
+<rect class="fr" x="48" y="92" width="104" height="16"/>
+<path class="s t" d="M56 88 L56 148 M72 88 L72 148 M88 88 L88 148 M104 88 L104 148 M120 88 L120 148 M136 88 L136 148 M144 92 L48 92 M48 128 L152 128"/>`},
+{id:"kagetsu",kanji:"〜か月",kana:"〜かげつ",romaji:"kagetsu",en:"for ... months",lesson:10,art:`
+<rect class="s" x="56" y="60" width="104" height="92" rx="5"/>
+<rect class="s t" x="48" y="52" width="104" height="92" rx="5"/>
+<rect class="s" x="40" y="44" width="104" height="92" rx="5"/>
+<path class="s" d="M40 68 L144 68"/>
+<path class="s t" d="M56 82 L72 82 M88 82 L104 82 M56 100 L72 100 M88 100 L104 100 M56 118 L72 118"/>
+<path class="s r" d="M112 132 Q132 116 152 132 M144 128 L154 132 L150 122"/>`},
+{id:"nen",kanji:"〜年",kana:"〜ねん",romaji:"nen",en:"... years",lesson:10,art:`
+<rect class="s" x="44" y="56" width="112" height="96" rx="6"/>
+<path class="s" d="M44 84 L156 84"/>
+<path class="s" d="M68 48 L68 64 M132 48 L132 64"/>
+<circle class="s r" cx="100" cy="118" r="22"/>
+<circle class="s t r" cx="100" cy="118" r="13"/>
+<circle class="fr" cx="100" cy="118" r="5"/>`},
+{id:"konogoro",kana:"このごろ",romaji:"konogoro",en:"these days",lesson:10,art:`
+<rect class="s" x="40" y="56" width="120" height="96" rx="6"/>
+<path class="s" d="M40 82 L160 82"/>
+<path class="s" d="M64 48 L64 64 M136 48 L136 64"/>
+<path class="s t" d="M56 96 L72 96 M84 96 L100 96 M112 96 L128 96 M56 116 L72 116 M84 116 L100 116"/>
+<rect class="fr" x="108" y="108" width="20" height="16"/><rect class="fr" x="132" y="108" width="16" height="16"/><rect class="fr" x="108" y="128" width="20" height="14"/>
+<path class="s t r" d="M150 42 Q160 44 160 54"/>`},
+{id:"go",kanji:"〜後",kana:"〜ご",romaji:"go",en:"in ... time; after ...",lesson:10,art:`
+<path class="s" d="M32 120 L150 120"/>
+<path class="s" d="M130 104 L152 120 L130 136"/>
+<circle class="s r" cx="70" cy="120" r="9"/>
+<path class="s t" d="M40 138 L40 148 M70 138 L70 148 M100 138 L100 148 M130 138 L130 148"/>
+<circle class="s t" cx="118" cy="66" r="16"/><path class="s t" d="M118 56 L118 66 L126 72"/>
+<path class="s t r" d="M118 120 L118 96 M110 104 L118 96 L126 104"/>`},
+{id:"ka",kana:"〜か〜",romaji:"ka",en:"or",lesson:10,art:`
+<rect class="s" x="34" y="86" width="46" height="46" rx="4"/><rect class="s" x="120" y="86" width="46" height="46" rx="4"/>
+<path class="s r" d="M112 60 L88 158"/>
+<path class="s t" d="M48 100 L66 118 M66 100 L48 118 M134 100 L152 118 M152 100 L134 118"/>`}
 ];
