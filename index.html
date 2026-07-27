@@ -503,7 +503,111 @@
   };
 })();
 </script>
-<script src="words.js"></script>
+<script>
+/* =========================================================
+   LESSON LOADER — vocabulary now lives in per-lesson files
+   (lesson_1.js, lesson_2.js, …), each of which registers
+   window.GENKI_LESSONS[N] = [ ...words... ].
+
+   On load we DISCOVER how many lesson files exist (probing
+   lesson_1.js upward until the first gap) so the range slider
+   can size itself. When the player taps はじめ we load ONLY
+   the lesson files inside the chosen range.
+
+   Discovery is cheap on a real server (HEAD requests, no code
+   run); over file:// (where fetch is blocked) it falls back to
+   loading the files directly. Assumes lessons are numbered
+   contiguously from 1 — drop in lesson_13.js and it appears.
+   ========================================================= */
+window.GENKI_LESSONS = window.GENKI_LESSONS || {};
+(function () {
+  "use strict";
+  const MAX_PROBE = 40;             // highest lesson number we'll look for
+  const store = window.GENKI_LESSONS;
+  const loading = {};               // n -> Promise, so each file loads once
+
+  function loadScript(url) {
+    return new Promise((res, rej) => {
+      const s = document.createElement("script");
+      s.src = url; s.async = false;
+      s.onload = () => res(true);
+      s.onerror = () => rej(new Error("missing " + url));
+      document.head.appendChild(s);
+    });
+  }
+
+  // Load lesson_n.js at most once; resolves true if its words are available.
+  function ensureLesson(n) {
+    if (store[n]) return Promise.resolve(true);
+    if (loading[n]) return loading[n];
+    return (loading[n] = loadScript("lesson_" + n + ".js").then(() => true).catch(() => false));
+  }
+
+  // Existence check that does NOT execute the file (keeps discovery lazy on a
+  // server). Returns true/false, or null when fetch can't be used (file://),
+  // so the caller knows to fall back to script probing.
+  async function headExists(n) {
+    try {
+      let r = await fetch("lesson_" + n + ".js", { method: "HEAD" });
+      if (r.status === 405 || r.status === 501) r = await fetch("lesson_" + n + ".js");
+      return r.ok;
+    } catch (e) { return null; }
+  }
+
+  async function discover() {
+    const found = [];
+    for (let n = 1; n <= MAX_PROBE; n++) {
+      const ok = await headExists(n);
+      if (ok === null) return probeByLoading();   // file:// — fall back
+      if (ok) found.push(n); else break;           // stop at first gap
+    }
+    return found;
+  }
+  async function probeByLoading() {
+    const found = [];
+    for (let n = 1; n <= MAX_PROBE; n++) {
+      if (await ensureLesson(n)) found.push(n); else break;
+    }
+    return found;
+  }
+
+  // Legacy safety net: if no lesson files exist but an old single words.js is
+  // present, load it and group its words by lesson so the game still runs.
+  function legacyWordsJs() {
+    return loadScript("words.js").then(() => {
+      (window.GENKI_WORDS || []).forEach(w => {
+        (store[w.lesson] = store[w.lesson] || []).push(w);
+      });
+      return Object.keys(store).map(Number).sort((a, b) => a - b);
+    }).catch(() => []);
+  }
+
+  window.LessonStore = {
+    ensureLesson: ensureLesson,
+    loadRange: function (a, b) {
+      const jobs = [];
+      for (let n = a; n <= b; n++) jobs.push(ensureLesson(n));
+      return Promise.all(jobs);
+    },
+    discover: async function () {
+      let found = await discover();
+      if (!found.length) found = await legacyWordsJs();
+      return found;
+    },
+    wordsInRange: function (a, b) {
+      const out = [];
+      for (let n = a; n <= b; n++) if (store[n]) out.push.apply(out, store[n]);
+      return out;
+    },
+    allLoaded: function () {
+      return Object.keys(store).reduce((acc, n) => acc.concat(store[n]), []);
+    },
+    wordById: function (id) {
+      return this.allLoaded().find(w => w.id === id);
+    },
+  };
+})();
+</script>
 <script>
 "use strict";
 /* =========================================================
@@ -608,11 +712,12 @@ function setScene(advance) {
 setScene(false);
 
 /* =========================================================
-   VOCAB — loaded from words.js (window.GENKI_WORDS).
-   Words with an `art` field render as draggable doodles;
-   words without one render as English text tiles.
+   VOCAB — served by the LessonStore loader above, which loads
+   per-lesson files (lesson_N.js) on demand. Words with an `art`
+   field render as draggable doodles; words without one render
+   as English text tiles. Use LessonStore.wordsInRange(a,b) and
+   LessonStore.wordById(id) to reach the loaded words.
    ========================================================= */
-const WORDS = (window.GENKI_WORDS || []);
 
 /* =========================================================
    AUDIO — inlined from berlintintin/game-voice (self-contained)
@@ -700,7 +805,7 @@ function shuffle(arr) {
 }
 
 function buildDeck(a, b) {
-  const bank = WORDS.filter(w => w.lesson >= a && w.lesson <= b);
+  const bank = LessonStore.wordsInRange(a, b);
   deck = { range: [a, b], unused: shuffle(bank), used: [] };
 }
 // Pull the next `n` words from the unused pile, moving them to used.
@@ -751,14 +856,42 @@ function startRound(a, b) {
   window.scrollTo(0, 0);
 }
 
-if (!WORDS.length) {
-  const e = document.getElementById("entry");
-  if (e) e.insertAdjacentHTML("beforeend",
-    '<p class="sub" style="color:var(--accent)">Couldn\'t load words.js — keep it in the same folder as this file.</p>');
+/* ---- discover the lesson files and size the slider to match ---- */
+const startBtn = document.getElementById("start");
+const ticksEl = document.querySelector(".ticks");
+function applyMaxLesson(maxN) {
+  lo.min = "1"; hi.min = "1";
+  lo.max = String(maxN); hi.max = String(maxN);
+  if (+hi.value > maxN || +hi.value < 1) hi.value = String(maxN);
+  if (+lo.value > maxN) lo.value = String(maxN);
+  ticksEl.innerHTML = Array.from({ length: maxN }, (_, i) => "<span>" + (i + 1) + "</span>").join("");
+  syncSlider();
 }
-document.getElementById("start").onclick = () => {
-  GameVoice.unlock(); // wake phone audio inside the tap
-  startRound(+lo.value, +hi.value);
+(function initLessons() {
+  startBtn.disabled = true;
+  const label = startBtn.textContent;
+  startBtn.textContent = "…";
+  LessonStore.discover().then(found => {
+    startBtn.textContent = label;
+    startBtn.disabled = false;
+    if (!found.length) {
+      const e = document.getElementById("entry");
+      if (e) e.insertAdjacentHTML("beforeend",
+        '<p class="sub" style="color:var(--accent)">Couldn\'t find any lesson files (lesson_1.js, lesson_2.js, …) — keep them in the same folder as this page.</p>');
+      return;
+    }
+    hi.value = String(found[found.length - 1]);   // default top thumb to the last lesson
+    applyMaxLesson(found[found.length - 1]);
+  });
+})();
+
+document.getElementById("start").onclick = async () => {
+  GameVoice.unlock();                 // wake phone audio inside the tap
+  const a = +lo.value, b = +hi.value;
+  startBtn.disabled = true;
+  await LessonStore.loadRange(a, b);  // load only the lesson files in range
+  startBtn.disabled = false;
+  startRound(a, b);
   GameVoice.say("がんばって！", { rate: voiceRate });
 };
 document.getElementById("back").onclick = () => { game.classList.remove("show"); entry.style.display = "block"; };
@@ -904,7 +1037,7 @@ function snapIn(tile, target) {
   GameVoice.sfx.snap();
   const p = GameVoice.praise({ silent: true }); // grab phrase; speak it in sequence below
   showBubble(p.jp, p.en, true);
-  const matched = WORDS.find(x => x.id === tile.dataset.id);
+  const matched = LessonStore.wordById(tile.dataset.id);
   speakSequence(matched ? [matched.kana, p.jp] : [p.jp]); // the word, then the encouragement
   solvedCount++;
   if (solvedCount === roundWords.length) {
