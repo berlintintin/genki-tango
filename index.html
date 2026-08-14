@@ -1058,5 +1058,25 @@ function showBubble(jp, en, good) {
   bubbleTimer = setTimeout(() => bubble.classList.remove("show"), 1800);
 }
 </script>
+<!-- Fun by Heinze — signature (drop-in) -->
+<div class="hz-sig">
+  <span class="hz-badge"><span class="hz-brand">ハインゼの<b>楽</b>しさ</span><small>Fun by Heinze</small></span>
+  <span class="hz-yr">2026</span>
+</div>
+<style>
+  .hz-sig{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:11px;
+    margin:24px auto 16px;line-height:1;user-select:none;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",system-ui,sans-serif}
+  .hz-badge{display:inline-flex;flex-direction:column;align-items:center;line-height:1;
+    color:#c0392b;font-weight:800;font-size:19px;letter-spacing:.04em;
+    border:2px solid #c0392b;border-radius:11px;padding:6px 15px 5px;background:rgba(255,255,255,.55);
+    box-shadow:2px 3px 0 rgba(192,57,43,.20)}
+  .hz-badge .hz-brand{white-space:nowrap;line-height:1}
+  .hz-badge b{font-weight:900}
+  .hz-badge small{font-size:8px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+    opacity:.72;margin-top:2px;line-height:1}
+  .hz-yr{font-size:12px;font-weight:600;color:#9aa3b2}
+</style>
+<script>(function(){var y=document.querySelector('.hz-sig .hz-yr');if(y)y.textContent=new Date().getFullYear();})();</script>
 </body>
 </html>
