@@ -61,11 +61,19 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 .btn.small{padding:6px 12px}
 .btn:disabled{opacity:.4;cursor:default}
 
-/* lesson picker chips */
-.lessonpick{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
-.lp{min-width:46px;padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;font-weight:700;background:var(--card);text-align:center}
-.lp.on{border-color:var(--ink);background:var(--hi-soft)}
-.lp.alt{font-weight:500;color:var(--muted);border-style:dashed}
+/* lesson range — two thumbs on one track, like Doodle Tango */
+.rangecard{background:var(--card);border:2px solid var(--ink);border-radius:16px;box-shadow:3px 4px 0 var(--shadow);padding:16px 18px 12px}
+.rangeread{text-align:center;font-size:20px;font-weight:700;margin-bottom:10px}
+.rangeread b{color:var(--bad)}
+.dual{position:relative;height:36px}
+.dual .track,.dual .fill{position:absolute;top:15px;height:6px;border-radius:3px;pointer-events:none}
+.dual .track{left:0;right:0;background:var(--line)}
+.dual .fill{background:var(--hi)}
+.dual input[type=range]{position:absolute;left:0;right:0;top:0;width:100%;height:36px;margin:0;-webkit-appearance:none;appearance:none;background:transparent;pointer-events:none}
+.dual input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;pointer-events:auto;width:26px;height:26px;border-radius:50%;background:var(--card);border:3px solid var(--ink);cursor:grab}
+.dual input[type=range]::-moz-range-thumb{pointer-events:auto;width:20px;height:20px;border-radius:50%;background:var(--card);border:3px solid var(--ink);cursor:grab}
+.ticks{display:flex;justify-content:space-between;padding:0 6px;font-size:12px;font-weight:700;color:var(--muted)}
+.ticks span{min-width:1em;text-align:center}
 .count{font-size:14px;color:var(--muted);margin:8px 0 22px}
 .count b{color:var(--ink)}
 
@@ -101,9 +109,9 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 .slidebar{padding-bottom:12px;border-bottom:1.5px solid var(--line)}
 #sl-sound{margin-left:8px;border-color:var(--bad);color:var(--bad)}
 .slopts{display:grid;gap:7px;margin-top:10px}
-.slrow{display:grid;grid-template-columns:44px 18px minmax(80px,1fr) 18px auto;align-items:center;gap:7px;max-width:460px}
+.slrow{display:grid;grid-template-columns:44px 26px minmax(80px,1fr) 26px auto;align-items:center;gap:7px;max-width:460px}
 .sllab{font-size:12.5px;color:var(--muted);text-align:right}
-.slend{font-size:14px;text-align:center;line-height:1;user-select:none}
+.slend{font-size:13px;font-weight:700;color:var(--muted);text-align:center;line-height:1;user-select:none}
 .pacenum{white-space:nowrap;min-width:92px;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
 .pacenum i{font-style:normal;font-weight:500;color:var(--muted)}
 .slrow input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:999px;background:var(--line);outline:none}
@@ -179,8 +187,17 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 <!-- ============================ HOME ============================ -->
 <section class="screen active" id="s-home">
   <h2>Lessons</h2>
-  <p class="lede">Tap the lessons you want. Both modes use the same pick.</p>
-  <div class="lessonpick" id="lessonpick"></div>
+  <p class="lede">Slide both ends to pick a range — put them together to drill one lesson. Both modes use the same pick.</p>
+  <div class="rangecard" id="rangecard" hidden>
+    <div class="rangeread">Lesson <b id="lo-num">1</b> – <b id="hi-num">1</b></div>
+    <div class="dual">
+      <div class="track"></div>
+      <div class="fill" id="rangefill"></div>
+      <input type="range" id="lessonLow" min="1" max="1" step="1" value="1" aria-label="First lesson">
+      <input type="range" id="lessonHigh" min="1" max="1" step="1" value="1" aria-label="Last lesson">
+    </div>
+    <div class="ticks" id="ticks"></div>
+  </div>
   <div class="count" id="wordcount"></div>
   <div class="modes">
     <button class="mode" id="btn-slides"><span class="ic">🎧</span><span><b>Slideshow</b><span>Words flip by in random order and get read aloud with their meaning. Just watch and listen.</span></span></button>
@@ -546,7 +563,7 @@ const STORAGE_KEY = "vocabFlip.v1";
 let ALL_LESSONS = []; // filled in by startWhenLessonsLoad() at the bottom
 
 function loadSaved() {
-  const defaults = { lessons: [], voiceRate: 1, slidePace: 1, rounds: [], missCounts: {} };
+  const defaults = { lessons: [], lessonRange: null, newestLessonSeen: 0, voiceRate: 1, cardWait: 2, rounds: [], missCounts: {} };
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
     return saved ? Object.assign(defaults, saved) : defaults;
@@ -772,16 +789,22 @@ function sayWord(word) {
   try { speechSynthesis.speak(makeUtterance(speakableKana(word.kana), "ja-JP", japaneseRate())); } catch (err) {}
 }
 
-/* Voice speed and card time — two separate dials, same as Yomikata. */
-// 0.35 is the slowest: about 3× slower than default for voice, ~14s per card.
-const SPEED_MIN = 0.35, SPEED_MAX = 2.0;
-const voiceSpeed   = () => clamp(Number(saved.voiceRate) || 1, SPEED_MIN, SPEED_MAX);
-const slideSpeed   = () => clamp(Number(saved.slidePace) || 1, SPEED_MIN, SPEED_MAX);
+/* Two separate dials:
+   • Voice — how fast the words are spoken. Nothing else.
+   • Cards — how long to wait AFTER the last word is spoken before flipping
+     to the next card. The wait only starts once the voice has finished. */
+const VOICE_MIN = 0.35, VOICE_MAX = 2.0;          // 0.35× is about 3× slower than normal
+const WAIT_MIN_SECONDS = 0, WAIT_MAX_SECONDS = 10; // cards slider, in seconds
+const voiceSpeed   = () => clamp(Number(saved.voiceRate) || 1, VOICE_MIN, VOICE_MAX);
 const japaneseRate = () => clamp(0.85 * voiceSpeed(), 0.3, 1.9);
 const englishRate  = () => clamp(1.0 * voiceSpeed(), 0.35, 2);
-const cardMs       = () => clamp(4800 / slideSpeed(), 1500, 15000); // minimum time a card stays up
-const quietBeatMs  = () => clamp(1000 / slideSpeed(), 200, 3500);   // pause after the voice finishes
+const cardWaitSeconds = () => {
+  const stored = Number(saved.cardWait);
+  return clamp(Number.isFinite(stored) ? stored : 2, WAIT_MIN_SECONDS, WAIT_MAX_SECONDS);
+};
+const cardWaitMs   = () => cardWaitSeconds() * 1000;
 const voiceLabel   = () => { const v = voiceSpeed(); return v < 0.55 ? "very slow" : v < 0.8 ? "deliberate" : v > 1.45 ? "quick" : v > 1.1 ? "brisk" : "natural"; };
+const waitLabel    = () => `${cardWaitSeconds().toFixed(1)}s <i>after voice</i>`;
 
 GameVoice.bindToggle($("#btnSound"));
 $("#btnSound").addEventListener("click", () => { if (!GameVoice.enabled) stopSpeaking(); });
@@ -806,21 +829,72 @@ function describeLessons(lessons) {
   return "Genki · L" + parts.join(", ");
 }
 
+/* Lesson range slider — two thumbs on one track. saved.lessonRange is
+   [first, last]; saved.lessons is the list of lessons inside that range. */
+const lessonLowSlider = $("#lessonLow"), lessonHighSlider = $("#lessonHigh");
+
+function applyLessonRange(first, last) {
+  saved.lessonRange = [first, last];
+  saved.lessons = ALL_LESSONS.filter(n => n >= first && n <= last);
+}
+
+// Move the readout and the coloured fill to match the two thumbs.
+function drawRangeSlider() {
+  const [first, last] = saved.lessonRange;
+  const lowest = ALL_LESSONS[0], highest = ALL_LESSONS[ALL_LESSONS.length - 1];
+  const span = Math.max(1, highest - lowest);
+  lessonLowSlider.value = first;
+  lessonHighSlider.value = last;
+  $("#lo-num").textContent = first;
+  $("#hi-num").textContent = last;
+  $("#rangefill").style.left = ((first - lowest) / span * 100) + "%";
+  $("#rangefill").style.right = (100 - (last - lowest) / span * 100) + "%";
+}
+
+function onRangeSliderMoved(whichThumb) {
+  let first = Number(lessonLowSlider.value), last = Number(lessonHighSlider.value);
+  // Thumbs can't cross: the one being dragged pushes the other along.
+  if (first > last) {
+    if (whichThumb === "low") last = first; else first = last;
+  }
+  applyLessonRange(first, last);
+  drawRangeSlider();
+  renderHome();
+}
+lessonLowSlider.addEventListener("input", () => onRangeSliderMoved("low"));
+lessonHighSlider.addEventListener("input", () => onRangeSliderMoved("high"));
+lessonLowSlider.addEventListener("change", persist);
+lessonHighSlider.addEventListener("change", persist);
+
+// Called once the lesson files have loaded: size the slider to the lessons found.
+function setUpRangeSlider() {
+  const lowest = ALL_LESSONS[0], highest = ALL_LESSONS[ALL_LESSONS.length - 1];
+  [lessonLowSlider, lessonHighSlider].forEach(slider => { slider.min = lowest; slider.max = highest; });
+  $("#ticks").innerHTML = ALL_LESSONS.map(n => `<span>${n}</span>`).join("");
+  $("#rangecard").hidden = false;
+
+  // Work out the starting range:
+  //  • first visit → everything
+  //  • coming from the old lesson buttons → their lowest–highest
+  //  • the range ended at the newest lesson last time and more lessons have
+  //    been added since → stretch it to include the new ones
+  let range = Array.isArray(saved.lessonRange) ? saved.lessonRange.slice() : null;
+  if (!range && saved.lessons && saved.lessons.length) {
+    range = [Math.min(...saved.lessons), Math.max(...saved.lessons)];
+  }
+  if (!range) range = [lowest, highest];
+  const previousNewest = saved.newestLessonSeen || range[1];
+  if (range[1] >= previousNewest) range[1] = highest;
+  let first = clamp(range[0], lowest, highest), last = clamp(range[1], lowest, highest);
+  if (first > last) first = last;
+
+  saved.newestLessonSeen = highest;
+  applyLessonRange(first, last);
+  drawRangeSlider();
+  persist();
+}
+
 function renderHome() {
-  const allOn = saved.lessons.length === ALL_LESSONS.length;
-  $("#lessonpick").innerHTML =
-    ALL_LESSONS.map(n => `<button class="lp${saved.lessons.includes(n) ? " on" : ""}" data-lesson="${n}" aria-pressed="${saved.lessons.includes(n)}">${n}</button>`).join("") +
-    `<button class="lp alt" id="lp-all">${allOn ? "Clear" : "All"}</button>`;
-
-  $("#lessonpick").querySelectorAll("[data-lesson]").forEach(chip => {
-    chip.onclick = () => {
-      const lesson = Number(chip.dataset.lesson);
-      saved.lessons = saved.lessons.includes(lesson) ? saved.lessons.filter(n => n !== lesson) : saved.lessons.concat(lesson);
-      persist(); renderHome();
-    };
-  });
-  $("#lp-all").onclick = () => { saved.lessons = allOn ? [] : ALL_LESSONS.slice(); persist(); renderHome(); };
-
   const count = chosenWords().length;
   const withKanji = chosenWords().filter(w => w.kanji).length;
   $("#wordcount").innerHTML = count
@@ -862,19 +936,19 @@ function renderSlideOptions() {
   $("#slopts").innerHTML = `
     <div class="slrow">
       <span class="sllab">Voice</span><span class="slend">🐢</span>
-      <input type="range" id="slvoice" min="${SPEED_MIN}" max="${SPEED_MAX}" step="0.05" value="${voiceSpeed()}" aria-label="Voice speed">
+      <input type="range" id="slvoice" min="${VOICE_MIN}" max="${VOICE_MAX}" step="0.05" value="${voiceSpeed()}" aria-label="Voice speed">
       <span class="slend">🐇</span>
       <span class="pacenum" id="slvoicenum">${voiceSpeed().toFixed(2)}× <i>${voiceLabel()}</i></span>
     </div>
     <div class="slrow">
-      <span class="sllab">Cards</span><span class="slend">🐢</span>
-      <input type="range" id="slpace" min="${SPEED_MIN}" max="${SPEED_MAX}" step="0.05" value="${slideSpeed()}" aria-label="Time on each card">
-      <span class="slend">🐇</span>
-      <span class="pacenum" id="slpacenum">${(cardMs() / 1000).toFixed(1)}s <i>per card</i></span>
+      <span class="sllab">Cards</span><span class="slend">0s</span>
+      <input type="range" id="slpace" min="${WAIT_MIN_SECONDS}" max="${WAIT_MAX_SECONDS}" step="0.5" value="${cardWaitSeconds()}" aria-label="Seconds to wait after the voice before the next card">
+      <span class="slend">10s</span>
+      <span class="pacenum" id="slpacenum">${waitLabel()}</span>
     </div>`;
   const voiceSlider = $("#slvoice"), paceSlider = $("#slpace");
   voiceSlider.oninput = () => { saved.voiceRate = Number(voiceSlider.value); $("#slvoicenum").innerHTML = `${voiceSpeed().toFixed(2)}× <i>${voiceLabel()}</i>`; };
-  paceSlider.oninput  = () => { saved.slidePace = Number(paceSlider.value); $("#slpacenum").innerHTML = `${(cardMs() / 1000).toFixed(1)}s <i>per card</i>`; };
+  paceSlider.oninput  = () => { saved.cardWait = Number(paceSlider.value); $("#slpacenum").innerHTML = waitLabel(); };
   voiceSlider.onchange = paceSlider.onchange = persist;
 }
 
@@ -918,35 +992,33 @@ function showSlide() {
   if (slideshow.paused) { englishEl.classList.add("show"); return; }
 
   const stillCurrent = () => slideshow && slideshow.token === token && !slideshow.paused;
-  const shownAt = Date.now();
-  let advanced = false;
-  const advance = () => {
-    if (advanced || !stillCurrent()) return;
-    advanced = true;
-    slideshow.index++;
-    showSlide();
-  };
-  // Never move on before the card's minimum time is up.
-  const advanceAfter = extraMs => {
-    const remaining = Math.max(extraMs, cardMs() - (Date.now() - shownAt));
-    slideshow.timers.push(setTimeout(advance, remaining));
-  };
+  const later = (fn, ms) => slideshow.timers.push(setTimeout(fn, ms));
   const revealEnglish = () => { if (stillCurrent()) englishEl.classList.add("show"); };
 
-  const kanaLine = speakableKana(word.kana);
-  const englishLine = "means " + speakableEnglish(word.english);
+  // Step 3: the voice is done → wait the "Cards" time, then flip to the next card.
+  let voiceFinished = false;
+  const whenVoiceFinishes = () => {
+    if (voiceFinished || !stillCurrent()) return;
+    voiceFinished = true;
+    revealEnglish();
+    later(() => {
+      if (!stillCurrent()) return;
+      slideshow.index++;
+      showSlide();
+    }, cardWaitMs());
+  };
 
-  // Rough guess at how long the Japanese takes — used to reveal the English
-  // if the speech events never fire (sound off, or iOS being stubborn).
-  const japaneseGuessMs = Math.max(600, kanaLine.length * 150 / voiceSpeed());
-  slideshow.timers.push(setTimeout(revealEnglish, japaneseGuessMs + 500));
-
+  // Sound off (or no speech support): give a short beat to read the word,
+  // show the English, and treat that as the "voice finishing".
   if (!GameVoice.enabled || !("speechSynthesis" in window)) {
-    advanceAfter(0);
+    later(whenVoiceFinishes, 1500);
     return;
   }
 
-  slideshow.timers.push(setTimeout(() => {
+  // Step 1: say the Japanese, then "means …" in English.
+  const kanaLine = speakableKana(word.kana);
+  const englishLine = "means " + speakableEnglish(word.english);
+  later(() => {
     if (!stillCurrent()) return;
     try {
       speechSynthesis.resume();
@@ -954,19 +1026,33 @@ function showSlide() {
       const english = makeUtterance(englishLine, "en-US", englishRate());
       japanese.onstart = () => { speechHeard = true; $("#sl-sound").style.display = "none"; };
       english.onstart = revealEnglish;
-      english.onend = () => { if (stillCurrent()) advanceAfter(quietBeatMs()); };
+      english.onend = whenVoiceFinishes;
+      english.onerror = whenVoiceFinishes;
       speechSynthesis.speak(japanese);
       speechSynthesis.speak(english);
-    } catch (err) { advanceAfter(0); }
-    // If nothing has been heard yet, offer a tap — iOS only allows speech from a tap.
-    slideshow.timers.push(setTimeout(() => {
-      if (stillCurrent() && !speechHeard && GameVoice.enabled) $("#sl-sound").style.display = "";
-    }, 1800));
-  }, 160));
+    } catch (err) { whenVoiceFinishes(); return; }
 
-  // Safety net: onend is unreliable on iOS, so estimate the whole line and move on anyway.
-  const wholeLineGuessMs = japaneseGuessMs + englishLine.length * 70 / voiceSpeed();
-  slideshow.timers.push(setTimeout(advance, Math.max(cardMs(), wholeLineGuessMs + quietBeatMs()) + 1500));
+    // Step 2: notice when the voice stops. The onend event above usually does
+    // it, but iOS sometimes never fires it, so also check every quarter second
+    // whether the browser is still talking. Because this watches the real
+    // voice, a slow voice simply keeps the card up longer — it never gets cut off.
+    const watchStartedAt = Date.now();
+    let heardTalking = false;
+    const checkVoice = () => {
+      if (!stillCurrent() || voiceFinished) return;
+      const talking = speechSynthesis.speaking || speechSynthesis.pending;
+      if (talking) heardTalking = true;
+      const waitedForStart = Date.now() - watchStartedAt > 4000; // voice never started (blocked)
+      if ((heardTalking && !talking) || (!heardTalking && waitedForStart)) whenVoiceFinishes();
+      else later(checkVoice, 250);
+    };
+    later(checkVoice, 400);
+
+    // If nothing has been heard yet, offer a tap — iOS only allows speech from a tap.
+    later(() => {
+      if (stillCurrent() && !speechHeard && GameVoice.enabled) $("#sl-sound").style.display = "";
+    }, 1800);
+  }, 160);
 }
 
 function pauseSlideshow(paused) {
@@ -1211,11 +1297,7 @@ $("#d-home").onclick = () => { quiz = null; renderHome(); showScreen("s-home"); 
     ALL_LESSONS = lessonsFound;
     ALL_WORDS = wordsForLessons(ALL_LESSONS);
 
-    // Keep the saved lesson pick, minus any lessons that no longer exist.
-    // First visit (or nothing left) → everything is selected.
-    const hadSavedPick = Array.isArray(saved.lessons) && saved.lessons.length > 0;
-    saved.lessons = (saved.lessons || []).filter(n => ALL_LESSONS.includes(n));
-    if (!hadSavedPick || !saved.lessons.length) saved.lessons = ALL_LESSONS.slice();
+    setUpRangeSlider();
     renderHome();
   });
 })();
