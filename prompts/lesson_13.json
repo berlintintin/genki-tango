@@ -1,0 +1,567 @@
+{
+  "lesson": 13,
+  "style": "Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image.",
+  "howto": "For each item, send `prompt` to your image model. Save the result to `file` (exact name — the game loads images/lesson_<N>/<id>.png). Items with \"optional\": true are counters/abstractions image models handle poorly; skipping them just leaves the built-in line art.",
+  "items": [
+    {
+      "id": "otona",
+      "kana": "おとな",
+      "kanji": "大人",
+      "en": "adult",
+      "file": "images/lesson_13/otona.png",
+      "optional": false,
+      "concept": "A friendly grown adult in smart-casual clothes standing tall and confident, with a small child beside them for scale, clearly emphasising the adult.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"adult\". A friendly grown adult in smart-casual clothes standing tall and confident, with a small child beside them for scale, clearly emphasising the adult. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "bengoshi13",
+      "kana": "べんごし",
+      "kanji": "弁護士",
+      "en": "lawyer",
+      "file": "images/lesson_13/bengoshi13.png",
+      "optional": false,
+      "concept": "A confident lawyer in a business suit standing before a courthouse, holding a folder of legal papers, with a wooden gavel resting nearby.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"lawyer\". A confident lawyer in a business suit standing before a courthouse, holding a folder of legal papers, with a wooden gavel resting nearby. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "watakushi",
+      "kana": "わたくし",
+      "kanji": "私",
+      "en": "I (formal)",
+      "file": "images/lesson_13/watakushi.png",
+      "optional": false,
+      "concept": "A polite person in neat formal attire resting an open hand on their own chest and bowing very slightly — a humble, formal way of referring to oneself ('I').",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"I (formal)\". A polite person in neat formal attire resting an open hand on their own chest and bowing very slightly — a humble, formal way of referring to oneself ('I'). Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "karee",
+      "kana": "カレー",
+      "kanji": null,
+      "en": "curry",
+      "file": "images/lesson_13/karee.png",
+      "optional": false,
+      "concept": "A plate of Japanese curry rice: glossy golden-brown curry sauce ladled over white rice, a spoon resting on the plate, gentle steam, appetising.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"curry\". A plate of Japanese curry rice: glossy golden-brown curry sauce ladled over white rice, a spoon resting on the plate, gentle steam, appetising. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "koucha",
+      "kana": "こうちゃ",
+      "kanji": "紅茶",
+      "en": "black tea",
+      "file": "images/lesson_13/koucha.png",
+      "optional": false,
+      "concept": "A cup of amber-red black tea on a saucer with a tea-bag tag hanging over the rim and soft steam rising.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"black tea\". A cup of amber-red black tea on a saucer with a tea-bag tag hanging over the rim and soft steam rising. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kimono",
+      "kana": "きもの",
+      "kanji": "着物",
+      "en": "kimono; Japanese traditional dress",
+      "file": "images/lesson_13/kimono.png",
+      "optional": false,
+      "concept": "An elegant traditional Japanese kimono with a wide obi sash and a patterned fabric, neatly worn or displayed on a stand.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"kimono; Japanese traditional dress\". An elegant traditional Japanese kimono with a wide obi sash and a patterned fabric, neatly worn or displayed on a stand. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "seetaa",
+      "kana": "セーター",
+      "kanji": null,
+      "en": "sweater",
+      "file": "images/lesson_13/seetaa.png",
+      "optional": false,
+      "concept": "A cozy knitted pullover sweater with visible knit texture and ribbed cuffs, folded or on a hanger.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"sweater\". A cozy knitted pullover sweater with visible knit texture and ribbed cuffs, folded or on a hanger. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "gakki",
+      "kana": "がっき",
+      "kanji": "楽器",
+      "en": "musical instrument",
+      "file": "images/lesson_13/gakki.png",
+      "optional": false,
+      "concept": "A small cluster of musical instruments together — an acoustic guitar and a keyboard — with a couple of floating music notes.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"musical instrument\". A small cluster of musical instruments together — an acoustic guitar and a keyboard — with a couple of floating music notes. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "karate",
+      "kana": "からて",
+      "kanji": "空手",
+      "en": "karate",
+      "file": "images/lesson_13/karate.png",
+      "optional": false,
+      "concept": "A person in a white karate gi with a belt performing a strong, dynamic karate chop or high kick.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"karate\". A person in a white karate gi with a belt performing a strong, dynamic karate chop or high kick. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "gorufu",
+      "kana": "ゴルフ",
+      "kanji": null,
+      "en": "golf",
+      "file": "images/lesson_13/gorufu.png",
+      "optional": false,
+      "concept": "A golfer mid-swing on a green lawn, a golf ball on a tee and a flag in a hole nearby.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"golf\". A golfer mid-swing on a green lawn, a golf ball on a tee and a flag in a hole nearby. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "baiku",
+      "kana": "バイク",
+      "kanji": null,
+      "en": "motorcycle",
+      "file": "images/lesson_13/baiku.png",
+      "optional": false,
+      "concept": "A shiny motorcycle parked in side profile — chrome and colourful bodywork — clearly a motorbike, not a bicycle.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"motorcycle\". A shiny motorcycle parked in side profile — chrome and colourful bodywork — clearly a motorbike, not a bicycle. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "zou",
+      "kana": "ぞう",
+      "kanji": "象",
+      "en": "elephant",
+      "file": "images/lesson_13/zou.png",
+      "optional": false,
+      "concept": "A cheerful grey elephant with big ears and a raised curling trunk, full body.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"elephant\". A cheerful grey elephant with big ears and a raised curling trunk, full body. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "karada",
+      "kana": "からだ",
+      "kanji": "体",
+      "en": "body",
+      "file": "images/lesson_13/karada.png",
+      "optional": false,
+      "concept": "A simple friendly full-body figure of a person standing with arms slightly out, emphasising the whole human body.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"body\". A simple friendly full-body figure of a person standing with arms slightly out, emphasising the whole human body. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "gaikokugo",
+      "kana": "がいこくご",
+      "kanji": "外国語",
+      "en": "foreign language",
+      "file": "images/lesson_13/gaikokugo.png",
+      "optional": false,
+      "concept": "A globe ringed by several speech bubbles filled with invented, non-readable squiggle-scripts and tiny generic flags, evoking many foreign languages.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"foreign language\". A globe ringed by several speech bubbles filled with invented, non-readable squiggle-scripts and tiny generic flags, evoking many foreign languages. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kotoba",
+      "kana": "ことば",
+      "kanji": "言葉",
+      "en": "language; word",
+      "file": "images/lesson_13/kotoba.png",
+      "optional": false,
+      "concept": "A person mid-speech with a big speech bubble full of abstract squiggle 'words' (no real letters), evoking words and language.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"language; word\". A person mid-speech with a big speech bubble full of abstract squiggle 'words' (no real letters), evoking words and language. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "bunpou",
+      "kana": "ぶんぽう",
+      "kanji": "文法",
+      "en": "grammar",
+      "file": "images/lesson_13/bunpou.png",
+      "optional": false,
+      "concept": "Colourful puzzle-like building blocks connecting in a neat row like the parts of a sentence, evoking grammar structure — no readable text.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"grammar\". Colourful puzzle-like building blocks connecting in a neat row like the parts of a sentence, evoking grammar structure — no readable text. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "apuri",
+      "kana": "アプリ",
+      "kanji": null,
+      "en": "application (app)",
+      "file": "images/lesson_13/apuri.png",
+      "optional": false,
+      "concept": "A hand holding a smartphone that shows a grid of colourful rounded app icons (blank, no text), one being tapped.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"application (app)\". A hand holding a smartphone that shows a grid of colourful rounded app icons (blank, no text), one being tapped. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "apaato",
+      "kana": "アパート",
+      "kanji": null,
+      "en": "apartment; smaller apartment building",
+      "file": "images/lesson_13/apaato.png",
+      "optional": false,
+      "concept": "A modest two-storey apartment building with an external staircase and a few small balconies.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"apartment; smaller apartment building\". A modest two-storey apartment building with an external staircase and a few small balconies. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "manshon",
+      "kana": "マンション",
+      "kanji": null,
+      "en": "larger apartment building; condominium",
+      "file": "images/lesson_13/manshon.png",
+      "optional": false,
+      "concept": "A tall modern condominium high-rise with many windows and balconies, clearly larger than a small apartment.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"larger apartment building; condominium\". A tall modern condominium high-rise with many windows and balconies, clearly larger than a small apartment. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kuukou",
+      "kana": "くうこう",
+      "kanji": "空港",
+      "en": "airport",
+      "file": "images/lesson_13/kuukou.png",
+      "optional": false,
+      "concept": "An airport scene with a control tower and a passenger airplane on a runway, blue sky, no readable signage.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"airport\". An airport scene with a control tower and a passenger airplane on a runway, blue sky, no readable signage. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "mise",
+      "kana": "みせ",
+      "kanji": "店",
+      "en": "shop; store",
+      "file": "images/lesson_13/mise.png",
+      "optional": false,
+      "concept": "A cute small shop storefront with a striped awning, a glass display window and a door — generic, no readable signage.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"shop; store\". A cute small shop storefront with a striped awning, a glass display window and a door — generic, no readable signage. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "bukka",
+      "kana": "ぶっか",
+      "kanji": "物価",
+      "en": "consumer prices",
+      "file": "images/lesson_13/bukka.png",
+      "optional": false,
+      "concept": "A price tag stamped with a yen mark beside a small upward red arrow and a few grocery items, evoking rising consumer prices — no readable numbers.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"consumer prices\". A price tag stamped with a yen mark beside a small upward red arrow and a few grocery items, evoking rising consumer prices — no readable numbers. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "koukoku",
+      "kana": "こうこく",
+      "kanji": "広告",
+      "en": "advertisement",
+      "file": "images/lesson_13/koukoku.png",
+      "optional": false,
+      "concept": "A bright billboard on a stand showing a bold red starburst 'SALE' shape and cheerful abstract graphics — no readable text.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"advertisement\". A bright billboard on a stand showing a bold red starburst 'SALE' shape and cheerful abstract graphics — no readable text. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "boshuu",
+      "kana": "ぼしゅう",
+      "kanji": "募集",
+      "en": "recruitment",
+      "file": "images/lesson_13/boshuu.png",
+      "optional": false,
+      "concept": "A 'now hiring' poster with a friendly person silhouette, a plus/join symbol and a little megaphone, evoking recruitment — no readable text.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"recruitment\". A 'now hiring' poster with a friendly person silhouette, a plus/join symbol and a little megaphone, evoking recruitment — no readable text. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "yakusoku",
+      "kana": "やくそく",
+      "kanji": "約束",
+      "en": "promise; appointment",
+      "file": "images/lesson_13/yakusoku.png",
+      "optional": false,
+      "concept": "Two people making a pinky-promise, their little fingers linked, a warm friendly close-up of hands.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"promise; appointment\". Two people making a pinky-promise, their little fingers linked, a warm friendly close-up of hands. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "ureshii",
+      "kana": "うれしい",
+      "kanji": null,
+      "en": "glad",
+      "file": "images/lesson_13/ureshii.png",
+      "optional": false,
+      "concept": "A person beaming with delight, arms raised, sparkles around them — clearly glad and happy in the moment.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"glad\". A person beaming with delight, arms raised, sparkles around them — clearly glad and happy in the moment. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kanashii",
+      "kana": "かなしい",
+      "kanji": "悲しい",
+      "en": "sad",
+      "file": "images/lesson_13/kanashii.png",
+      "optional": false,
+      "concept": "A person looking sad, a single tear on their cheek and a downturned mouth, gloomy blue mood.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"sad\". A person looking sad, a single tear on their cheek and a downturned mouth, gloomy blue mood. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kibishii",
+      "kana": "きびしい",
+      "kanji": "厳しい",
+      "en": "strict",
+      "file": "images/lesson_13/kibishii.png",
+      "optional": false,
+      "concept": "A stern, strict teacher with furrowed brows and a raised pointing finger, serious no-nonsense expression.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"strict\". A stern, strict teacher with furrowed brows and a raised pointing finger, serious no-nonsense expression. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kibungawarui",
+      "kana": "きぶんがわるい",
+      "kanji": "気分が悪い",
+      "en": "to feel sick",
+      "file": "images/lesson_13/kibungawarui.png",
+      "optional": false,
+      "concept": "A person feeling unwell and queasy, one hand on their stomach, slightly pale-green face, nauseous.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"to feel sick\". A person feeling unwell and queasy, one hand on their stomach, slightly pale-green face, nauseous. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "karai",
+      "kana": "からい",
+      "kanji": "辛い",
+      "en": "hot and spicy; salty",
+      "file": "images/lesson_13/karai.png",
+      "optional": false,
+      "concept": "A glowing red chili pepper wreathed in little flames, next to a person fanning their open mouth with a sweat drop — spicy heat.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"hot and spicy; salty\". A glowing red chili pepper wreathed in little flames, next to a person fanning their open mouth with a sweat drop — spicy heat. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "sugoi",
+      "kana": "すごい",
+      "kanji": null,
+      "en": "incredible; awesome",
+      "file": "images/lesson_13/sugoi.png",
+      "optional": false,
+      "concept": "A person with a wide-eyed, star-struck 'wow!' expression, sparkling eyes and stars bursting around them, awed by something amazing.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"incredible; awesome\". A person with a wide-eyed, star-struck 'wow!' expression, sparkling eyes and stars bursting around them, awed by something amazing. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "chikai",
+      "kana": "ちかい",
+      "kanji": "近い",
+      "en": "close; near",
+      "file": "images/lesson_13/chikai.png",
+      "optional": false,
+      "concept": "Two map location-pins standing very close together with a short double-headed arrow between them, meaning 'near / close'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"close; near\". Two map location-pins standing very close together with a short double-headed arrow between them, meaning 'near / close'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "iroiro",
+      "kana": "いろいろ",
+      "kanji": null,
+      "en": "various; different kinds of",
+      "file": "images/lesson_13/iroiro.png",
+      "optional": false,
+      "concept": "An assortment of many different colourful objects and shapes gathered together (fruits, shapes, colours), meaning 'various, many kinds'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"various; different kinds of\". An assortment of many different colourful objects and shapes gathered together (fruits, shapes, colours), meaning 'various, many kinds'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "shiawase",
+      "kana": "しあわせ",
+      "kanji": "幸せ",
+      "en": "happy (lasting happiness)",
+      "file": "images/lesson_13/shiawase.png",
+      "optional": false,
+      "concept": "A calm, contented person with a gentle warm smile and a soft glowing heart above them — serene, lasting happiness (not hyper).",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"happy (lasting happiness)\". A calm, contented person with a gentle warm smile and a soft glowing heart above them — serene, lasting happiness (not hyper). Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "dame",
+      "kana": "だめ",
+      "kanji": null,
+      "en": "no good",
+      "file": "images/lesson_13/dame.png",
+      "optional": false,
+      "concept": "A person crossing their forearms into a big 'X' no-good gesture, with a red circle-slash symbol, meaning 'no good / not allowed'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"no good\". A person crossing their forearms into a big 'X' no-good gesture, with a red circle-slash symbol, meaning 'no good / not allowed'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "amu",
+      "kana": "あむ",
+      "kanji": "編む",
+      "en": "to knit",
+      "file": "images/lesson_13/amu.png",
+      "optional": false,
+      "concept": "Hands knitting with two needles and a ball of yarn, a half-finished scarf trailing, cozy.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"to knit\". Hands knitting with two needles and a ball of yarn, a half-finished scarf trailing, cozy. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "ganbaru",
+      "kana": "がんばる",
+      "kanji": "頑張る",
+      "en": "to do one's best; to try hard",
+      "file": "images/lesson_13/ganbaru.png",
+      "optional": false,
+      "concept": "A determined person with both fists clenched and raised, a gritted, fired-up smile — 'I'll do my best!'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"to do one's best; to try hard\". A determined person with both fists clenched and raised, a gritted, fired-up smile — 'I'll do my best!'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "naku",
+      "kana": "なく",
+      "kanji": "泣く",
+      "en": "to cry",
+      "file": "images/lesson_13/naku.png",
+      "optional": false,
+      "concept": "A person crying hard, streams of tears running down both cheeks, clearly weeping.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"to cry\". A person crying hard, streams of tears running down both cheeks, clearly weeping. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "migaku",
+      "kana": "みがく",
+      "kanji": "磨く",
+      "en": "to brush (teeth); to polish",
+      "file": "images/lesson_13/migaku.png",
+      "optional": false,
+      "concept": "A person brushing their teeth with a toothbrush, a bright sparkle of clean teeth and a little foam, cheerful.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"to brush (teeth); to polish\". A person brushing their teeth with a toothbrush, a bright sparkle of clean teeth and a little foam, cheerful. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "yakusokuwomamoru",
+      "kana": "やくそくをまもる",
+      "kanji": "約束を守る",
+      "en": "to keep a promise",
+      "file": "images/lesson_13/yakusokuwomamoru.png",
+      "optional": false,
+      "concept": "Two people who made a pinky-promise, with a small glowing shield-and-check beside their linked hands, meaning keeping/honouring the promise.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"to keep a promise\". Two people who made a pinky-promise, with a small glowing shield-and-check beside their linked hands, meaning keeping/honouring the promise. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kandousuru",
+      "kana": "かんどうする",
+      "kanji": "感動する",
+      "en": "to be moved/touched (by ...)",
+      "file": "images/lesson_13/kandousuru.png",
+      "optional": false,
+      "concept": "A person deeply moved to happy tears, hands clasped at their chest, a glowing heart and gentle sparkles — emotionally touched.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"to be moved/touched (by ...)\". A person deeply moved to happy tears, hands clasped at their chest, a glowing heart and gentle sparkles — emotionally touched. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kai",
+      "kana": "〜かい",
+      "kanji": "〜回",
+      "en": "... times",
+      "file": "images/lesson_13/kai.png",
+      "optional": true,
+      "concept": "A circular repeat arrow with a few tally strokes beside it, evoking counting how many times something happens — no readable numbers.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"... times\". A circular repeat arrow with a few tally strokes beside it, evoking counting how many times something happens — no readable numbers. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kiro",
+      "kana": "〜キロ",
+      "kanji": null,
+      "en": "... kilometers; ... kilograms",
+      "file": "images/lesson_13/kiro.png",
+      "optional": true,
+      "concept": "A roadside distance signpost next to a weighing scale, evoking kilometres and kilograms together — no readable numbers.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"... kilometers; ... kilograms\". A roadside distance signpost next to a weighing scale, evoking kilometres and kilograms together — no readable numbers. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "zenbu",
+      "kana": "ぜんぶ",
+      "kanji": "全部",
+      "en": "all",
+      "file": "images/lesson_13/zenbu.png",
+      "optional": false,
+      "concept": "Several items all gathered together inside one big bracket with a check-mark, meaning 'all / everything'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"all\". Several items all gathered together inside one big bracket with a check-mark, meaning 'all / everything'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "tomoushimasu",
+      "kana": "〜ともうします",
+      "kanji": "〜と申します",
+      "en": "my name is ...",
+      "file": "images/lesson_13/tomoushimasu.png",
+      "optional": false,
+      "concept": "A person bowing politely in greeting while wearing a blank name badge, a humble self-introduction — the badge has no readable text.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"my name is ...\". A person bowing politely in greeting while wearing a blank name badge, a humble self-introduction — the badge has no readable text. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "tokuni",
+      "kana": "とくに",
+      "kanji": "特に",
+      "en": "especially",
+      "file": "images/lesson_13/tokuni.png",
+      "optional": false,
+      "concept": "A row of similar items with one singled out in a bright spotlight and a star above it, meaning 'especially / in particular'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"especially\". A row of similar items with one singled out in a bright spotlight and a star above it, meaning 'especially / in particular'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "ichinichi",
+      "kana": "いちにち",
+      "kanji": "一日",
+      "en": "one day",
+      "file": "images/lesson_13/ichinichi.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly one day-square circled in red, meaning 'one day'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"one day\". A wall calendar with exactly one day-square circled in red, meaning 'one day'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "futsuka",
+      "kana": "ふつか",
+      "kanji": "二日",
+      "en": "two days",
+      "file": "images/lesson_13/futsuka.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly two day-squares circled in red, meaning 'two days'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"two days\". A wall calendar with exactly two day-squares circled in red, meaning 'two days'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "mikka",
+      "kana": "みっか",
+      "kanji": "三日",
+      "en": "three days",
+      "file": "images/lesson_13/mikka.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly three day-squares circled in red, meaning 'three days'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"three days\". A wall calendar with exactly three day-squares circled in red, meaning 'three days'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "yokka",
+      "kana": "よっか",
+      "kanji": "四日",
+      "en": "four days",
+      "file": "images/lesson_13/yokka.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly four day-squares circled in red, meaning 'four days'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"four days\". A wall calendar with exactly four day-squares circled in red, meaning 'four days'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "itsuka",
+      "kana": "いつか",
+      "kanji": "五日",
+      "en": "five days",
+      "file": "images/lesson_13/itsuka.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly five day-squares circled in red, meaning 'five days'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"five days\". A wall calendar with exactly five day-squares circled in red, meaning 'five days'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "muika",
+      "kana": "むいか",
+      "kanji": "六日",
+      "en": "six days",
+      "file": "images/lesson_13/muika.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly six day-squares circled in red, meaning 'six days'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"six days\". A wall calendar with exactly six day-squares circled in red, meaning 'six days'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "nanoka",
+      "kana": "なのか",
+      "kanji": "七日",
+      "en": "seven days",
+      "file": "images/lesson_13/nanoka.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly seven day-squares circled in red, meaning 'seven days'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"seven days\". A wall calendar with exactly seven day-squares circled in red, meaning 'seven days'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "youka",
+      "kana": "ようか",
+      "kanji": "八日",
+      "en": "eight days",
+      "file": "images/lesson_13/youka.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly eight day-squares circled in red, meaning 'eight days'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"eight days\". A wall calendar with exactly eight day-squares circled in red, meaning 'eight days'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "kokonoka",
+      "kana": "ここのか",
+      "kanji": "九日",
+      "en": "nine days",
+      "file": "images/lesson_13/kokonoka.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly nine day-squares circled in red, meaning 'nine days'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"nine days\". A wall calendar with exactly nine day-squares circled in red, meaning 'nine days'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    },
+    {
+      "id": "tooka",
+      "kana": "とおか",
+      "kanji": "十日",
+      "en": "ten days",
+      "file": "images/lesson_13/tooka.png",
+      "optional": true,
+      "concept": "A wall calendar with exactly ten day-squares circled in red, meaning 'ten days'.",
+      "prompt": "Illustration for a Japanese vocabulary card meaning \"ten days\". A wall calendar with exactly ten day-squares circled in red, meaning 'ten days'. Bright, clean, colorful educational illustration in a warm modern anime style — soft cel shading, gentle linework, cheerful natural lighting — made for a Japanese vocabulary flashcard game. Square 1:1 framing. One instantly recognizable subject or action, centered and large, on a simple uncluttered background. Friendly, wholesome, all-ages tone, consistent look across the whole set. Absolutely NO text, letters, Japanese characters, numbers, labels, signs, logos, or watermarks anywhere in the image."
+    }
+  ]
+}

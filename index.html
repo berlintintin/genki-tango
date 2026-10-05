@@ -213,6 +213,10 @@
   .tile .wordtile { width:100%; height:100%; display:flex; align-items:center; justify-content:center;
     text-align:center; font-weight:700; font-size:clamp(.8rem,2.2vw,1.05rem); color:var(--ink);
     padding:6px; line-height:1.2; }
+  /* real illustration inside a tile (falls back to the line-art doodle if the file is missing) */
+  .tile img.tile-img { width:100%; height:100%; object-fit:cover; border-radius:8px;
+    display:block; pointer-events:none; user-select:none; -webkit-user-drag:none; }
+  #btnImg.muted { color:var(--pencil); opacity:.7; }
 
   /* controls: matched height + katakana speed labels */
   .topbar .ctrls button, .speed { height:34px; box-sizing:border-box; display:inline-flex; align-items:center; }
@@ -276,6 +280,7 @@
         <span class="spd-ico">ウサギ</span>
       </label>
       <button id="btnEn" data-tip="Show / hide English">ABC</button>
+      <button id="btnImg" data-tip="Illustrations / line art">🖼 IMG</button>
       <button id="btnSound" data-tip="Sound on / off">♪ ON</button>
       <button id="back" data-tip="Back to lessons">← Lessons</button>
     </span>
@@ -820,6 +825,55 @@ function drawRound(a, b, n) {
   return round;
 }
 
+/* ---- illustrations vs. line art ---------------------------------------
+   Every word can have a real picture at  images/lesson_<N>/<id>.png
+   (a relative path, so it works on GitHub Pages). In "IMG" mode we try to
+   load that picture; if the file isn't there yet, the tile quietly falls
+   back to the built-in line-art doodle (and then to an English text tile).
+   So a half-finished image set is fine — missing pictures just show the
+   doodle. The 🖼 button flips between illustrations and line art. */
+const IMG_BASE = "images";
+function imgPathFor(w) { return `${IMG_BASE}/lesson_${w.lesson}/${w.id}.png`; }
+
+let useImages = true;
+try { const v = localStorage.getItem("dt-useImages"); if (v !== null) useImages = v === "1"; } catch (e) {}
+
+function fillTile(tile, w) {
+  const fallback = w.art
+    ? `<svg viewBox="0 0 200 200" role="img" aria-label="doodle">${w.art}</svg>`
+    : `<div class="wordtile">${w.en}</div>`;
+  if (useImages) {
+    const img = document.createElement("img");
+    img.className = "tile-img";
+    img.alt = "";
+    img.draggable = false;
+    img.onerror = () => { tile.innerHTML = fallback; };   // no picture yet -> doodle
+    img.src = imgPathFor(w);
+    tile.innerHTML = "";
+    tile.appendChild(img);
+  } else {
+    tile.innerHTML = fallback;
+  }
+}
+
+const btnImg = document.getElementById("btnImg");
+function updateImgBtn() {
+  if (!btnImg) return;
+  btnImg.textContent = useImages ? "🖼 IMG" : "✏️ ART";
+  btnImg.classList.toggle("muted", !useImages);
+}
+updateImgBtn();
+if (btnImg) btnImg.addEventListener("click", () => {
+  useImages = !useImages;
+  try { localStorage.setItem("dt-useImages", useImages ? "1" : "0"); } catch (e) {}
+  updateImgBtn();
+  // re-skin tiles still in the pool, leaving any already-placed ones alone
+  pool.querySelectorAll(".tile:not(.placed)").forEach(tile => {
+    const w = LessonStore.wordById(tile.dataset.id);
+    if (w) fillTile(tile, w);
+  });
+});
+
 function startRound(a, b) {
   curRange = [a, b];
   setScene(true); // fresh backdrop each round
@@ -843,9 +897,7 @@ function startRound(a, b) {
     const tile = document.createElement("div");
     tile.className = "tile";
     tile.dataset.id = w.id;
-    tile.innerHTML = w.art
-      ? `<svg viewBox="0 0 200 200" role="img" aria-label="doodle">${w.art}</svg>`
-      : `<div class="wordtile">${w.en}</div>`;
+    fillTile(tile, w);
     pool.appendChild(tile);
     enableDrag(tile);
   });
@@ -1058,25 +1110,5 @@ function showBubble(jp, en, good) {
   bubbleTimer = setTimeout(() => bubble.classList.remove("show"), 1800);
 }
 </script>
-<!-- Fun by Heinze — signature (drop-in) -->
-<div class="hz-sig">
-  <span class="hz-badge"><span class="hz-brand">ハインゼの<b>楽</b>しさ</span><small>Fun by Heinze</small></span>
-  <span class="hz-yr">2026</span>
-</div>
-<style>
-  .hz-sig{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:11px;
-    margin:24px auto 16px;line-height:1;user-select:none;
-    font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",system-ui,sans-serif}
-  .hz-badge{display:inline-flex;flex-direction:column;align-items:center;line-height:1;
-    color:#c0392b;font-weight:800;font-size:19px;letter-spacing:.04em;
-    border:2px solid #c0392b;border-radius:11px;padding:6px 15px 5px;background:rgba(255,255,255,.55);
-    box-shadow:2px 3px 0 rgba(192,57,43,.20)}
-  .hz-badge .hz-brand{white-space:nowrap;line-height:1}
-  .hz-badge b{font-weight:900}
-  .hz-badge small{font-size:8px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
-    opacity:.72;margin-top:2px;line-height:1}
-  .hz-yr{font-size:12px;font-weight:600;color:#9aa3b2}
-</style>
-<script>(function(){var y=document.querySelector('.hz-sig .hz-yr');if(y)y.textContent=new Date().getFullYear();})();</script>
 </body>
 </html>

@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>単語めくり — Vocab Flip · Genki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* =========================================================================
+   Colors — same paper/ink/yellow tokens as Yomikata, with a dark version.
+   ========================================================================= */
+:root{
+  --paper:#f7f3e8; --ink:#2b3a67; --muted:#8a8577; --line:#ddd5bf; --card:#fffdf6;
+  --hi:#F5C542; --hi-soft:#FBE9A6; --ok:#2e7d4f; --ok-soft:#dff0e4; --bad:#c0392b; --bad-soft:#f6dcd8;
+  --shadow:rgba(43,58,103,.16);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141C17; --ink:#E9EFE6; --muted:#9BAEA2; --line:#2E3D34; --card:#1B2620;
+    --hi:#E0B23C; --hi-soft:#4A3F17; --ok:#6CC59A; --ok-soft:#1F3A2C; --bad:#E27A67; --bad-soft:#3E1F19;
+    --shadow:rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141C17; --ink:#E9EFE6; --muted:#9BAEA2; --line:#2E3D34; --card:#1B2620;
+  --hi:#E0B23C; --hi-soft:#4A3F17; --ok:#6CC59A; --ok-soft:#1F3A2C; --bad:#E27A67; --bad-soft:#3E1F19;
+  --shadow:rgba(0,0,0,.35);
+}
+
+/* Keep content clear of phone notches / home bars. */
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font-family:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.kj{font-family:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--hi);outline-offset:3px}
+
+.app{max-width:640px;margin:0 auto;padding:16px 16px 48px;min-height:100vh}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:6px 0 18px;border-bottom:2px solid var(--ink)}
+header .brand{font-size:26px;font-weight:900;letter-spacing:.02em}
+header .brand small{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:500;font-size:13px;color:var(--muted);margin-left:8px}
+header .right{display:flex;align-items:center;gap:10px}
+header .lesson{color:var(--muted);font-size:14px;white-space:nowrap}
+@media (max-width:480px){header .brand small{display:none}}
+#btnSound{white-space:nowrap;font-size:13px;font-weight:700;border:1.5px solid var(--line);border-radius:8px;padding:4px 9px;background:var(--card)}
+
+.screen{display:none;padding-top:20px}
+.screen.active{display:block}
+h2{font-size:18px;font-weight:700;margin:0 0 4px}
+.lede{color:var(--muted);margin:0 0 16px}
+
+/* buttons */
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn{padding:12px 18px;border-radius:12px;border:1.5px solid var(--ink);font-weight:700;background:var(--card)}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.quiet{border-color:var(--line);color:var(--muted);font-weight:500;background:transparent}
+.btn.small{padding:6px 12px}
+.btn:disabled{opacity:.4;cursor:default}
+
+/* lesson picker chips */
+.lessonpick{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px}
+.lp{min-width:46px;padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;font-weight:700;background:var(--card);text-align:center}
+.lp.on{border-color:var(--ink);background:var(--hi-soft)}
+.lp.alt{font-weight:500;color:var(--muted);border-style:dashed}
+.count{font-size:14px;color:var(--muted);margin:8px 0 22px}
+.count b{color:var(--ink)}
+
+/* the two mode buttons on the home screen */
+.modes{display:grid;gap:12px}
+.mode{display:flex;align-items:center;gap:14px;text-align:left;padding:16px 18px;border:2px solid var(--ink);border-radius:16px;background:var(--card);box-shadow:3px 4px 0 var(--shadow);transition:transform .1s}
+.mode:active{transform:translate(2px,3px);box-shadow:1px 1px 0 var(--shadow)}
+.mode .ic{font-size:30px;line-height:1}
+.mode b{display:block;font-size:19px}
+.mode span span{display:block;color:var(--muted);font-size:14.5px;line-height:1.4}
+.mode:disabled{opacity:.45}
+.stats{display:flex;gap:18px;color:var(--muted);font-size:14px;margin-top:22px;flex-wrap:wrap}
+.stats b{color:var(--ink)}
+.foot{margin-top:26px;font-size:13px;color:var(--muted)}
+.foot button{text-decoration:underline;color:var(--muted);font-size:13px}
+
+/* =========================================================================
+   The flashcard: reading as the big title, kanji underneath, English below.
+   --len (set from JS) shrinks the type so long words still fit one line.
+   ========================================================================= */
+.flash{position:relative;margin:18px auto 0;padding:46px 22px 30px;background:var(--card);border:2px solid var(--ink);border-radius:20px;box-shadow:4px 5px 0 var(--shadow);text-align:center;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.stamp{position:absolute;top:14px;right:14px;color:var(--bad);border:2px solid var(--bad);border-radius:8px;padding:2px 8px 1px;font-weight:900;font-size:14px;transform:rotate(5deg);letter-spacing:.04em}
+.fl-kana{font-weight:900;line-height:1.15;white-space:nowrap;font-size:min(92px, calc((min(100vw, 640px) - 110px) / var(--len, 4)))}
+.fl-kanji{margin-top:6px;font-weight:600;line-height:1.2;white-space:nowrap;color:var(--ink);opacity:.85;font-size:min(52px, calc(0.6 * (min(100vw, 640px) - 110px) / var(--len, 4)))}
+.fl-kanji:empty{display:none}
+.fl-en{margin-top:22px;padding-top:16px;border-top:1.5px dashed var(--line);font-size:22px;font-weight:700;min-width:60%;opacity:0;transition:opacity .4s ease}
+.fl-en.show{opacity:1}
+.flash.in .fl-kana{animation:pop .45s ease-out}
+@keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+.counter{text-align:center;color:var(--muted);font-size:13px;margin-top:12px;font-variant-numeric:tabular-nums}
+
+/* slideshow controls */
+.slidebar{padding-bottom:12px;border-bottom:1.5px solid var(--line)}
+#sl-sound{margin-left:8px;border-color:var(--bad);color:var(--bad)}
+.slopts{display:grid;gap:7px;margin-top:10px}
+.slrow{display:grid;grid-template-columns:44px 18px minmax(80px,1fr) 18px auto;align-items:center;gap:7px;max-width:460px}
+.sllab{font-size:12.5px;color:var(--muted);text-align:right}
+.slend{font-size:14px;text-align:center;line-height:1;user-select:none}
+.pacenum{white-space:nowrap;min-width:92px;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.pacenum i{font-style:normal;font-weight:500;color:var(--muted)}
+.slrow input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:999px;background:var(--line);outline:none}
+.slrow input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--hi);border:2px solid var(--ink);cursor:pointer}
+.slrow input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--hi);border:2px solid var(--ink);cursor:pointer}
+.slidefoot{display:flex;gap:10px;justify-content:center;margin-top:20px}
+
+/* =========================================================================
+   Quiz
+   ========================================================================= */
+.topbar{display:flex;align-items:center;gap:12px}
+.prog{flex:1;height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--hi);transition:width .3s ease}
+.qinfo{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.prompt{margin-top:22px;padding:30px 20px 26px;background:var(--card);border:2px solid var(--ink);border-radius:20px;box-shadow:4px 5px 0 var(--shadow);text-align:center;position:relative}
+.prompt .en{font-size:clamp(24px,6.5vw,34px);font-weight:900;line-height:1.25}
+.prompt .how{margin-top:8px;font-size:13.5px;color:var(--muted)}
+.typerow{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.tin{font:inherit;font-size:28px;font-weight:700;text-align:center;width:100%;max-width:360px;padding:10px 14px;color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:12px}
+.tin.right{border-color:var(--ok);background:var(--ok-soft)}
+.tin.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.qbtns{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.fb{display:none;margin-top:18px;padding:14px 16px;border-radius:14px;text-align:center}
+.fb.show{display:block}
+.fb.ok{background:var(--ok-soft);border:1.5px solid var(--ok)}
+.fb.bad{background:var(--bad-soft);border:1.5px solid var(--bad)}
+.fb.skip{background:var(--hi-soft);border:1.5px solid var(--hi)}
+.fb .head{font-weight:900;font-size:19px}
+.fb .head small{font-weight:500;font-size:13.5px;color:var(--muted);margin-left:6px}
+.fb .ans{margin-top:6px;font-size:30px;font-weight:900;line-height:1.2}
+.fb .ans .kj{font-size:22px;font-weight:600;margin-left:10px;opacity:.85}
+.fb .note{font-size:14px;color:var(--muted);margin-top:4px}
+.next{text-align:center;margin-top:16px}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* results */
+.score{font-size:64px;font-weight:900;line-height:1;margin:6px 0 4px}
+.score small{font-size:20px;color:var(--muted);font-weight:500;margin-left:6px}
+.results{margin-top:18px;border-top:1.5px solid var(--line)}
+.res{display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:center;padding:10px 2px;border-bottom:1.5px solid var(--line)}
+.res .mark{font-weight:900;text-align:center}
+.res .mark.ok{color:var(--ok)} .res .mark.bad{color:var(--bad)}
+.res .w{font-size:20px;font-weight:700}
+.res .w .kj{font-weight:600;font-size:17px;margin-left:8px;opacity:.85}
+.res .m{font-size:14px;color:var(--muted)}
+.res .typed{font-size:13px;color:var(--bad)}
+.res button{font-size:20px;padding:4px 8px}
+
+/* signature badge */
+.sig{margin:34px auto 0;display:flex;align-items:center;justify-content:center;gap:11px;line-height:1;user-select:none}
+.logo{display:inline-flex;flex-direction:column;align-items:center;line-height:1;color:var(--bad);font-weight:800;font-size:19px;letter-spacing:.04em;border:2px solid var(--bad);border-radius:11px;padding:6px 15px 5px;background:rgba(255,255,255,.5)}
+.logo b{font-weight:900}
+.logo small{font-size:8px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;opacity:.72;margin-top:2px}
+.sig .yr{font-size:12px;font-weight:600;color:var(--muted)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo{background:transparent}}
+:root[data-theme="dark"] .logo{background:transparent}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand kj">単語めくり <small>Vocab Flip</small></div>
+  <div class="right"><span class="lesson" id="lessonlabel"></span><button id="btnSound">♪ ON</button></div>
+</header>
+
+<!-- ============================ HOME ============================ -->
+<section class="screen active" id="s-home">
+  <h2>Lessons</h2>
+  <p class="lede">Tap the lessons you want. Both modes use the same pick.</p>
+  <div class="lessonpick" id="lessonpick"></div>
+  <div class="count" id="wordcount"></div>
+  <div class="modes">
+    <button class="mode" id="btn-slides"><span class="ic">🎧</span><span><b>Slideshow</b><span>Words flip by in random order and get read aloud with their meaning. Just watch and listen.</span></span></button>
+    <button class="mode" id="btn-quiz"><span class="ic">⌨️</span><span><b>Quiz</b><span>See the English, type the word in hiragana or katakana. Ten words a round, graded at the end.</span></span></button>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="foot">Audio uses your device's Japanese voice. <button id="btn-test">Test voice</button> · <button id="btn-reset">Reset progress</button></div>
+</section>
+
+<!-- ============================ SLIDESHOW ============================ -->
+<section class="screen" id="s-slide">
+  <div class="slidebar">
+    <button class="btn quiet small" id="sl-close">✕ Close</button>
+    <button class="btn small" id="sl-sound" style="display:none">🔊 Tap to turn on sound</button>
+    <div class="slopts" id="slopts"></div>
+  </div>
+  <div class="flash" id="sl-card">
+    <span class="stamp" id="sl-stamp"></span>
+    <div class="fl-kana" id="sl-kana"></div>
+    <div class="fl-kanji kj" id="sl-kanji"></div>
+    <div class="fl-en" id="sl-en"></div>
+  </div>
+  <div class="counter" id="sl-count"></div>
+  <div class="slidefoot">
+    <button class="btn" id="sl-prev">‹ Back</button>
+    <button class="btn primary" id="sl-play">⏸ Pause</button>
+    <button class="btn" id="sl-next">Next ›</button>
+  </div>
+</section>
+
+<!-- ============================ QUIZ ============================ -->
+<section class="screen" id="s-quiz">
+  <div class="topbar">
+    <button class="btn quiet small" id="q-stop">Stop</button>
+    <div class="prog"><i id="q-prog"></i></div>
+    <span class="qinfo" id="q-info"></span>
+  </div>
+  <div class="prompt" id="q-prompt">
+    <span class="stamp" id="q-stamp"></span>
+    <div class="en" id="q-en"></div>
+    <div class="how">Type it in hiragana or katakana. Romaji turns into kana as you type; CAPITALS give katakana.</div>
+  </div>
+  <div class="typerow">
+    <input class="tin" id="q-input" type="text" lang="ja" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="ひらがな / カタカナ" aria-label="Your answer in kana">
+  </div>
+  <div class="qbtns" id="q-btns">
+    <button class="btn" id="q-hear">🔊 Hear it</button>
+    <button class="btn" id="q-dunno">I don't know</button>
+    <button class="btn primary" id="q-check">Check</button>
+  </div>
+  <div class="fb" id="q-fb"></div>
+  <div class="next" id="q-nextrow" style="display:none"><button class="btn primary" id="q-next">Next word</button></div>
+</section>
+
+<!-- ============================ RESULTS ============================ -->
+<section class="screen" id="s-done">
+  <h2>Round done</h2>
+  <div class="score" id="d-score"></div>
+  <p class="lede" id="d-note"></p>
+  <div class="row">
+    <button class="btn primary" id="d-again">Play another 10</button>
+    <button class="btn" id="d-retry">Retry the misses</button>
+    <button class="btn quiet" id="d-home">Home</button>
+  </div>
+  <div class="results" id="d-list"></div>
+</section>
+
+<div class="sig"><span class="logo"><span class="brand">ハインゼの<b>楽</b>しさ</span><small>Fun by Heinze</small></span><span class="yr">2026</span></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- ===== game-voice.js inlined (self-contained; no network needed).
+     Master copy lives at https://github.com/berlintintin/game-voice ===== -->
+<script>
+/* =========================================================================
+   game-voice.js — shared retro audio + Japanese voice for T-Money's games
+   =========================================================================
+   Classic script, no build step, no modules. Works from file://, GitHub
+   Pages, or any host. Include it BEFORE your game script:
+
+     <script src="../shared/game-voice.js"><\/script>
+
+   Then hit functions on window.GameVoice:
+
+     GameVoice.say("すごい！");            // 8-bit bleeps, then spoken Japanese
+     GameVoice.speak("こんにちは");        // spoken only, no bleeps
+     GameVoice.beep(880, .1);              // raw synth beep
+     GameVoice.sfx.snap();                 // preset: correct-answer arpeggio
+     GameVoice.sfx.wrong();                // preset: low buzz
+     GameVoice.sfx.fanfare();              // preset: level-clear fanfare
+     GameVoice.sfx.shoot();                // preset: pew
+     GameVoice.praise();                   // random praise -> {jp, en}, says it
+     GameVoice.oops();                     // random miss phrase -> {jp, en} (not spoken)
+     GameVoice.setEnabled(false);          // mute everything (also cancels speech)
+     GameVoice.enabled                     // current on/off state
+     GameVoice.bindToggle(buttonEl);       // wires a ♪ ON / ♪ OFF button for you
+
+   iOS/Safari note: audio contexts start SUSPENDED and only wake inside a
+   user gesture. This library self-registers unlock listeners on
+   touchstart/pointerdown/mousedown/keydown, so as long as the player has
+   tapped ANYTHING before your first sound, you're fine. For extra safety,
+   call GameVoice.unlock() inside your start-button handler.
+   ========================================================================= */
+(function () {
+  "use strict";
+
+  // ------------------------------ state ------------------------------
+  let AC = null;
+  let audioUnlocked = false;
+  let enabled = true;
+  let jaVoice = null;
+
+  // ------------------------------ unlock ------------------------------
+  // iOS/Safari start the AudioContext SUSPENDED — it only wakes inside a
+  // user gesture. (Speech synthesis is a separate system with its own rules.)
+  function unlock() {
+    try {
+      if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+      if (AC.state === "suspended") AC.resume();
+      if (!audioUnlocked) {
+        audioUnlocked = true;
+        const o = AC.createOscillator(), g = AC.createGain();
+        g.gain.value = 0.0001;
+        o.connect(g).connect(AC.destination);
+        o.start();
+        o.stop(AC.currentTime + 0.02);
+      }
+    } catch (e) { /* no audio available — degrade silently */ }
+  }
+  ["touchstart", "pointerdown", "mousedown", "keydown"].forEach(function (ev) {
+    window.addEventListener(ev, unlock, { passive: true });
+  });
+
+  // ------------------------------ synth ------------------------------
+  function beep(freq, dur, type, vol, when, slide) {
+    if (!enabled) return;
+    type = type || "square"; vol = vol == null ? 0.05 : vol;
+    when = when || 0; slide = slide || 0;
+    try {
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, AC.currentTime + when);
+      if (slide) o.frequency.exponentialRampToValueAtTime(
+        Math.max(40, freq + slide), AC.currentTime + when + dur);
+      g.gain.setValueAtTime(vol, AC.currentTime + when);
+      g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + when + dur);
+      o.connect(g).connect(AC.destination);
+      o.start(AC.currentTime + when);
+      o.stop(AC.currentTime + when + dur + 0.02);
+    } catch (e) { }
+  }
+
+  // ------------------------------ sfx presets ------------------------------
+  const sfx = {
+    snap:    function () { beep(523, .09, "square", .05); beep(659, .09, "square", .05, .08); beep(784, .14, "square", .05, .16); },
+    wrong:   function () { beep(140, .3, "sawtooth", .05, 0, -60); },
+    fanfare: function () { [523, 659, 784, 1047].forEach(function (f, i) { beep(f, .12, "square", .05, i * .09); }); },
+    shoot:   function () { beep(880, .09, "square", .04, 0, -600); },
+    chip:    function () { beep(300, .05, "square", .04); },
+    pickup:  function (n) { beep(900 + (n || 0) * 8, .06, "sine", .02); },
+  };
+
+  // ------------------------------ speech ------------------------------
+  function pickVoice() {
+    if (!window.speechSynthesis) return;
+    const vs = speechSynthesis.getVoices();
+    jaVoice = vs.find(function (v) { return v.lang === "ja-JP" && /kyoko|otoya|google/i.test(v.name); })
+           || vs.find(function (v) { return v.lang && v.lang.indexOf("ja") === 0; })
+           || null;
+  }
+  if (window.speechSynthesis) {
+    pickVoice();
+    speechSynthesis.onvoiceschanged = pickVoice; // voice list loads async
+  }
+
+  // Spoken only — no bleeps.
+  function speak(text, opts) {
+    if (!enabled || !window.speechSynthesis) return;
+    opts = opts || {};
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = opts.lang || "ja-JP";
+      u.pitch = opts.pitch == null ? 1.0 : opts.pitch;
+      u.rate = opts.rate == null ? 1.0 : opts.rate;
+      if (u.lang === "ja-JP" && jaVoice) u.voice = jaVoice;
+      speechSynthesis.speak(u);
+    } catch (e) { }
+  }
+
+  // Retro "voice": square-wave syllable bleeps (the 8-bit part), then the
+  // words spoken with a Japanese voice (the 16-bit part).
+  function say(text, opts) {
+    if (!enabled) return;
+    const sylls = Math.min(8, text.replace(/[ーっ！!。〜]/g, "").length);
+    for (let i = 0; i < sylls; i++) {
+      const f = 520 + Math.random() * 380 + (i === sylls - 1 ? -160 : 0);
+      beep(f, .08, "square", .05, i * 0.085);
+    }
+    setTimeout(function () { speak(text, opts); }, sylls * 85 + 60);
+  }
+
+  // ------------------------------ phrase banks ------------------------------
+  const PRAISE = [
+    ["すばらしい！", "Subarashii! — Magnificent!"],
+    ["いちばん！", "Ichiban! — You're number one!"],
+    ["かんぺき！", "Kanpeki! — Flawless!"],
+    ["よくできました！", "Yoku dekimashita! — Well done!"],
+    ["てんさい！", "Tensai! — Genius!"],
+    ["そのちょうし！", "Sono choushi! — Keep it up!"],
+    ["やったね！", "Yatta ne! — You did it!"],
+    ["すごい！", "Sugoi! — Incredible!"],
+    ["せいかい！", "Seikai! — Correct!"],
+    ["おみごと！", "O-migoto! — Bravo!"],
+    ["さすが！", "Sasuga! — That's the stuff!"],
+    ["いいぞ、いいぞ！", "Ii zo, ii zo! — Yeah, keep going!"],
+    ["ナイスショット！", "Naisu shotto! — Nice shot!"],
+    ["かっこいい！", "Kakkoii! — So cool!"],
+    ["しんじられない！", "Shinjirarenai! — Unbelievable!"],
+  ];
+  const OOPS = [
+    ["ちがうよ〜", "Chigau yo — not that one"],
+    ["もういちど！", "Mō ichido! — one more try!"],
+    ["おしい！", "Oshii! — so close!"],
+  ];
+  function pick(bank) { return bank[Math.floor(Math.random() * bank.length)]; }
+
+  // Random praise, spoken with bleeps. Returns {jp, en} so you can show
+  // your own bubble/toast. Pass {silent:true} to skip the voice.
+  function praise(opts) {
+    const p = pick(PRAISE);
+    if (!(opts && opts.silent)) say(p[0]);
+    return { jp: p[0], en: p[1] };
+  }
+  // Miss phrases return only — a spoken scold on every miss gets old fast.
+  // Call GameVoice.say(o.jp) yourself if a given game wants it audible.
+  function oops() {
+    const o = pick(OOPS);
+    return { jp: o[0], en: o[1] };
+  }
+
+  // ------------------------------ enable / toggle ------------------------------
+  function setEnabled(on) {
+    enabled = !!on;
+    if (!enabled && window.speechSynthesis) speechSynthesis.cancel();
+  }
+  // Wires up a mute button: sets its label, flips state on click.
+  function bindToggle(btn, onLabel, offLabel) {
+    onLabel = onLabel || "♪ ON"; offLabel = offLabel || "♪ OFF";
+    btn.textContent = enabled ? onLabel : offLabel;
+    btn.addEventListener("click", function () {
+      setEnabled(!enabled);
+      btn.textContent = enabled ? onLabel : offLabel;
+    });
+  }
+
+  // ------------------------------ export ------------------------------
+  window.GameVoice = {
+    unlock: unlock,
+    beep: beep,
+    sfx: sfx,
+    speak: speak,
+    say: say,
+    praise: praise,
+    oops: oops,
+    PRAISE: PRAISE,
+    OOPS: OOPS,
+    setEnabled: setEnabled,
+    bindToggle: bindToggle,
+    get enabled() { return enabled; },
+  };
+})();
+</script>
+
+<!-- ===== Vocabulary — read straight from Doodle Tango's lesson files.
+     Put this page in the same folder as Doodle Tango's index.html. It loads
+     lesson_1.js, lesson_2.js, … in order until the first missing number, so
+     dropping in lesson_14.js makes lesson 14 show up here automatically.
+     Each lesson file registers window.GENKI_LESSONS[N] = [ {kana, kanji?, en, …} ].
+     The doodle art in those files is simply ignored here. ===== -->
+<script>
+"use strict";
+window.GENKI_LESSONS = window.GENKI_LESSONS || {};
+
+// VOCAB_BY_LESSON[N] = [ [kana, kanji or "", English], … ] — the shape the
+// game code below expects. Filled in once the lesson files have loaded.
+const VOCAB_BY_LESSON = {};
+
+const HIGHEST_LESSON_TO_LOOK_FOR = 40;
+
+// Add a <script src="..."> tag and wait for it. Script tags (unlike fetch)
+// work when the page is opened straight from disk (file://) too.
+function loadLessonScript(url) {
+  return new Promise(resolve => {
+    const scriptTag = document.createElement("script");
+    scriptTag.src = url;
+    scriptTag.onload = () => resolve(true);
+    scriptTag.onerror = () => { scriptTag.remove(); resolve(false); };
+    document.head.appendChild(scriptTag);
+  });
+}
+
+// Load lesson files one by one, stopping at the first gap (same rule as Doodle Tango).
+// Resolves with the list of lesson numbers that were found.
+const lessonsReady = (async function loadAllLessons() {
+  const lessonsFound = [];
+  for (let lessonNumber = 1; lessonNumber <= HIGHEST_LESSON_TO_LOOK_FOR; lessonNumber++) {
+    const alreadyThere = Array.isArray(window.GENKI_LESSONS[lessonNumber]);
+    const loaded = alreadyThere || await loadLessonScript("lesson_" + lessonNumber + ".js");
+    if (!loaded || !Array.isArray(window.GENKI_LESSONS[lessonNumber])) break;
+
+    VOCAB_BY_LESSON[lessonNumber] = window.GENKI_LESSONS[lessonNumber]
+      .filter(entry => entry && entry.kana && entry.en)
+      .map(entry => [entry.kana, entry.kanji || "", entry.en]);
+    lessonsFound.push(lessonNumber);
+  }
+  return lessonsFound;
+})();
+</script>
+
+<script>
+"use strict";
+
+/* =========================================================================
+   1. Small helpers
+   ========================================================================= */
+const $ = selector => document.querySelector(selector);
+const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
+
+function shuffle(list) {
+  const copy = list.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function escapeHtml(text) {
+  return String(text).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+}
+
+let toastTimer = null;
+function toast(message) {
+  const el = $("#toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+function showScreen(screenId) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === screenId));
+  window.scrollTo(0, 0);
+}
+
+/* =========================================================================
+   2. Saved settings and progress (localStorage — private to this browser).
+      Everything is wrapped in try/catch so the game still runs if storage
+      is blocked or empty.
+   ========================================================================= */
+const STORAGE_KEY = "vocabFlip.v1";
+let ALL_LESSONS = []; // filled in by startWhenLessonsLoad() at the bottom
+
+function loadSaved() {
+  const defaults = { lessons: [], voiceRate: 1, slidePace: 1, rounds: [], missCounts: {} };
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+    return saved ? Object.assign(defaults, saved) : defaults;
+  } catch (err) {
+    return defaults;
+  }
+}
+let saved = loadSaved();
+function persist() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch (err) { /* storage unavailable — fine */ }
+}
+
+/* =========================================================================
+   3. Word list for the chosen lessons.
+      A word that appears in two lessons (いす in L2 and L4, say) is kept once,
+      under the earlier lesson.
+   ========================================================================= */
+function wordKey(word) { return word.kana + "|" + word.kanji; }
+
+function wordsForLessons(lessonNumbers) {
+  const seen = new Set();
+  const words = [];
+  lessonNumbers.slice().sort((a, b) => a - b).forEach(lesson => {
+    (VOCAB_BY_LESSON[lesson] || []).forEach(([kana, kanji, english]) => {
+      const word = { kana, kanji, english, lesson };
+      if (seen.has(wordKey(word))) return;
+      seen.add(wordKey(word));
+      words.push(word);
+    });
+  });
+  return words;
+}
+
+/* =========================================================================
+   4. Kana tools
+      • romajiToKana — live conversion while typing ("sensei" → せんせい,
+        capitals → katakana, "-" → ー, "nn" or n+consonant → ん).
+      • answersMatch — compares answers loosely: katakana and hiragana count
+        as the same, 〜 and spaces are ignored, and long vowels are forgiven
+        (カレー = かれえ, せんせい = せんせえ).
+   ========================================================================= */
+const ROMAJI_TO_HIRAGANA = {
+  a:"あ", i:"い", u:"う", e:"え", o:"お",
+  ka:"か", ki:"き", ku:"く", ke:"け", ko:"こ", ga:"が", gi:"ぎ", gu:"ぐ", ge:"げ", go:"ご",
+  sa:"さ", si:"し", shi:"し", su:"す", se:"せ", so:"そ", za:"ざ", zi:"じ", ji:"じ", zu:"ず", ze:"ぜ", zo:"ぞ",
+  ta:"た", ti:"ち", chi:"ち", tu:"つ", tsu:"つ", te:"て", to:"と", da:"だ", di:"ぢ", du:"づ", de:"で", do:"ど",
+  na:"な", ni:"に", nu:"ぬ", ne:"ね", no:"の",
+  ha:"は", hi:"ひ", hu:"ふ", fu:"ふ", he:"へ", ho:"ほ", ba:"ば", bi:"び", bu:"ぶ", be:"べ", bo:"ぼ",
+  pa:"ぱ", pi:"ぴ", pu:"ぷ", pe:"ぺ", po:"ぽ",
+  ma:"ま", mi:"み", mu:"む", me:"め", mo:"も",
+  ya:"や", yu:"ゆ", yo:"よ",
+  ra:"ら", ri:"り", ru:"る", re:"れ", ro:"ろ",
+  wa:"わ", wo:"を", wi:"うぃ", we:"うぇ", vu:"ゔ",
+  kya:"きゃ", kyu:"きゅ", kyo:"きょ", gya:"ぎゃ", gyu:"ぎゅ", gyo:"ぎょ",
+  sha:"しゃ", shu:"しゅ", sho:"しょ", she:"しぇ", sya:"しゃ", syu:"しゅ", syo:"しょ",
+  ja:"じゃ", ju:"じゅ", jo:"じょ", je:"じぇ", jya:"じゃ", jyu:"じゅ", jyo:"じょ", zya:"じゃ", zyu:"じゅ", zyo:"じょ",
+  cha:"ちゃ", chu:"ちゅ", cho:"ちょ", che:"ちぇ", tya:"ちゃ", tyu:"ちゅ", tyo:"ちょ",
+  nya:"にゃ", nyu:"にゅ", nyo:"にょ", hya:"ひゃ", hyu:"ひゅ", hyo:"ひょ",
+  bya:"びゃ", byu:"びゅ", byo:"びょ", pya:"ぴゃ", pyu:"ぴゅ", pyo:"ぴょ",
+  mya:"みゃ", myu:"みゅ", myo:"みょ", rya:"りゃ", ryu:"りゅ", ryo:"りょ",
+  fa:"ふぁ", fi:"ふぃ", fe:"ふぇ", fo:"ふぉ", thi:"てぃ", dhi:"でぃ",
+  xa:"ぁ", xi:"ぃ", xu:"ぅ", xe:"ぇ", xo:"ぉ", la:"ぁ", li:"ぃ", lu:"ぅ", le:"ぇ", lo:"ぉ",
+  xya:"ゃ", xyu:"ゅ", xyo:"ょ", xtu:"っ", xtsu:"っ", ltu:"っ"
+};
+
+const isVowelOrY = ch => /[aiueoy]/.test(ch);
+const isDoublableConsonant = ch => /[bcdfghjkmpqrstvwxz]/.test(ch);
+
+function hiraganaToKatakana(text) {
+  return text.replace(/[\u3041-\u3096]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
+}
+function katakanaToHiragana(text) {
+  return text.replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+}
+
+/* finishing = true converts a trailing lone "n" to ん (used when grading).
+   While typing we leave it, because the next letter might make it な, に, … */
+function romajiToKana(text, finishing) {
+  let output = "";
+  let position = 0;
+  while (position < text.length) {
+    const ch = text[position];
+    if (!/[A-Za-z\-']/.test(ch)) { output += ch; position++; continue; }
+    if (ch === "-") { output += "ー"; position++; continue; }
+    if (ch === "'") { position++; continue; }
+
+    const wantsKatakana = ch !== ch.toLowerCase();
+    const addKana = kana => { output += wantsKatakana ? hiraganaToKatakana(kana) : kana; };
+    const rest = text.slice(position).toLowerCase();
+
+    // Double consonant: "kk", "tt", "pp" … → small っ, then carry on from the second letter.
+    if (rest.length >= 2 && rest[0] === rest[1] && isDoublableConsonant(rest[0])) {
+      addKana("っ"); position++; continue;
+    }
+    // The letter n: becomes ん before a consonant, as "nn", as "n'", or at the very end when finishing.
+    if (rest[0] === "n") {
+      const following = rest[1];
+      if (following === "'") { addKana("ん"); position += 2; continue; }
+      if (following === "n") {
+        // "nna" → んな ("konnichiwa"), but "nn" + consonant/end → ん
+        const afterThat = rest[2];
+        if (afterThat && isVowelOrY(afterThat)) { addKana("ん"); position += 1; }
+        else { addKana("ん"); position += 2; }
+        continue;
+      }
+      if (following && !isVowelOrY(following)) { addKana("ん"); position++; continue; }
+      if (!following) {
+        if (finishing) addKana("ん"); else output += ch;
+        position++; continue;
+      }
+    }
+    // Longest match first: "tsu" before "ts", "kya" before "ky".
+    let matched = false;
+    for (const length of [4, 3, 2, 1]) {
+      const chunk = rest.slice(0, length);
+      if (chunk.length === length && ROMAJI_TO_HIRAGANA[chunk]) {
+        addKana(ROMAJI_TO_HIRAGANA[chunk]);
+        position += length;
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) { output += ch; position++; } // still mid-syllable, leave the letter
+  }
+  return output;
+}
+
+/* Which vowel each hiragana ends in — used to forgive long-vowel spellings. */
+const VOWEL_OF = {};
+Object.entries(ROMAJI_TO_HIRAGANA).forEach(([romaji, kana]) => {
+  const lastKana = kana[kana.length - 1];
+  const vowel = romaji[romaji.length - 1];
+  if ("aiueo".includes(vowel) && !(lastKana in VOWEL_OF)) VOWEL_OF[lastKana] = vowel;
+});
+Object.assign(VOWEL_OF, { "ゃ": "a", "ゅ": "u", "ょ": "o", "ぁ": "a", "ぃ": "i", "ぅ": "u", "ぇ": "e", "ぉ": "o" });
+const VOWEL_KANA = { a: "あ", i: "い", u: "う", e: "え", o: "お" };
+
+/* Turn any answer into a plain, forgiving hiragana form for comparing. */
+function comparableForm(text) {
+  let kana = katakanaToHiragana(romajiToKana(text.trim(), true));
+  kana = kana.replace(/[〜～~\s・、。()（）]/g, "");
+  let result = "";
+  for (const ch of kana) {
+    const previous = result[result.length - 1];
+    const previousVowel = previous && VOWEL_OF[previous];
+    if (ch === "ー" && previousVowel) { result += VOWEL_KANA[previousVowel]; continue; }
+    // おう ≈ おお and えい ≈ ええ, so either long-vowel spelling counts.
+    if (ch === "う" && previousVowel === "o") { result += "お"; continue; }
+    if (ch === "い" && previousVowel === "e") { result += "え"; continue; }
+    result += ch;
+  }
+  return result;
+}
+
+/* Every spelling that counts as right for this word: its kana (both halves of
+   "どっち／どちら"), its kanji, and any other word with the exact same English
+   (so "cafe" accepts both カフェ and きっさてん). */
+function acceptedAnswers(word) {
+  const accepted = new Set();
+  const addKanaVariants = kana => kana.split(/[／\/]/).forEach(v => accepted.add(comparableForm(v)));
+  addKanaVariants(word.kana);
+  if (word.kanji) accepted.add(word.kanji.replace(/[〜～]/g, ""));
+  const sameEnglish = word.english.trim().toLowerCase();
+  ALL_WORDS.forEach(other => {
+    if (other.english.trim().toLowerCase() === sameEnglish) addKanaVariants(other.kana);
+  });
+  accepted.delete("");
+  return accepted;
+}
+
+function isCorrect(typed, word) {
+  const accepted = acceptedAnswers(word);
+  const typedTrimmed = typed.trim().replace(/[〜～]/g, "");
+  return accepted.has(comparableForm(typed)) || accepted.has(typedTrimmed);
+}
+
+/* =========================================================================
+   5. Speech
+      Japanese is read from the kana (more reliable than kanji for the voice).
+      English is tidied so "[counter for flat objects]" or "to ask (person に)"
+      read naturally.
+   ========================================================================= */
+function speakableKana(kana) {
+  return kana.split(/[／\/]/)[0].replace(/[〜～]/g, "");
+}
+function speakableEnglish(english) {
+  return english
+    .replace(/\([^)]*[\u3040-\u30ff\u4e00-\u9fff][^)]*\)/g, "") // drop notes with Japanese in them
+    .replace(/[\[\]]/g, "")
+    .replace(/\.\.\.|…/g, " ")
+    .replace(/\s*[;\/]\s*/g, " or ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+let japaneseVoice = null;
+function pickJapaneseVoice() {
+  try {
+    const voices = speechSynthesis.getVoices().filter(v => /^ja/i.test(v.lang));
+    japaneseVoice = voices.find(v => /Kyoko|O-ren|Google 日本語|Nanami|Ayumi|Haruka|Otoya/i.test(v.name)) || voices[0] || null;
+  } catch (err) { /* no speech support */ }
+}
+if ("speechSynthesis" in window) {
+  pickJapaneseVoice();
+  try { speechSynthesis.addEventListener("voiceschanged", pickJapaneseVoice); } catch (err) {}
+}
+
+function makeUtterance(text, lang, rate) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  utterance.rate = rate;
+  if (lang === "ja-JP" && japaneseVoice) utterance.voice = japaneseVoice;
+  return utterance;
+}
+function stopSpeaking() {
+  try { if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel(); } catch (err) {}
+}
+
+/* Say one Japanese word right now (quiz pronunciation button, reveals). */
+function sayWord(word) {
+  if (!GameVoice.enabled || !("speechSynthesis" in window)) return;
+  stopSpeaking();
+  try { speechSynthesis.speak(makeUtterance(speakableKana(word.kana), "ja-JP", japaneseRate())); } catch (err) {}
+}
+
+/* Voice speed and card time — two separate dials, same as Yomikata. */
+// 0.35 is the slowest: about 3× slower than default for voice, ~14s per card.
+const SPEED_MIN = 0.35, SPEED_MAX = 2.0;
+const voiceSpeed   = () => clamp(Number(saved.voiceRate) || 1, SPEED_MIN, SPEED_MAX);
+const slideSpeed   = () => clamp(Number(saved.slidePace) || 1, SPEED_MIN, SPEED_MAX);
+const japaneseRate = () => clamp(0.85 * voiceSpeed(), 0.3, 1.9);
+const englishRate  = () => clamp(1.0 * voiceSpeed(), 0.35, 2);
+const cardMs       = () => clamp(4800 / slideSpeed(), 1500, 15000); // minimum time a card stays up
+const quietBeatMs  = () => clamp(1000 / slideSpeed(), 200, 3500);   // pause after the voice finishes
+const voiceLabel   = () => { const v = voiceSpeed(); return v < 0.55 ? "very slow" : v < 0.8 ? "deliberate" : v > 1.45 ? "quick" : v > 1.1 ? "brisk" : "natural"; };
+
+GameVoice.bindToggle($("#btnSound"));
+$("#btnSound").addEventListener("click", () => { if (!GameVoice.enabled) stopSpeaking(); });
+
+/* =========================================================================
+   6. Home screen — lesson picker, word count, stats
+   ========================================================================= */
+let ALL_WORDS = []; // every word from every lesson file (used to accept synonyms in the quiz)
+
+function chosenWords() { return wordsForLessons(saved.lessons); }
+
+/* "1–4, 7, 10–13" style label for the header. */
+function describeLessons(lessons) {
+  const sorted = lessons.slice().sort((a, b) => a - b);
+  const parts = [];
+  for (let i = 0; i < sorted.length; i++) {
+    let end = i;
+    while (end + 1 < sorted.length && sorted[end + 1] === sorted[end] + 1) end++;
+    parts.push(end > i ? `${sorted[i]}–${sorted[end]}` : `${sorted[i]}`);
+    i = end;
+  }
+  return "Genki · L" + parts.join(", ");
+}
+
+function renderHome() {
+  const allOn = saved.lessons.length === ALL_LESSONS.length;
+  $("#lessonpick").innerHTML =
+    ALL_LESSONS.map(n => `<button class="lp${saved.lessons.includes(n) ? " on" : ""}" data-lesson="${n}" aria-pressed="${saved.lessons.includes(n)}">${n}</button>`).join("") +
+    `<button class="lp alt" id="lp-all">${allOn ? "Clear" : "All"}</button>`;
+
+  $("#lessonpick").querySelectorAll("[data-lesson]").forEach(chip => {
+    chip.onclick = () => {
+      const lesson = Number(chip.dataset.lesson);
+      saved.lessons = saved.lessons.includes(lesson) ? saved.lessons.filter(n => n !== lesson) : saved.lessons.concat(lesson);
+      persist(); renderHome();
+    };
+  });
+  $("#lp-all").onclick = () => { saved.lessons = allOn ? [] : ALL_LESSONS.slice(); persist(); renderHome(); };
+
+  const count = chosenWords().length;
+  const withKanji = chosenWords().filter(w => w.kanji).length;
+  $("#wordcount").innerHTML = count
+    ? `<b>${count}</b> words, ${withKanji} with kanji`
+    : "Pick at least one lesson to start.";
+  $("#btn-slides").disabled = $("#btn-quiz").disabled = count === 0;
+  $("#lessonlabel").textContent = saved.lessons.length ? describeLessons(saved.lessons) : "";
+
+  const rounds = saved.rounds || [];
+  if (rounds.length) {
+    const best = Math.max(...rounds.map(r => Math.round(100 * r.score / r.total)));
+    const recent = rounds.slice(-5).map(r => `${r.score}/${r.total}`).join("  ");
+    $("#stats").innerHTML = `<span>Rounds <b>${rounds.length}</b></span><span>Best <b>${best}%</b></span><span>Recent <b>${recent}</b></span>`;
+  } else {
+    $("#stats").innerHTML = "";
+  }
+}
+
+$("#btn-test").onclick = () => sayWord({ kana: "たんごめくり、はじめましょう" });
+$("#btn-reset").onclick = () => {
+  if (!confirm("Erase your quiz history and missed-word tracking?")) return;
+  saved.rounds = []; saved.missCounts = {}; persist(); renderHome(); toast("Progress reset");
+};
+
+/* =========================================================================
+   7. Slideshow — random order, reads the kana, then "means …" in English.
+      The English line fades in as it's spoken, so there's a beat to recall it.
+   ========================================================================= */
+let slideshow = null; // { order, index, paused, timers, token }
+let speechHeard = false; // flips true once any utterance actually starts (iOS check)
+
+function clearSlideTimers() {
+  if (!slideshow) return;
+  slideshow.timers.forEach(clearTimeout);
+  slideshow.timers = [];
+}
+
+function renderSlideOptions() {
+  $("#slopts").innerHTML = `
+    <div class="slrow">
+      <span class="sllab">Voice</span><span class="slend">🐢</span>
+      <input type="range" id="slvoice" min="${SPEED_MIN}" max="${SPEED_MAX}" step="0.05" value="${voiceSpeed()}" aria-label="Voice speed">
+      <span class="slend">🐇</span>
+      <span class="pacenum" id="slvoicenum">${voiceSpeed().toFixed(2)}× <i>${voiceLabel()}</i></span>
+    </div>
+    <div class="slrow">
+      <span class="sllab">Cards</span><span class="slend">🐢</span>
+      <input type="range" id="slpace" min="${SPEED_MIN}" max="${SPEED_MAX}" step="0.05" value="${slideSpeed()}" aria-label="Time on each card">
+      <span class="slend">🐇</span>
+      <span class="pacenum" id="slpacenum">${(cardMs() / 1000).toFixed(1)}s <i>per card</i></span>
+    </div>`;
+  const voiceSlider = $("#slvoice"), paceSlider = $("#slpace");
+  voiceSlider.oninput = () => { saved.voiceRate = Number(voiceSlider.value); $("#slvoicenum").innerHTML = `${voiceSpeed().toFixed(2)}× <i>${voiceLabel()}</i>`; };
+  paceSlider.oninput  = () => { saved.slidePace = Number(paceSlider.value); $("#slpacenum").innerHTML = `${(cardMs() / 1000).toFixed(1)}s <i>per card</i>`; };
+  voiceSlider.onchange = paceSlider.onchange = persist;
+}
+
+/* Fill a flashcard element set with one word. */
+function fillCard(word, kanaEl, kanjiEl, stampEl) {
+  // Kana sets the size; the kanji line is drawn at about 60% of it.
+  kanaEl.parentElement.style.setProperty("--len", Math.max(word.kana.length, (word.kanji || "").length / 1.6, 3));
+  kanaEl.textContent = word.kana;
+  kanjiEl.textContent = word.kanji || "";
+  stampEl.textContent = `第${word.lesson}課`;
+}
+
+function startSlideshow() {
+  const words = chosenWords();
+  if (!words.length) return;
+  $("#sl-sound").style.display = "none";
+  slideshow = { words, order: shuffle(words), index: 0, paused: false, timers: [], token: 0 };
+  $("#sl-play").textContent = "⏸ Pause";
+  renderSlideOptions();
+  showScreen("s-slide");
+  showSlide();
+}
+
+function showSlide() {
+  if (!slideshow) return;
+  clearSlideTimers();
+  stopSpeaking();
+  if (slideshow.index >= slideshow.order.length) { slideshow.order = shuffle(slideshow.words); slideshow.index = 0; }
+  if (slideshow.index < 0) slideshow.index = slideshow.order.length - 1;
+
+  const word = slideshow.order[slideshow.index];
+  const token = ++slideshow.token; // any older timers/speech for a previous card are ignored
+  const card = $("#sl-card"), englishEl = $("#sl-en");
+
+  fillCard(word, $("#sl-kana"), $("#sl-kanji"), $("#sl-stamp"));
+  englishEl.textContent = word.english;
+  englishEl.classList.remove("show");
+  card.classList.remove("in"); void card.offsetWidth; card.classList.add("in");
+  $("#sl-count").textContent = `${slideshow.index + 1} / ${slideshow.order.length}`;
+
+  if (slideshow.paused) { englishEl.classList.add("show"); return; }
+
+  const stillCurrent = () => slideshow && slideshow.token === token && !slideshow.paused;
+  const shownAt = Date.now();
+  let advanced = false;
+  const advance = () => {
+    if (advanced || !stillCurrent()) return;
+    advanced = true;
+    slideshow.index++;
+    showSlide();
+  };
+  // Never move on before the card's minimum time is up.
+  const advanceAfter = extraMs => {
+    const remaining = Math.max(extraMs, cardMs() - (Date.now() - shownAt));
+    slideshow.timers.push(setTimeout(advance, remaining));
+  };
+  const revealEnglish = () => { if (stillCurrent()) englishEl.classList.add("show"); };
+
+  const kanaLine = speakableKana(word.kana);
+  const englishLine = "means " + speakableEnglish(word.english);
+
+  // Rough guess at how long the Japanese takes — used to reveal the English
+  // if the speech events never fire (sound off, or iOS being stubborn).
+  const japaneseGuessMs = Math.max(600, kanaLine.length * 150 / voiceSpeed());
+  slideshow.timers.push(setTimeout(revealEnglish, japaneseGuessMs + 500));
+
+  if (!GameVoice.enabled || !("speechSynthesis" in window)) {
+    advanceAfter(0);
+    return;
+  }
+
+  slideshow.timers.push(setTimeout(() => {
+    if (!stillCurrent()) return;
+    try {
+      speechSynthesis.resume();
+      const japanese = makeUtterance(kanaLine, "ja-JP", japaneseRate());
+      const english = makeUtterance(englishLine, "en-US", englishRate());
+      japanese.onstart = () => { speechHeard = true; $("#sl-sound").style.display = "none"; };
+      english.onstart = revealEnglish;
+      english.onend = () => { if (stillCurrent()) advanceAfter(quietBeatMs()); };
+      speechSynthesis.speak(japanese);
+      speechSynthesis.speak(english);
+    } catch (err) { advanceAfter(0); }
+    // If nothing has been heard yet, offer a tap — iOS only allows speech from a tap.
+    slideshow.timers.push(setTimeout(() => {
+      if (stillCurrent() && !speechHeard && GameVoice.enabled) $("#sl-sound").style.display = "";
+    }, 1800));
+  }, 160));
+
+  // Safety net: onend is unreliable on iOS, so estimate the whole line and move on anyway.
+  const wholeLineGuessMs = japaneseGuessMs + englishLine.length * 70 / voiceSpeed();
+  slideshow.timers.push(setTimeout(advance, Math.max(cardMs(), wholeLineGuessMs + quietBeatMs()) + 1500));
+}
+
+function pauseSlideshow(paused) {
+  if (!slideshow) return;
+  slideshow.paused = paused;
+  $("#sl-play").textContent = paused ? "▶ Play" : "⏸ Pause";
+  if (paused) { clearSlideTimers(); stopSpeaking(); $("#sl-en").classList.add("show"); }
+  else showSlide();
+}
+
+function closeSlideshow() {
+  clearSlideTimers(); stopSpeaking(); slideshow = null;
+  renderHome(); showScreen("s-home");
+}
+
+$("#btn-slides").onclick = () => { GameVoice.unlock(); startSlideshow(); };
+$("#sl-close").onclick = closeSlideshow;
+$("#sl-play").onclick = () => pauseSlideshow(!slideshow.paused);
+$("#sl-next").onclick = () => { if (!slideshow) return; slideshow.index++; showSlide(); };
+$("#sl-prev").onclick = () => { if (!slideshow) return; slideshow.index--; showSlide(); };
+$("#sl-sound").onclick = () => {
+  // Called straight from a tap, which iOS always lets speak.
+  speechHeard = false;
+  if (!GameVoice.enabled) {
+    GameVoice.setEnabled(true);
+    $("#btnSound").textContent = "♪ ON";
+  }
+  if (slideshow) { slideshow.paused = false; $("#sl-play").textContent = "⏸ Pause"; }
+  try { speechSynthesis.cancel(); speechSynthesis.speak(makeUtterance(" ", "en-US", 1)); } catch (err) {}
+  showSlide();
+};
+// Pause when the tab is hidden so it doesn't keep talking in the background.
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && slideshow && !slideshow.paused) pauseSlideshow(true);
+});
+
+/* =========================================================================
+   8. Quiz — English shown, type the kana. Ten words a round.
+      Words you've missed before are more likely to come up again.
+   ========================================================================= */
+const ROUND_SIZE = 10;
+let quiz = null; // { words, index, results, answered }
+
+function pickRoundWords(pool) {
+  // Weighted pick without repeats: each past miss makes a word 2× more likely.
+  const candidates = pool.map(word => ({ word, weight: 1 + 2 * (saved.missCounts[wordKey(word)] || 0) }));
+  const picked = [];
+  while (picked.length < ROUND_SIZE && candidates.length) {
+    const total = candidates.reduce((sum, c) => sum + c.weight, 0);
+    let roll = Math.random() * total;
+    let chosenIndex = 0;
+    for (; chosenIndex < candidates.length - 1; chosenIndex++) {
+      roll -= candidates[chosenIndex].weight;
+      if (roll <= 0) break;
+    }
+    picked.push(candidates.splice(chosenIndex, 1)[0].word);
+  }
+  return picked;
+}
+
+function startQuiz(specificWords) {
+  const words = specificWords || pickRoundWords(chosenWords());
+  if (!words.length) return;
+  quiz = { words: shuffle(words), index: 0, results: [], answered: false };
+  showScreen("s-quiz");
+  showQuestion();
+}
+
+function showQuestion() {
+  const word = quiz.words[quiz.index];
+  const correctSoFar = quiz.results.filter(r => r.correct).length;
+  quiz.answered = false;
+
+  $("#q-prog").style.width = `${100 * quiz.index / quiz.words.length}%`;
+  $("#q-info").textContent = `${quiz.index + 1} / ${quiz.words.length} · ✓ ${correctSoFar}`;
+  $("#q-en").textContent = word.english;
+  $("#q-stamp").textContent = `第${word.lesson}課`;
+
+  const input = $("#q-input");
+  input.value = "";
+  input.disabled = false;
+  input.className = "tin";
+  $("#q-fb").className = "fb";
+  $("#q-fb").innerHTML = "";
+  $("#q-btns").style.display = "";
+  $("#q-nextrow").style.display = "none";
+  input.focus();
+}
+
+// Live romaji → kana while typing. Skipped mid-IME so a Japanese keyboard works normally.
+let composingWithIme = false;
+$("#q-input").addEventListener("compositionstart", () => { composingWithIme = true; });
+$("#q-input").addEventListener("compositionend", () => { composingWithIme = false; });
+$("#q-input").addEventListener("input", event => {
+  if (composingWithIme || event.isComposing) return;
+  const input = event.target;
+  const converted = romajiToKana(input.value, false);
+  if (converted !== input.value) {
+    input.value = converted;
+    input.setSelectionRange(converted.length, converted.length);
+  }
+});
+
+function kanaWithKanjiHtml(word) {
+  return `${escapeHtml(word.kana)}${word.kanji ? `<span class="kj">${escapeHtml(word.kanji)}</span>` : ""}`;
+}
+
+function finishQuestion(outcome) {
+  // outcome: "right" | "wrong" | "skipped"
+  if (quiz.answered) return;
+  quiz.answered = true;
+  const word = quiz.words[quiz.index];
+  const input = $("#q-input");
+  const typed = romajiToKana(input.value, true).trim();
+  const key = wordKey(word);
+  const feedback = $("#q-fb");
+
+  quiz.results.push({ word, correct: outcome === "right", typed: outcome === "wrong" ? typed : "" });
+  input.disabled = true;
+  input.value = typed;
+
+  if (outcome === "right") {
+    input.classList.add("right");
+    saved.missCounts[key] = Math.max(0, (saved.missCounts[key] || 0) - 1);
+    if (!saved.missCounts[key]) delete saved.missCounts[key];
+    const praise = GameVoice.praise({ silent: true });
+    GameVoice.sfx.snap();
+    // Note the textbook spelling when a looser spelling was accepted (せんせえ → せんせい).
+    const exact = word.kana.split(/[／\/]/).map(v => v.replace(/[〜～]/g, ""));
+    const typedHiragana = katakanaToHiragana(typed);
+    const spelledExactly = exact.some(v => katakanaToHiragana(v) === typedHiragana) || typed === (word.kanji || "").replace(/[〜～]/g, "");
+    feedback.className = "fb show ok";
+    feedback.innerHTML = `<div class="head">${praise.jp}<small>${escapeHtml(praise.en)}</small></div>
+      <div class="ans">${kanaWithKanjiHtml(word)}</div>
+      ${spelledExactly ? "" : `<div class="note">Counted — the book spells it ${escapeHtml(word.kana)}.</div>`}`;
+    sayWord(word);
+    setTimeout(() => { if (quiz && quiz.answered) GameVoice.say(praise.jp); }, Math.round(speakableKana(word.kana).length * 170 / voiceSpeed()) + 500);
+  } else {
+    saved.missCounts[key] = (saved.missCounts[key] || 0) + 1;
+    if (outcome === "wrong") {
+      input.classList.add("wrong", "shake");
+      GameVoice.sfx.wrong();
+      const oops = GameVoice.oops();
+      feedback.className = "fb show bad";
+      feedback.innerHTML = `<div class="head">${oops.jp}<small>${escapeHtml(oops.en)}</small></div>
+        <div class="ans">${kanaWithKanjiHtml(word)}</div>
+        <div class="note">You typed ${escapeHtml(typed || "nothing")}</div>`;
+    } else {
+      feedback.className = "fb show skip";
+      feedback.innerHTML = `<div class="head">Here it is</div><div class="ans">${kanaWithKanjiHtml(word)}</div>`;
+    }
+    sayWord(word);
+  }
+  persist();
+  $("#q-btns").style.display = "none";
+  $("#q-nextrow").style.display = "";
+  $("#q-next").textContent = quiz.index + 1 < quiz.words.length ? "Next word" : "See results";
+  $("#q-next").focus();
+}
+
+function checkAnswer() {
+  if (!quiz || quiz.answered) return;
+  const typed = $("#q-input").value;
+  if (!typed.trim()) { $("#q-input").focus(); toast("Type an answer, or tap I don't know"); return; }
+  finishQuestion(isCorrect(typed, quiz.words[quiz.index]) ? "right" : "wrong");
+}
+
+function nextQuestion() {
+  if (!quiz || !quiz.answered) return;
+  quiz.index++;
+  if (quiz.index >= quiz.words.length) showResults();
+  else showQuestion();
+}
+
+$("#btn-quiz").onclick = () => { GameVoice.unlock(); startQuiz(); };
+$("#q-check").onclick = checkAnswer;
+$("#q-dunno").onclick = () => finishQuestion("skipped");
+$("#q-hear").onclick = () => { if (quiz) sayWord(quiz.words[quiz.index]); $("#q-input").focus(); };
+$("#q-next").onclick = nextQuestion;
+$("#q-stop").onclick = () => { stopSpeaking(); quiz = null; renderHome(); showScreen("s-home"); };
+document.addEventListener("keydown", event => {
+  if (!$("#s-quiz").classList.contains("active") || event.key !== "Enter" || event.isComposing) return;
+  event.preventDefault();
+  if (quiz && quiz.answered) nextQuestion(); else checkAnswer();
+});
+
+/* =========================================================================
+   9. Results
+   ========================================================================= */
+function showResults() {
+  const total = quiz.results.length;
+  const score = quiz.results.filter(r => r.correct).length;
+  const percent = Math.round(100 * score / total);
+  saved.rounds = (saved.rounds || []).concat({ score, total, date: Date.now() }).slice(-50);
+  persist();
+
+  if (percent === 100) GameVoice.sfx.fanfare();
+  $("#d-score").innerHTML = `${score}<small>/ ${total}</small>`;
+  $("#d-note").textContent =
+    percent === 100 ? "Every one. かんぺき！" :
+    percent >= 80 ? "Strong round. The misses below will come up more often." :
+    percent >= 50 ? "Getting there. Missed words come back sooner, so keep going." :
+    "Tough set. Try the slideshow on these lessons for a bit, then come back.";
+
+  $("#d-list").innerHTML = quiz.results.map((r, i) => `
+    <div class="res">
+      <span class="mark ${r.correct ? "ok" : "bad"}">${r.correct ? "✓" : "✗"}</span>
+      <div>
+        <div class="w">${kanaWithKanjiHtml(r.word)}</div>
+        <div class="m">${escapeHtml(r.word.english)}</div>
+        ${r.typed ? `<div class="typed">you typed ${escapeHtml(r.typed)}</div>` : ""}
+      </div>
+      <button data-say="${i}" aria-label="Hear ${escapeHtml(r.word.kana)}">🔊</button>
+    </div>`).join("");
+  $("#d-list").querySelectorAll("[data-say]").forEach(button => {
+    button.onclick = () => sayWord(quiz.results[Number(button.dataset.say)].word);
+  });
+
+  const missed = quiz.results.filter(r => !r.correct).map(r => r.word);
+  $("#d-retry").style.display = missed.length ? "" : "none";
+  $("#d-retry").onclick = () => startQuiz(missed);
+  showScreen("s-done");
+}
+
+$("#d-again").onclick = () => startQuiz();
+$("#d-home").onclick = () => { quiz = null; renderHome(); showScreen("s-home"); };
+
+/* =========================================================================
+   10. Start — wait for the lesson files, then draw the home screen.
+   ========================================================================= */
+(function startWhenLessonsLoad() {
+  $("#wordcount").textContent = "Loading lessons…";
+  $("#btn-slides").disabled = $("#btn-quiz").disabled = true;
+
+  lessonsReady.then(lessonsFound => {
+    if (!lessonsFound.length) {
+      $("#wordcount").innerHTML =
+        "Couldn't find any lesson files (<b>lesson_1.js</b>, <b>lesson_2.js</b>, …). " +
+        "Put this page in the same folder as Doodle Tango.";
+      return;
+    }
+    ALL_LESSONS = lessonsFound;
+    ALL_WORDS = wordsForLessons(ALL_LESSONS);
+
+    // Keep the saved lesson pick, minus any lessons that no longer exist.
+    // First visit (or nothing left) → everything is selected.
+    const hadSavedPick = Array.isArray(saved.lessons) && saved.lessons.length > 0;
+    saved.lessons = (saved.lessons || []).filter(n => ALL_LESSONS.includes(n));
+    if (!hadSavedPick || !saved.lessons.length) saved.lessons = ALL_LESSONS.slice();
+    renderHome();
+  });
+})();
+</script>
+</body>
+</html>
