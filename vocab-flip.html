@@ -119,6 +119,22 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 .slrow input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--hi);border:2px solid var(--ink);cursor:pointer}
 .slidefoot{display:flex;gap:10px;justify-content:center;margin-top:20px}
 
+/* Listen & answer: the English question, then the answer reveals underneath */
+.ask{font-size:15px;color:var(--muted);font-weight:500;margin-bottom:4px}
+.ask-en{font-size:clamp(24px,6.5vw,34px);font-weight:900;line-height:1.25;max-width:100%}
+.answer{margin-top:22px;padding-top:18px;border-top:1.5px dashed var(--line);min-width:60%;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+/* fade in on reveal only — hiding is instant so the next answer never flashes */
+.answer:not(.hidden) .fl-kana,.answer:not(.hidden) .fl-kanji{transition:opacity .35s ease}
+/* visibility (not opacity) so the card's pop-in animation can't show the answer early */
+.answer.hidden .fl-kana,.answer.hidden .fl-kanji{visibility:hidden}
+.answer .think{font-size:44px;font-weight:900;color:var(--line);display:none}
+.answer.hidden .think{display:block}
+.answer.hidden .fl-kana,.answer.hidden .fl-kanji{position:absolute;pointer-events:none}
+/* a thin bar that empties while you think */
+.thinkbar{height:5px;border-radius:999px;background:var(--line);overflow:hidden;margin:14px auto 0;max-width:260px;visibility:hidden}
+.thinkbar.on{visibility:visible}
+.thinkbar i{display:block;height:100%;width:100%;background:var(--hi);transform-origin:left center}
+
 /* =========================================================================
    Quiz
    ========================================================================= */
@@ -201,6 +217,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
   <div class="count" id="wordcount"></div>
   <div class="modes">
     <button class="mode" id="btn-slides"><span class="ic">🎧</span><span><b>Slideshow</b><span>Words flip by in random order and get read aloud with their meaning. Just watch and listen.</span></span></button>
+    <button class="mode" id="btn-listen"><span class="ic">🚌</span><span><b>Listen &amp; answer</b><span>Hands-free quiz. Hears "How do you say …?", gives you time to answer in your head, then says the Japanese.</span></span></button>
     <button class="mode" id="btn-quiz"><span class="ic">⌨️</span><span><b>Quiz</b><span>See the English, type the word in hiragana or katakana. Ten words a round, graded at the end.</span></span></button>
   </div>
   <div class="stats" id="stats"></div>
@@ -225,6 +242,32 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
     <button class="btn" id="sl-prev">‹ Back</button>
     <button class="btn primary" id="sl-play">⏸ Pause</button>
     <button class="btn" id="sl-next">Next ›</button>
+  </div>
+</section>
+
+<!-- ============================ LISTEN & ANSWER ============================ -->
+<section class="screen" id="s-listen">
+  <div class="slidebar">
+    <button class="btn quiet small" id="ls-close">✕ Close</button>
+    <button class="btn small" id="ls-sound" style="display:none">🔊 Tap to turn on sound</button>
+    <div class="slopts" id="lsopts"></div>
+  </div>
+  <div class="flash" id="ls-card">
+    <span class="stamp" id="ls-stamp"></span>
+    <div class="ask">How do you say</div>
+    <div class="ask-en" id="ls-en"></div>
+    <div class="thinkbar" id="ls-bar"><i></i></div>
+    <div class="answer hidden" id="ls-answer">
+      <div class="think">？</div>
+      <div class="fl-kana" id="ls-kana"></div>
+      <div class="fl-kanji kj" id="ls-kanji"></div>
+    </div>
+  </div>
+  <div class="counter" id="ls-count"></div>
+  <div class="slidefoot">
+    <button class="btn" id="ls-prev">‹ Back</button>
+    <button class="btn primary" id="ls-play">⏸ Pause</button>
+    <button class="btn" id="ls-next">Next ›</button>
   </div>
 </section>
 
@@ -563,7 +606,7 @@ const STORAGE_KEY = "vocabFlip.v1";
 let ALL_LESSONS = []; // filled in by startWhenLessonsLoad() at the bottom
 
 function loadSaved() {
-  const defaults = { lessons: [], lessonRange: null, newestLessonSeen: 0, voiceRate: 1, cardWait: 2, rounds: [], missCounts: {} };
+  const defaults = { lessons: [], lessonRange: null, newestLessonSeen: 0, voiceRate: 1, cardWait: 2, thinkWait: 3, answerWait: 2, rounds: [], missCounts: {} };
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
     return saved ? Object.assign(defaults, saved) : defaults;
@@ -800,11 +843,11 @@ const japaneseRate = () => clamp(0.85 * voiceSpeed(), 0.3, 1.9);
 const englishRate  = () => clamp(1.0 * voiceSpeed(), 0.35, 2);
 const cardWaitSeconds = () => {
   const stored = Number(saved.cardWait);
-  return clamp(Number.isFinite(stored) ? stored : 2, WAIT_MIN_SECONDS, WAIT_MAX_SECONDS);
+  return clamp(Number.isFinite(stored) ? Math.round(stored) : 2, WAIT_MIN_SECONDS, WAIT_MAX_SECONDS);
 };
 const cardWaitMs   = () => cardWaitSeconds() * 1000;
 const voiceLabel   = () => { const v = voiceSpeed(); return v < 0.55 ? "very slow" : v < 0.8 ? "deliberate" : v > 1.45 ? "quick" : v > 1.1 ? "brisk" : "natural"; };
-const waitLabel    = () => `${cardWaitSeconds().toFixed(1)}s <i>after voice</i>`;
+const waitLabel    = () => `${cardWaitSeconds()}s <i>after voice</i>`;
 
 GameVoice.bindToggle($("#btnSound"));
 $("#btnSound").addEventListener("click", () => { if (!GameVoice.enabled) stopSpeaking(); });
@@ -900,7 +943,7 @@ function renderHome() {
   $("#wordcount").innerHTML = count
     ? `<b>${count}</b> words, ${withKanji} with kanji`
     : "Pick at least one lesson to start.";
-  $("#btn-slides").disabled = $("#btn-quiz").disabled = count === 0;
+  $("#btn-slides").disabled = $("#btn-quiz").disabled = $("#btn-listen").disabled = count === 0;
   $("#lessonlabel").textContent = saved.lessons.length ? describeLessons(saved.lessons) : "";
 
   const rounds = saved.rounds || [];
@@ -942,7 +985,7 @@ function renderSlideOptions() {
     </div>
     <div class="slrow">
       <span class="sllab">Cards</span><span class="slend">0s</span>
-      <input type="range" id="slpace" min="${WAIT_MIN_SECONDS}" max="${WAIT_MAX_SECONDS}" step="0.5" value="${cardWaitSeconds()}" aria-label="Seconds to wait after the voice before the next card">
+      <input type="range" id="slpace" min="${WAIT_MIN_SECONDS}" max="${WAIT_MAX_SECONDS}" step="1" value="${cardWaitSeconds()}" aria-label="Seconds to wait after the voice before the next card">
       <span class="slend">10s</span>
       <span class="pacenum" id="slpacenum">${waitLabel()}</span>
     </div>`;
@@ -1087,6 +1130,224 @@ $("#sl-sound").onclick = () => {
 // Pause when the tab is hidden so it doesn't keep talking in the background.
 document.addEventListener("visibilitychange", () => {
   if (document.hidden && slideshow && !slideshow.paused) pauseSlideshow(true);
+});
+
+/* =========================================================================
+   7b. Listen & answer — a hands-free quiz for the bus.
+       For each word:
+         1. say "How do you say <English>?"
+         2. wait the THINK time (starts once the question has been spoken)
+         3. show the answer and say it in Japanese
+         4. wait the NEXT time (starts once the answer has been spoken)
+         5. next word
+       Goes through every word in the chosen lessons in random order, then
+       reshuffles and starts again.
+   ========================================================================= */
+let listen = null; // { order, index, paused, timers, token }
+
+const thinkSeconds  = () => { const s = Number(saved.thinkWait);  return clamp(Number.isFinite(s) ? Math.round(s) : 3, 1, 10); };
+const answerSeconds = () => { const s = Number(saved.answerWait); return clamp(Number.isFinite(s) ? Math.round(s) : 2, 0, 10); };
+const SOUND_OFF_READ_MS = 1500; // with sound off, a moment to read before a timer starts
+
+function clearListenTimers() {
+  if (!listen) return;
+  listen.timers.forEach(clearTimeout);
+  listen.timers = [];
+}
+
+/* Speak a list of lines in order, then call whenDone(spoke) once the voice has
+   really finished. Uses the utterance's end event, plus a check every quarter
+   second in case iOS never sends that event. whenDone(false) means nothing was
+   spoken (sound off, or speech blocked), so the caller can allow reading time. */
+function speakLinesThen(lines, isStillCurrent, whenDone) {
+  let finished = false;
+  const finish = spoke => { if (finished || !isStillCurrent()) return; finished = true; whenDone(spoke); };
+  if (!GameVoice.enabled || !("speechSynthesis" in window)) { finish(false); return; }
+
+  stopSpeaking();
+  listen.timers.push(setTimeout(() => {
+    if (!isStillCurrent()) return;
+    let lastUtterance = null;
+    try {
+      speechSynthesis.resume();
+      lines.forEach((line, i) => {
+        const utterance = makeUtterance(line.text, line.lang, line.rate);
+        if (i === 0) utterance.onstart = () => { speechHeard = true; $("#ls-sound").style.display = "none"; };
+        lastUtterance = utterance;
+        speechSynthesis.speak(utterance);
+      });
+    } catch (err) { finish(false); return; }
+    if (lastUtterance) lastUtterance.onend = lastUtterance.onerror = () => finish(true);
+
+    const watchStartedAt = Date.now();
+    let heardTalking = false;
+    const checkVoice = () => {
+      if (finished || !isStillCurrent()) return;
+      const talking = speechSynthesis.speaking || speechSynthesis.pending;
+      if (talking) heardTalking = true;
+      const neverStarted = !heardTalking && Date.now() - watchStartedAt > 4000;
+      if (heardTalking && !talking) finish(true);
+      else if (neverStarted) finish(false);
+      else listen.timers.push(setTimeout(checkVoice, 250));
+    };
+    listen.timers.push(setTimeout(checkVoice, 400));
+
+    // iOS only allows speech that starts from a tap — offer one if nothing is heard.
+    listen.timers.push(setTimeout(() => {
+      if (isStillCurrent() && !speechHeard && GameVoice.enabled) $("#ls-sound").style.display = "";
+    }, 1800));
+  }, 160));
+}
+
+// Run the thin "thinking" bar from full to empty over `ms`.
+function runThinkBar(ms) {
+  const bar = $("#ls-bar"), fill = bar.querySelector("i");
+  bar.classList.add("on");
+  fill.style.transition = "none";
+  fill.style.transform = "scaleX(1)";
+  void fill.offsetWidth;
+  fill.style.transition = `transform ${ms}ms linear`;
+  fill.style.transform = "scaleX(0)";
+}
+function hideThinkBar() {
+  const bar = $("#ls-bar"), fill = bar.querySelector("i");
+  bar.classList.remove("on");
+  fill.style.transition = "none";
+  fill.style.transform = "scaleX(1)";
+}
+
+function renderListenOptions() {
+  $("#lsopts").innerHTML = `
+    <div class="slrow">
+      <span class="sllab">Voice</span><span class="slend">🐢</span>
+      <input type="range" id="lsvoice" min="${VOICE_MIN}" max="${VOICE_MAX}" step="0.05" value="${voiceSpeed()}" aria-label="Voice speed">
+      <span class="slend">🐇</span>
+      <span class="pacenum" id="lsvoicenum">${voiceSpeed().toFixed(2)}× <i>${voiceLabel()}</i></span>
+    </div>
+    <div class="slrow">
+      <span class="sllab">Think</span><span class="slend">1s</span>
+      <input type="range" id="lsthink" min="1" max="10" step="1" value="${thinkSeconds()}" aria-label="Seconds to think after the question">
+      <span class="slend">10s</span>
+      <span class="pacenum" id="lsthinknum">${thinkSeconds()}s <i>after question</i></span>
+    </div>
+    <div class="slrow">
+      <span class="sllab">Next</span><span class="slend">0s</span>
+      <input type="range" id="lsnext" min="0" max="10" step="1" value="${answerSeconds()}" aria-label="Seconds to wait after the answer before the next word">
+      <span class="slend">10s</span>
+      <span class="pacenum" id="lsnextnum">${answerSeconds()}s <i>after answer</i></span>
+    </div>`;
+  const voiceSlider = $("#lsvoice"), thinkSlider = $("#lsthink"), nextSlider = $("#lsnext");
+  voiceSlider.oninput = () => { saved.voiceRate = Number(voiceSlider.value); $("#lsvoicenum").innerHTML = `${voiceSpeed().toFixed(2)}× <i>${voiceLabel()}</i>`; };
+  thinkSlider.oninput = () => { saved.thinkWait = Number(thinkSlider.value); $("#lsthinknum").innerHTML = `${thinkSeconds()}s <i>after question</i>`; };
+  nextSlider.oninput  = () => { saved.answerWait = Number(nextSlider.value); $("#lsnextnum").innerHTML = `${answerSeconds()}s <i>after answer</i>`; };
+  voiceSlider.onchange = thinkSlider.onchange = nextSlider.onchange = persist;
+}
+
+/* Keep the phone screen awake while this runs, where the browser allows it
+   (a locked screen stops the voice). Quietly does nothing elsewhere. */
+let screenWakeLock = null;
+async function keepScreenAwake() {
+  try { if ("wakeLock" in navigator && !screenWakeLock) screenWakeLock = await navigator.wakeLock.request("screen"); } catch (err) {}
+  if (screenWakeLock) screenWakeLock.addEventListener("release", () => { screenWakeLock = null; });
+}
+function letScreenSleep() {
+  try { if (screenWakeLock) screenWakeLock.release(); } catch (err) {}
+  screenWakeLock = null;
+}
+
+function startListen() {
+  const words = chosenWords();
+  if (!words.length) return;
+  $("#ls-sound").style.display = "none";
+  listen = { words, order: shuffle(words), index: 0, paused: false, timers: [], token: 0 };
+  $("#ls-play").textContent = "⏸ Pause";
+  renderListenOptions();
+  showScreen("s-listen");
+  keepScreenAwake();
+  showListenCard();
+}
+
+function revealAnswer() { $("#ls-answer").classList.remove("hidden"); hideThinkBar(); }
+
+function showListenCard() {
+  if (!listen) return;
+  clearListenTimers();
+  stopSpeaking();
+  if (listen.index >= listen.order.length) { listen.order = shuffle(listen.words); listen.index = 0; }
+  if (listen.index < 0) listen.index = listen.order.length - 1;
+
+  const word = listen.order[listen.index];
+  const token = ++listen.token; // anything left over from an earlier card is ignored
+  const isStillCurrent = () => listen && listen.token === token && !listen.paused;
+
+  // Draw the card: English question showing, answer hidden.
+  const card = $("#ls-card");
+  $("#ls-en").textContent = word.english;
+  fillCard(word, $("#ls-kana"), $("#ls-kanji"), $("#ls-stamp"));
+  $("#ls-answer").classList.add("hidden");
+  hideThinkBar();
+  card.classList.remove("in"); void card.offsetWidth; card.classList.add("in");
+  $("#ls-count").textContent = `${listen.index + 1} / ${listen.order.length}`;
+  if (listen.paused) { revealAnswer(); return; }
+
+  const goToNextCard = () => { if (!isStillCurrent()) return; listen.index++; showListenCard(); };
+
+  // Step 3 → 4: reveal, say the Japanese, then wait the NEXT time.
+  const sayTheAnswer = () => {
+    if (!isStillCurrent()) return;
+    revealAnswer();
+    speakLinesThen(
+      [{ text: speakableKana(word.kana), lang: "ja-JP", rate: japaneseRate() }],
+      isStillCurrent,
+      spoke => listen.timers.push(setTimeout(goToNextCard, (spoke ? 0 : SOUND_OFF_READ_MS) + answerSeconds() * 1000))
+    );
+  };
+
+  // Step 1 → 2: ask the question, then wait the THINK time.
+  speakLinesThen(
+    [{ text: "How do you say, " + speakableEnglish(word.english) + "?", lang: "en-US", rate: englishRate() }],
+    isStillCurrent,
+    spoke => {
+      const thinkMs = thinkSeconds() * 1000;
+      listen.timers.push(setTimeout(() => {
+        if (!isStillCurrent()) return;
+        runThinkBar(thinkMs);
+        listen.timers.push(setTimeout(sayTheAnswer, thinkMs));
+      }, spoke ? 0 : SOUND_OFF_READ_MS));
+    }
+  );
+}
+
+function pauseListen(paused) {
+  if (!listen) return;
+  listen.paused = paused;
+  $("#ls-play").textContent = paused ? "▶ Play" : "⏸ Pause";
+  if (paused) { clearListenTimers(); stopSpeaking(); revealAnswer(); }
+  else showListenCard();
+}
+
+function closeListen() {
+  clearListenTimers(); stopSpeaking(); listen = null; letScreenSleep();
+  renderHome(); showScreen("s-home");
+}
+
+$("#btn-listen").onclick = () => { GameVoice.unlock(); startListen(); };
+$("#ls-close").onclick = closeListen;
+$("#ls-play").onclick = () => pauseListen(!listen.paused);
+$("#ls-next").onclick = () => { if (!listen) return; listen.index++; showListenCard(); };
+$("#ls-prev").onclick = () => { if (!listen) return; listen.index--; showListenCard(); };
+$("#ls-sound").onclick = () => {
+  // Straight from a tap, which iOS always lets speak.
+  speechHeard = false;
+  if (!GameVoice.enabled) { GameVoice.setEnabled(true); $("#btnSound").textContent = "♪ ON"; }
+  if (listen) { listen.paused = false; $("#ls-play").textContent = "⏸ Pause"; }
+  try { speechSynthesis.cancel(); speechSynthesis.speak(makeUtterance(" ", "en-US", 1)); } catch (err) {}
+  showListenCard();
+};
+document.addEventListener("visibilitychange", () => {
+  if (!listen) return;
+  if (document.hidden && !listen.paused) pauseListen(true);   // locked or switched away: pause
+  else if (!document.hidden) keepScreenAwake();               // the wake lock drops when hidden
 });
 
 /* =========================================================================
@@ -1285,7 +1546,7 @@ $("#d-home").onclick = () => { quiz = null; renderHome(); showScreen("s-home"); 
    ========================================================================= */
 (function startWhenLessonsLoad() {
   $("#wordcount").textContent = "Loading lessons…";
-  $("#btn-slides").disabled = $("#btn-quiz").disabled = true;
+  $("#btn-slides").disabled = $("#btn-quiz").disabled = $("#btn-listen").disabled = true;
 
   lessonsReady.then(lessonsFound => {
     if (!lessonsFound.length) {
