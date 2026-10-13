@@ -119,6 +119,46 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 .slrow input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--hi);border:2px solid var(--ink);cursor:pointer}
 .slidefoot{display:flex;gap:10px;justify-content:center;margin-top:20px}
 
+/* Story time — list */
+.storylist{display:grid;gap:12px;margin-top:14px}
+.storycard{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px 16px;border:2px solid var(--ink);border-radius:16px;background:var(--card);box-shadow:3px 4px 0 var(--shadow)}
+.storycard:active{transform:translate(2px,3px);box-shadow:1px 1px 0 var(--shadow)}
+.sc-title{font-size:21px;font-weight:900}
+.sc-en{color:var(--muted);font-size:14px}
+.sc-meta{font-size:13px;color:var(--muted);margin-top:4px}
+.sc-meta b{color:var(--ink)}
+.sc-warn{font-size:12.5px;color:var(--bad)}
+/* Story time — reader */
+.st-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#st-sound{border-color:var(--bad);color:var(--bad)}
+#st-body{position:relative;font-size:22px;line-height:2.35;padding:6px 2px 40px}
+#st-body .st-h{font-size:26px;margin:14px 0 0;line-height:1.4}
+#st-body .st-hen{color:var(--muted);font-size:14px;line-height:1.4;margin-bottom:6px}
+#st-body .st-ch{font-size:19px;margin:26px 0 4px;line-height:1.4;border-bottom:1.5px solid var(--line);padding-bottom:4px}
+#st-body .st-ch span,#st-body .st-hen{display:block;font-family:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;font-size:13px;color:var(--muted);font-weight:500}
+#st-body .st-p{margin:0 0 14px}
+#st-body .sent{cursor:pointer;border-radius:6px}
+#st-body .sent.now .ja{background:var(--hi-soft);border-radius:6px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+#st-body .u.now{color:var(--bad)}
+#st-body rt{font-size:.48em;color:var(--muted);font-weight:500}
+#st-body.no-furi rt{display:none}
+#st-body .en{display:none;font-size:14.5px;line-height:1.45;color:var(--muted);margin:0 0 10px}
+#st-body.show-en .sent{display:block}
+#st-body.show-en .en{display:block}
+#st-body .st-end{text-align:center;color:var(--muted);font-size:18px}
+.glide{position:absolute;left:0;top:0;height:3px;width:0;border-radius:3px;background:var(--bad);opacity:0;pointer-events:none;transition:transform .22s ease,width .22s ease}
+.st-bar{position:sticky;bottom:0;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));background:var(--paper);border-top:1.5px solid var(--line)}
+.st-bar .btn{padding:10px 14px}
+.st-bar .tog{border-color:var(--line);color:var(--muted)}
+.st-bar .tog.on{border-color:var(--ink);color:var(--ink);background:var(--hi-soft)}
+.st-bar .counter{margin:0;min-width:64px}
+.storder{grid-column:2 / -1;display:flex;gap:7px;flex-wrap:wrap}
+.storder .lp{padding:5px 11px;font-size:13px;font-weight:700;border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--muted)}
+.storder .lp.on{border-color:var(--ink);background:var(--hi-soft);color:var(--ink)}
+/* while the English is read aloud: show it (even with EN off) and light it up */
+#st-body .sent.saying-en .en{display:block;color:var(--ink);background:var(--hi-soft);border-radius:6px;padding:2px 6px}
+#st-body .sent.saying-en .ja{background:none}
+
 /* Listen & answer: the English question, then the answer reveals underneath */
 .ask{font-size:15px;color:var(--muted);font-weight:500;margin-bottom:4px}
 .ask-en{font-size:clamp(24px,6.5vw,34px);font-weight:900;line-height:1.25;max-width:100%}
@@ -218,6 +258,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
   <div class="modes">
     <button class="mode" id="btn-slides"><span class="ic">🎧</span><span><b>Slideshow</b><span>Words flip by in random order and get read aloud with their meaning. Just watch and listen.</span></span></button>
     <button class="mode" id="btn-listen"><span class="ic">🚌</span><span><b>Listen &amp; answer</b><span>Hands-free quiz. Hears "How do you say …?", gives you time to answer in your head, then says the Japanese.</span></span></button>
+    <button class="mode" id="btn-stories"><span class="ic">📚</span><span><b>Story time</b><span>Long, silly stories made from the lesson vocab. Read along while it's read aloud — tap any sentence to jump there.</span></span></button>
     <button class="mode" id="btn-quiz"><span class="ic">⌨️</span><span><b>Quiz</b><span>See the English, type the word in hiragana or katakana. Ten words a round, graded at the end.</span></span></button>
   </div>
   <div class="stats" id="stats"></div>
@@ -268,6 +309,33 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
     <button class="btn" id="ls-prev">‹ Back</button>
     <button class="btn primary" id="ls-play">⏸ Pause</button>
     <button class="btn" id="ls-next">Next ›</button>
+  </div>
+</section>
+
+<!-- ============================ STORY TIME ============================ -->
+<section class="screen" id="s-stories">
+  <div class="st-top"><button class="btn quiet small" id="sts-home">✕ Close</button></div>
+  <h2 style="margin-top:14px">Story time</h2>
+  <p class="lede">Each story is written to use most of the vocab from its lessons. The count below is checked against your lesson files.</p>
+  <div class="storylist" id="st-list"><p class="lede">Loading stories…</p></div>
+</section>
+
+<section class="screen" id="s-story">
+  <div class="slidebar">
+    <div class="st-top">
+      <button class="btn quiet small" id="st-close">✕ Stories</button>
+      <button class="btn small" id="st-sound" style="display:none">🔊 Tap to turn on sound</button>
+    </div>
+    <div class="slopts" id="stopts"></div>
+  </div>
+  <div id="st-body"></div>
+  <div class="st-bar">
+    <button class="btn" id="st-prev" aria-label="Previous sentence">‹</button>
+    <button class="btn primary" id="st-play">▶ Read</button>
+    <button class="btn" id="st-next" aria-label="Next sentence">›</button>
+    <button class="btn tog" id="st-en" aria-label="Show English translation">EN</button>
+    <button class="btn tog kj" id="st-furi" aria-label="Show furigana">ふりがな</button>
+    <span class="counter" id="st-count"></span>
   </div>
 </section>
 
@@ -1562,6 +1630,442 @@ $("#d-home").onclick = () => { quiz = null; renderHome(); showScreen("s-home"); 
     renderHome();
   });
 })();
+</script>
+
+<script>
+"use strict";
+/* =========================================================================
+   11. Story time — long stories built from the lesson vocab, read aloud
+       with a gliding underline under each word.
+
+       Story files live in stories/ next to this page:
+         stories/story-engine.js   parses the markup + measures vocab coverage
+         stories/story_1.js, story_2.js, …   one story each (loaded in order
+                                             until the first missing number)
+       Each story file sets window.GENKI_STORIES[N] = { title, titleEn,
+       lessons:[first,last], goal, chapters:[{title, titleEn, paragraphs}] }.
+
+       Reading: one sentence is spoken at a time. The underline follows the
+       voice using the browser's word-boundary events when it sends them, and
+       otherwise glides along at the speed the voice has been talking (it
+       re-measures that after every sentence, so it stays in step).
+   ========================================================================= */
+window.GENKI_STORIES = window.GENKI_STORIES || {};
+const HIGHEST_STORY_TO_LOOK_FOR = 60;
+
+const storiesReady = (async function loadStories() {
+  const engineLoaded = await loadLessonScript("stories/story-engine.js");
+  if (!engineLoaded || !window.StoryEngine) return [];
+  const found = [];
+  for (let n = 1; n <= HIGHEST_STORY_TO_LOOK_FOR; n++) {
+    const loaded = window.GENKI_STORIES[n] || await loadLessonScript("stories/story_" + n + ".js");
+    if (!loaded || !window.GENKI_STORIES[n]) break;
+    found.push(n);
+  }
+  return found;
+})();
+
+/* ---------- saved settings ---------- */
+const STORY_SPEED_MIN = 0.35, STORY_SPEED_MAX = 1.5;
+const storySpeed = () => { const v = Number(saved.storySpeed); return clamp(Number.isFinite(v) ? v : 0.8, STORY_SPEED_MIN, STORY_SPEED_MAX); };
+const storyRate  = () => clamp(storySpeed(), 0.3, 1.6);
+if (saved.storyFurigana === undefined) saved.storyFurigana = true;
+if (saved.storyEnglish === undefined) saved.storyEnglish = false;
+saved.storyPlace = saved.storyPlace || {}; // story number → sentence index to resume from
+
+/* ---------- vocab coverage (uses the real lesson files) ---------- */
+function vocabForEngine() {
+  // StoryEngine wants {lesson: [[kana, kanji, english], …]} — exactly VOCAB_BY_LESSON.
+  return VOCAB_BY_LESSON;
+}
+function coverageOf(story) {
+  return StoryEngine.measureStory(story, vocabForEngine());
+}
+
+/* ---------- list of stories ---------- */
+function renderStoryList(storyNumbers) {
+  const list = $("#st-list");
+  if (!storyNumbers.length) {
+    list.innerHTML = `<p class="lede">No stories found. Story files go in a <b>stories</b> folder next to this page (stories/story_1.js, …).</p>`;
+    return;
+  }
+  list.innerHTML = storyNumbers.map(n => {
+    const story = window.GENKI_STORIES[n];
+    const [first, last] = story.lessons;
+    const missingLessons = [];
+    for (let lesson = first; lesson <= last; lesson++) if (!VOCAB_BY_LESSON[lesson]) missingLessons.push(lesson);
+    const cov = coverageOf(story);
+    const sentences = StoryEngine.paragraphsOf(story).reduce((sum, p) => sum + p.length, 0);
+    const place = saved.storyPlace[n] || 0;
+    return `<button class="storycard" data-story="${n}">
+      <span class="sc-title kj">${escapeHtml(story.title)}</span>
+      <span class="sc-en">${escapeHtml(story.titleEn || "")}</span>
+      <span class="sc-meta">Lessons ${first}–${last} · uses <b>${cov.used}</b> of ${cov.total} words (<b>${Math.floor(cov.percent)}%</b>, goal ${story.goal}%) · ${sentences} sentences${place ? ` · resume at ${place + 1}` : ""}</span>
+      ${missingLessons.length ? `<span class="sc-warn">Lesson files missing: ${missingLessons.join(", ")}</span>` : ""}
+    </button>`;
+  }).join("");
+  list.querySelectorAll("[data-story]").forEach(card => card.onclick = () => { GameVoice.unlock(); openStory(Number(card.dataset.story)); });
+}
+
+/* ---------- drawing a story ---------- */
+// Put furigana only over the kanji part: 食べました/たべました → 食<rt>た</rt>べました
+function rubyHtml(surface, reading) {
+  if (!/[㐀-鿿々]/.test(surface) || !reading || reading === surface) return escapeHtml(surface);
+  let start = 0, endSurface = surface.length, endReading = reading.length;
+  while (start < surface.length && start < reading.length && surface[start] === reading[start] && !/[㐀-鿿々]/.test(surface[start])) start++;
+  while (endSurface > start && endReading > start && surface[endSurface - 1] === reading[endReading - 1] && !/[㐀-鿿々]/.test(surface[endSurface - 1])) { endSurface--; endReading--; }
+  return escapeHtml(surface.slice(0, start)) +
+    `<ruby>${escapeHtml(surface.slice(start, endSurface))}<rt>${escapeHtml(reading.slice(start, endReading))}</rt></ruby>` +
+    escapeHtml(surface.slice(endSurface));
+}
+
+let reader = null; // { number, story, sentences:[{ja, en, units, speech, el}], index, playing, timers, token, ... }
+
+function openStory(number) {
+  const story = window.GENKI_STORIES[number];
+  const sentences = [];
+  let html = `<h2 class="st-h kj">${escapeHtml(story.title)}</h2><div class="st-hen">${escapeHtml(story.titleEn || "")}</div>`;
+  story.chapters.forEach((chapter, c) => {
+    html += `<h3 class="st-ch kj">${escapeHtml(chapter.title || `第${c + 1}章`)}<span>${escapeHtml(chapter.titleEn || "")}</span></h3>`;
+    chapter.paragraphs.forEach(paragraph => {
+      html += `<p class="st-p">`;
+      paragraph.forEach(([ja, en]) => {
+        const { units } = StoryEngine.parseSentence(ja);
+        const i = sentences.length;
+        let speech = "";
+        const unitHtml = units.map((unit, u) => {
+          unit.start = speech.length;
+          speech += unit.reading;
+          unit.end = speech.length;
+          return `<span class="u${unit.kind === "vocab" ? " v" : ""}" data-u="${u}">${rubyHtml(unit.surface, unit.reading)}</span>`;
+        }).join("");
+        sentences.push({ ja, en, units, speech });
+        html += `<span class="sent" data-s="${i}"><span class="ja kj">${unitHtml}</span><span class="en">${escapeHtml(en)}</span></span>`;
+      });
+      html += `</p>`;
+    });
+  });
+  const body = $("#st-body");
+  body.innerHTML = html + `<div class="glide" id="st-glide"></div><p class="st-end kj">おわり</p>`;
+  sentences.forEach((s, i) => {
+    s.el = body.querySelector(`.sent[data-s="${i}"]`);
+    s.unitEls = [...s.el.querySelectorAll(".u")];
+    s.el.onclick = () => { if (!reader) return; jumpToSentence(i, true); };
+  });
+
+  reader = { number, story, sentences, index: clamp(saved.storyPlace[number] || 0, 0, sentences.length - 1),
+    playing: false, timers: [], token: 0, frame: 0 };
+  applyStoryToggles();
+  renderStoryOptions();
+  showScreen("s-story");
+  markSentence(reader.index);
+  placeGlide(reader.index, 0, false);
+  scrollToSentence(reader.index, false);
+  updateStoryControls();
+}
+
+function applyStoryToggles() {
+  $("#st-body").classList.toggle("no-furi", !saved.storyFurigana);
+  $("#st-body").classList.toggle("show-en", !!saved.storyEnglish);
+  $("#st-en").classList.toggle("on", !!saved.storyEnglish);
+  $("#st-furi").classList.toggle("on", !!saved.storyFurigana);
+  if (reader) requestAnimationFrame(() => placeGlide(reader.index, reader.unit || 0, false));
+}
+
+function renderStoryOptions() {
+  $("#stopts").innerHTML = `
+    <div class="slrow">
+      <span class="sllab">Speed</span><span class="slend">🐢</span>
+      <input type="range" id="stspeed" min="${STORY_SPEED_MIN}" max="${STORY_SPEED_MAX}" step="0.05" value="${storySpeed()}" aria-label="Reading speed">
+      <span class="slend">🐇</span>
+      <span class="pacenum" id="stspeednum">${storySpeed().toFixed(2)}×</span>
+    </div>
+    <div class="slrow">
+      <span class="sllab">Read</span>
+      <div class="storder">${Object.entries(READ_ORDERS).map(([key, order]) =>
+        `<button class="lp${readOrder() === key ? " on" : ""}" data-order="${key}">${order.label}</button>`).join("")}</div>
+    </div>`;
+  $("#stopts").querySelectorAll("[data-order]").forEach(button => button.onclick = () => {
+    saved.storyOrder = button.dataset.order; persist();
+    renderStoryOptions();   // takes effect from the next sentence
+  });
+  const slider = $("#stspeed");
+  slider.oninput = () => { saved.storySpeed = Number(slider.value); $("#stspeednum").textContent = `${storySpeed().toFixed(2)}×`; };
+  slider.onchange = persist; // the new speed starts with the next sentence
+}
+
+function updateStoryControls() {
+  if (!reader) return;
+  $("#st-play").textContent = reader.playing ? "⏸ Pause" : "▶ Read";
+  $("#st-count").textContent = `${reader.index + 1} / ${reader.sentences.length}`;
+}
+
+/* ---------- the underline ---------- */
+function markSentence(index) {
+  document.querySelectorAll("#st-body .sent.now").forEach(el => el.classList.remove("now"));
+  document.querySelectorAll("#st-body .u.now").forEach(el => el.classList.remove("now"));
+  const sentence = reader.sentences[index];
+  if (sentence) sentence.el.classList.add("now");
+}
+
+// Slide the underline to unit `unitIndex` of sentence `index`.
+function placeGlide(index, unitIndex, animate) {
+  if (!reader) return;
+  const sentence = reader.sentences[index];
+  const unitEl = sentence && sentence.unitEls[unitIndex];
+  const glide = $("#st-glide");
+  if (!unitEl) { glide.style.opacity = 0; return; }
+  sentence.unitEls.forEach((el, i) => el.classList.toggle("now", i === unitIndex));
+  const bodyRect = $("#st-body").getBoundingClientRect();
+  const rects = unitEl.getClientRects();
+  const rect = rects[0] || unitEl.getBoundingClientRect();
+  glide.style.transition = animate ? "" : "none";
+  glide.style.opacity = 1;
+  glide.style.transform = `translate(${rect.left - bodyRect.left}px, ${rect.bottom - bodyRect.top + 1}px)`;
+  glide.style.width = `${Math.max(8, rect.width)}px`;
+  reader.unit = unitIndex;
+}
+
+function scrollToSentence(index, smooth) {
+  const sentence = reader.sentences[index];
+  if (!sentence) return;
+  const rect = sentence.el.getBoundingClientRect();
+  const viewTop = 120, viewBottom = window.innerHeight - 110; // keep clear of the top options and bottom bar
+  if (rect.top < viewTop || rect.bottom > viewBottom) {
+    window.scrollTo({ top: window.scrollY + rect.top - window.innerHeight * 0.35, behavior: smooth ? "smooth" : "auto" });
+  }
+}
+
+/* ---------- reading aloud ---------- */
+// How "long" each unit is, in rough mora-sized beats, for gliding without boundary events.
+function beatsOf(unit) {
+  const text = unit.reading;
+  let beats = 0;
+  for (const ch of text) {
+    if ("ゃゅょャュョぁぃぅぇぉァィゥェォ".includes(ch)) continue;      // small kana join the one before
+    else if ("、,".includes(ch)) beats += 2;                            // short pause
+    else if ("。！？!?".includes(ch)) beats += 3;                        // longer pause
+    else if ("「」『』・…".includes(ch)) beats += 0.3;
+    else beats += 1;
+  }
+  return Math.max(0.5, beats);
+}
+let msPerBeat = 125; // at 1.0× — re-measured as the voice talks
+
+function clearStoryTimers() {
+  if (!reader) return;
+  reader.timers.forEach(clearTimeout);
+  reader.timers = [];
+  cancelAnimationFrame(reader.frame);
+}
+
+function playStory() {
+  if (!reader) return;
+  if (reader.index >= reader.sentences.length) reader.index = 0;
+  reader.playing = true;
+  keepScreenAwake();
+  updateStoryControls();
+  readSentence(reader.index);
+}
+function pauseStory() {
+  if (!reader) return;
+  reader.playing = false;
+  reader.token++;
+  clearStoryTimers();
+  stopSpeaking();
+  letScreenSleep();
+  updateStoryControls();
+}
+function jumpToSentence(index, startReading) {
+  if (!reader) return;
+  const wasPlaying = reader.playing || startReading;
+  pauseStory();
+  reader.index = clamp(index, 0, reader.sentences.length - 1);
+  saved.storyPlace[reader.number] = reader.index; persist();
+  markSentence(reader.index);
+  placeGlide(reader.index, 0, false);
+  scrollToSentence(reader.index, true);
+  updateStoryControls();
+  if (wasPlaying) playStory();
+}
+
+/* Which languages are read for each sentence, and in what order.
+     "ja"    — Japanese only
+     "en-ja" — English first, so you know what's coming, then the Japanese
+     "ja-en" — Japanese first, then the English to check you understood */
+const READ_ORDERS = {
+  "ja":    { label: "日本語", steps: ["ja"] },
+  "en-ja": { label: "EN → 日本語", steps: ["en", "ja"] },
+  "ja-en": { label: "日本語 → EN", steps: ["ja", "en"] },
+};
+const readOrder = () => READ_ORDERS[saved.storyOrder] ? saved.storyOrder : "ja";
+const GAP_BETWEEN_LANGUAGES_MS = 500;
+
+function readSentence(index) {
+  if (!reader || !reader.playing) return;
+  clearStoryTimers();
+  stopSpeaking();
+  if (index >= reader.sentences.length) { // the end
+    reader.playing = false; reader.index = reader.sentences.length - 1;
+    saved.storyPlace[reader.number] = 0; persist();
+    letScreenSleep(); updateStoryControls(); toast("おわり — the end!");
+    return;
+  }
+  reader.index = index;
+  saved.storyPlace[reader.number] = index; persist();
+  const sentence = reader.sentences[index];
+  const token = ++reader.token;
+  const isCurrent = () => reader && reader.token === token && reader.playing;
+  markSentence(index);
+  placeGlide(index, 0, true);
+  scrollToSentence(index, true);
+  updateStoryControls();
+
+  // Read each language in turn, then move on to the next sentence.
+  const steps = READ_ORDERS[readOrder()].steps;
+  const runStep = stepNumber => {
+    if (!isCurrent()) return;
+    if (stepNumber >= steps.length) {
+      const endOfParagraph = !sentence.el.nextElementSibling;
+      const pause = (endOfParagraph ? 900 : 450) / Math.max(0.6, storySpeed());
+      reader.timers.push(setTimeout(() => { if (isCurrent()) readSentence(index + 1); }, pause));
+      return;
+    }
+    const thenNext = () => reader.timers.push(setTimeout(() => runStep(stepNumber + 1),
+      stepNumber + 1 < steps.length ? GAP_BETWEEN_LANGUAGES_MS : 0));
+    if (steps[stepNumber] === "ja") readJapanese(sentence, index, isCurrent, thenNext);
+    else readEnglish(sentence, isCurrent, thenNext);
+  };
+  runStep(0);
+}
+
+/* Speak a line, then call whenDone(spoke). Uses onend, plus a quarter-second
+   check in case a phone never sends onend. whenDone(false) = nothing was heard. */
+function speakThen(utterance, isCurrent, whenDone, onStarted) {
+  let finished = false;
+  const finish = spoke => { if (finished || !isCurrent()) return; finished = true; whenDone(spoke); };
+  reader.timers.push(setTimeout(() => {
+    if (!isCurrent()) return;
+    try {
+      speechSynthesis.resume();
+      utterance.onstart = () => { speechHeard = true; $("#st-sound").style.display = "none"; if (onStarted) onStarted(); };
+      utterance.onend = utterance.onerror = () => finish(true);
+      speechSynthesis.speak(utterance);
+    } catch (err) { finish(false); return; }
+    const watchStartedAt = Date.now();
+    let heardTalking = false;
+    const checkVoice = () => {
+      if (finished || !isCurrent()) return;
+      const talking = speechSynthesis.speaking || speechSynthesis.pending;
+      if (talking) heardTalking = true;
+      if (heardTalking && !talking) finish(true);
+      else if (!heardTalking && Date.now() - watchStartedAt > 4000) finish(false);   // never started (blocked)
+      else reader.timers.push(setTimeout(checkVoice, 250));
+    };
+    reader.timers.push(setTimeout(checkVoice, 400));
+    reader.timers.push(setTimeout(() => {
+      if (isCurrent() && !speechHeard && GameVoice.enabled) $("#st-sound").style.display = "";
+    }, 1800));
+  }, 120));
+}
+
+/* Japanese: the underline follows the voice word by word. */
+function readJapanese(sentence, index, isCurrent, whenDone) {
+  sentence.el.classList.remove("saying-en");
+  placeGlide(index, 0, true);
+
+  // Where each unit starts, in beats, for gliding when the voice gives no word positions.
+  const beatStarts = [];
+  let totalBeats = 0;
+  sentence.units.forEach(unit => { beatStarts.push(totalBeats); totalBeats += beatsOf(unit); });
+  const unitAtBeat = beat => { let u = 0; while (u + 1 < beatStarts.length && beatStarts[u + 1] <= beat) u++; return u; };
+  const unitAtChar = charIndex => { let u = 0; while (u + 1 < sentence.units.length && sentence.units[u + 1].start <= charIndex) u++; return u; };
+
+  let spokenAt = 0, boundaryEvents = false, done = false;
+  const glideAlong = () => {
+    if (!isCurrent() || boundaryEvents || done) return;
+    const beat = (performance.now() - spokenAt) / (msPerBeat / storyRate());
+    const u = unitAtBeat(beat);
+    if (u !== reader.unit) placeGlide(index, u, true);
+    reader.frame = requestAnimationFrame(glideAlong);
+  };
+  const finishJapanese = spoke => {
+    if (done || !isCurrent()) return;
+    done = true;
+    cancelAnimationFrame(reader.frame);
+    // Learn how fast this voice really talks, so the next glide matches it.
+    if (spoke && spokenAt) {
+      const measured = (performance.now() - spokenAt) * storyRate() / totalBeats;
+      if (measured > 40 && measured < 600) msPerBeat = msPerBeat * 0.6 + measured * 0.4;
+    }
+    placeGlide(index, sentence.units.length - 1, true);
+    whenDone();
+  };
+  const glideSilently = () => {   // sound off or blocked: glide along at the remembered speed
+    spokenAt = performance.now();
+    glideAlong();
+    reader.timers.push(setTimeout(() => finishJapanese(false), totalBeats * msPerBeat / storyRate()));
+  };
+
+  if (!GameVoice.enabled || !("speechSynthesis" in window)) { glideSilently(); return; }
+  const utterance = makeUtterance(sentence.speech, "ja-JP", storyRate());
+  utterance.onboundary = event => {
+    if (!isCurrent() || typeof event.charIndex !== "number") return;
+    boundaryEvents = true;   // the voice tells us exactly where it is
+    placeGlide(index, unitAtChar(event.charIndex), true);
+  };
+  speakThen(utterance, isCurrent,
+    spoke => spoke ? finishJapanese(true) : glideSilently(),
+    () => { spokenAt = performance.now(); glideAlong(); });
+}
+
+/* English: the translation line lights up while it's read. */
+function readEnglish(sentence, isCurrent, whenDone) {
+  const finishEnglish = () => { sentence.el.classList.remove("saying-en"); whenDone(); };
+  sentence.el.classList.add("saying-en");
+  // Hide the word underline while the English is read; it comes back with the Japanese.
+  $("#st-glide").style.opacity = 0;
+  sentence.unitEls.forEach(el => el.classList.remove("now"));
+  if (!GameVoice.enabled || !("speechSynthesis" in window)) {
+    // Sound off: leave the English up for about as long as it would take to say.
+    reader.timers.push(setTimeout(() => { if (isCurrent()) finishEnglish(); }, sentence.en.length * 60 / storyRate()));
+    return;
+  }
+  const utterance = makeUtterance(speakableEnglish(sentence.en), "en-US", clamp(storyRate() * 1.1, 0.4, 1.7));
+  speakThen(utterance, isCurrent, () => { if (isCurrent()) finishEnglish(); });
+}
+
+function closeStory() {
+  pauseStory();
+  reader = null;
+  showStoryList();
+}
+function showStoryList() {
+  showScreen("s-stories");
+  storiesReady.then(renderStoryList);
+}
+
+/* ---------- buttons ---------- */
+$("#btn-stories").onclick = () => { GameVoice.unlock(); showStoryList(); };
+$("#sts-home").onclick = () => { renderHome(); showScreen("s-home"); };
+$("#st-close").onclick = closeStory;
+$("#st-play").onclick = () => { if (!reader) return; reader.playing ? pauseStory() : playStory(); };
+$("#st-prev").onclick = () => { if (reader) jumpToSentence(reader.index - 1, false); };
+$("#st-next").onclick = () => { if (reader) jumpToSentence(reader.index + 1, false); };
+$("#st-en").onclick = () => { saved.storyEnglish = !saved.storyEnglish; persist(); applyStoryToggles(); };
+$("#st-furi").onclick = () => { saved.storyFurigana = !saved.storyFurigana; persist(); applyStoryToggles(); };
+$("#st-sound").onclick = () => {
+  // Straight from a tap, which iOS always lets speak.
+  speechHeard = false;
+  if (!GameVoice.enabled) { GameVoice.setEnabled(true); $("#btnSound").textContent = "♪ ON"; }
+  try { speechSynthesis.cancel(); speechSynthesis.speak(makeUtterance(" ", "en-US", 1)); } catch (err) {}
+  if (reader) { reader.playing = true; readSentence(reader.index); }
+};
+window.addEventListener("resize", () => { if (reader) placeGlide(reader.index, reader.unit || 0, false); });
+document.addEventListener("visibilitychange", () => {
+  if (!reader) return;
+  if (document.hidden && reader.playing) pauseStory();
+});
 </script>
 </body>
 </html>
