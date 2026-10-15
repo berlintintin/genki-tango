@@ -101,6 +101,19 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 .fl-kanji:empty{display:none}
 .fl-en{margin-top:22px;padding-top:16px;border-top:1.5px dashed var(--line);font-size:22px;font-weight:700;min-width:60%;opacity:0;transition:opacity .4s ease}
 .fl-en.show{opacity:1}
+/* "why it's that word" + example sentence, under the English */
+.fl-notes{margin-top:14px;max-width:520px;text-align:left;font-size:15.5px;line-height:1.6;opacity:0;transition:opacity .4s ease}
+.fl-en.show ~ .fl-notes{opacity:1}
+.fl-notes .why{color:var(--ink)}
+.fl-notes .jp{font-weight:700;color:var(--bad)}
+.fl-notes rt{font-size:.6em;color:var(--muted)}
+.fl-notes .ex{margin-top:10px;padding:8px 12px;border-left:3px solid var(--hi);background:var(--hi-soft);border-radius:0 8px 8px 0}
+.fl-notes .ex-ja{font-size:19px;line-height:2}
+.fl-notes .ex-ja .target{color:var(--bad);font-weight:700}
+.fl-notes .ex-en{font-size:14px;color:var(--muted)}
+.extras{grid-column:2 / -1;display:flex;gap:7px;flex-wrap:wrap}
+.extras .lp{padding:5px 11px;font-size:13px;font-weight:700;border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--muted)}
+.extras .lp.on{border-color:var(--ink);background:var(--hi-soft);color:var(--ink)}
 .flash.in .fl-kana{animation:pop .45s ease-out}
 @keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 .counter{text-align:center;color:var(--muted);font-size:13px;margin-top:12px;font-variant-numeric:tabular-nums}
@@ -277,6 +290,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
     <div class="fl-kana" id="sl-kana"></div>
     <div class="fl-kanji kj" id="sl-kanji"></div>
     <div class="fl-en" id="sl-en"></div>
+    <div class="fl-notes" id="sl-notes" style="display:none"></div>
   </div>
   <div class="counter" id="sl-count"></div>
   <div class="slidefoot">
@@ -1056,7 +1070,17 @@ function renderSlideOptions() {
       <input type="range" id="slpace" min="${WAIT_MIN_SECONDS}" max="${WAIT_MAX_SECONDS}" step="1" value="${cardWaitSeconds()}" aria-label="Seconds to wait after the voice before the next card">
       <span class="slend">10s</span>
       <span class="pacenum" id="slpacenum">${waitLabel()}</span>
+    </div>
+    <div class="slrow">
+      <span class="sllab">Extras</span>
+      <div class="extras">
+        <button class="lp${saved.showWhy ? " on" : ""}" id="slwhy" aria-pressed="${!!saved.showWhy}">💡 Mini-lesson</button>
+        <button class="lp${saved.showExample ? " on" : ""}" id="slexample" aria-pressed="${!!saved.showExample}">📝 Example sentence</button>
+      </div>
     </div>`;
+  // Turning these on/off takes effect from the next card.
+  $("#slwhy").onclick = () => { saved.showWhy = !saved.showWhy; persist(); renderSlideOptions(); };
+  $("#slexample").onclick = () => { saved.showExample = !saved.showExample; persist(); renderSlideOptions(); };
   const voiceSlider = $("#slvoice"), paceSlider = $("#slpace");
   voiceSlider.oninput = () => { saved.voiceRate = Number(voiceSlider.value); $("#slvoicenum").innerHTML = `${voiceSpeed().toFixed(2)}× <i>${voiceLabel()}</i>`; };
   paceSlider.oninput  = () => { saved.cardWait = Number(paceSlider.value); $("#slpacenum").innerHTML = waitLabel(); };
@@ -1097,6 +1121,7 @@ function showSlide() {
   fillCard(word, $("#sl-kana"), $("#sl-kanji"), $("#sl-stamp"));
   englishEl.textContent = word.english;
   englishEl.classList.remove("show");
+  fillNotes(word);   // explanation / example sentence, if those are turned on
   card.classList.remove("in"); void card.offsetWidth; card.classList.add("in");
   $("#sl-count").textContent = `${slideshow.index + 1} / ${slideshow.order.length}`;
 
@@ -1122,11 +1147,13 @@ function showSlide() {
   // Sound off (or no speech support): give a short beat to read the word,
   // show the English, and treat that as the "voice finishing".
   if (!GameVoice.enabled || !("speechSynthesis" in window)) {
-    later(whenVoiceFinishes, 1500);
+    later(revealEnglish, 1500);
+    later(whenVoiceFinishes, 1500 + noteReadingMs(word));
     return;
   }
 
-  // Step 1: say the Japanese, then "means …" in English.
+  // Step 1: say the Japanese, then "means …" in English — then the explanation
+  // and example sentence if they're on. The "Cards" wait starts after the LAST line.
   const kanaLine = speakableKana(word.kana);
   const englishLine = "means " + speakableEnglish(word.english);
   later(() => {
@@ -1137,10 +1164,13 @@ function showSlide() {
       const english = makeUtterance(englishLine, "en-US", englishRate());
       japanese.onstart = () => { speechHeard = true; $("#sl-sound").style.display = "none"; };
       english.onstart = revealEnglish;
-      english.onend = whenVoiceFinishes;
-      english.onerror = whenVoiceFinishes;
+      const extras = noteLinesFor(word).map(line => makeUtterance(line.text, line.lang, line.rate));
+      const lastLine = extras.length ? extras[extras.length - 1] : english;
+      lastLine.onend = whenVoiceFinishes;
+      lastLine.onerror = whenVoiceFinishes;
       speechSynthesis.speak(japanese);
       speechSynthesis.speak(english);
+      extras.forEach(line => speechSynthesis.speak(line));
     } catch (err) { whenVoiceFinishes(); return; }
 
     // Step 2: notice when the voice stops. The onend event above usually does
@@ -2066,6 +2096,102 @@ document.addEventListener("visibilitychange", () => {
   if (!reader) return;
   if (document.hidden && reader.playing) pauseStory();
 });
+</script>
+
+<script>
+"use strict";
+/* =========================================================================
+   12. Word notes — "why it's that word" explanations and example sentences
+       for the slideshow. They live in vocab-notes.js next to this page:
+         window.VOCAB_NOTES["がくせい|学生"] = {
+           explain: "English, with 「学|がく」 Japanese bits in 「」",
+           ja: "example sentence in Story-time markup", en: "its translation" }
+       Turned on with the two buttons under the slideshow's sliders.
+   ========================================================================= */
+window.VOCAB_NOTES = window.VOCAB_NOTES || {};
+loadLessonScript("vocab-notes.js");   // optional — the buttons just do nothing without it
+
+if (saved.showWhy === undefined) saved.showWhy = false;
+if (saved.showExample === undefined) saved.showExample = false;
+const notesFor = word => window.VOCAB_NOTES[wordKey(word)] || null;
+
+/* Split an explanation into pieces for the two voices:
+   "「大|だい」 means big" → [{lang:"ja", show:"大", say:"だい"}, {lang:"en", say:" means big"}] */
+function explanationPieces(text) {
+  const pieces = [];
+  const pattern = /「([^」]*)」|([^「」]+)/g;
+  let match;
+  while ((match = pattern.exec(text))) {
+    if (match[1] !== undefined) {
+      const [show, reading] = match[1].split("|");
+      pieces.push({ lang: "ja", show, say: reading || show });
+    } else {
+      pieces.push({ lang: "en", show: match[2], say: match[2] });
+    }
+  }
+  return pieces;
+}
+
+// Furigana over just the kanji part (same idea as Story time).
+function noteRuby(surface, reading) {
+  const isKanji = ch => /[㐀-鿿々]/.test(ch);
+  if (![...surface].some(isKanji) || !reading || reading === surface) return escapeHtml(surface);
+  let start = 0, endS = surface.length, endR = reading.length;
+  while (start < surface.length && start < reading.length && surface[start] === reading[start] && !isKanji(surface[start])) start++;
+  while (endS > start && endR > start && surface[endS - 1] === reading[endR - 1] && !isKanji(surface[endS - 1])) { endS--; endR--; }
+  return escapeHtml(surface.slice(0, start)) + `<ruby>${escapeHtml(surface.slice(start, endS))}<rt>${escapeHtml(reading.slice(start, endR))}</rt></ruby>` + escapeHtml(surface.slice(endS));
+}
+
+/* Draw the notes area on the slideshow card (hidden until the English shows). */
+function fillNotes(word) {
+  const notesEl = $("#sl-notes");
+  const notes = notesFor(word);
+  let html = "";
+  if (notes && saved.showWhy && notes.explain) {
+    html += `<div class="why">💡 ${explanationPieces(notes.explain).map(p =>
+      p.lang === "ja" ? `<span class="jp kj">${noteRuby(p.show, p.say)}</span>` : escapeHtml(p.show)).join("")}</div>`;
+  }
+  if (notes && saved.showExample && notes.ja && window.StoryEngine) {
+    const { units } = StoryEngine.parseSentence(notes.ja);
+    html += `<div class="ex"><div class="ex-ja kj">${units.map(u =>
+      `<span class="${u.kind === "vocab" ? "target" : ""}">${noteRuby(u.surface, u.reading)}</span>`).join("")}</div>
+      <div class="ex-en">${escapeHtml(notes.en || "")}</div></div>`;
+  }
+  notesEl.innerHTML = html;
+  notesEl.style.display = html ? "" : "none";
+}
+
+/* The extra things to say after "means …", as {text, lang, rate} lines. */
+function noteLinesFor(word) {
+  const notes = notesFor(word);
+  const lines = [];
+  if (!notes) return lines;
+  if (saved.showWhy && notes.explain) {
+    explanationPieces(notes.explain).forEach(piece => {
+      if (piece.lang === "ja") lines.push({ text: piece.say, lang: "ja-JP", rate: japaneseRate() });
+      // Long English stretches are split into sentences: some browsers cut off
+      // a single utterance after about 15 seconds.
+      else piece.say.split(/(?<=[.!?;:])\s+/).forEach(chunk => {
+        if (/[A-Za-z0-9]/.test(chunk)) lines.push({ text: chunk, lang: "en-US", rate: englishRate() });
+      });
+    });
+  }
+  if (saved.showExample && notes.ja && window.StoryEngine) {
+    const { units } = StoryEngine.parseSentence(notes.ja);
+    lines.push({ text: units.map(u => u.reading).join(""), lang: "ja-JP", rate: japaneseRate() });
+    if (notes.en) lines.push({ text: notes.en, lang: "en-US", rate: englishRate() });
+  }
+  return lines;
+}
+
+// With sound off: roughly how long to leave the notes up for reading.
+function noteReadingMs(word) {
+  const lines = noteLinesFor(word);
+  return lines.reduce((ms, line) => ms + line.text.length * (line.lang === "ja-JP" ? 140 : 55), 0);
+}
+
+// Story time's engine also parses example sentences; load it even if Story time isn't opened.
+if (!window.StoryEngine) loadLessonScript("stories/story-engine.js");
 </script>
 </body>
 </html>
