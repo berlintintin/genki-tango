@@ -2172,7 +2172,10 @@ function noteLinesFor(word) {
       // Long English stretches are split into sentences: some browsers cut off
       // a single utterance after about 15 seconds.
       else piece.say.split(/(?<=[.!?;:])\s+/).forEach(chunk => {
-        if (/[A-Za-z0-9]/.test(chunk)) lines.push({ text: chunk, lang: "en-US", rate: englishRate() });
+        // A piece that starts right after Japanese often begins with ", " — the
+        // English voice reads a leading comma out loud ("comma"), so trim it off.
+        const cleaned = chunk.replace(/^[\s,.;:!?)\]、。\-–—]+/, "").replace(/[\s,;:(]+$/, "");
+        if (/[A-Za-z0-9]/.test(cleaned)) lines.push({ text: cleaned, lang: "en-US", rate: englishRate() });
       });
     });
   }
