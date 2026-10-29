@@ -99,6 +99,10 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 .fl-kana{font-weight:900;line-height:1.15;white-space:nowrap;font-size:min(92px, calc((min(100vw, 640px) - 110px) / var(--len, 4)))}
 .fl-kanji{margin-top:6px;font-weight:600;line-height:1.2;white-space:nowrap;color:var(--ink);opacity:.85;font-size:min(52px, calc(0.6 * (min(100vw, 640px) - 110px) / var(--len, 4)))}
 .fl-kanji:empty{display:none}
+/* particles that go with the word: "person に thing を" */
+.fl-part{margin-top:8px;font-size:17px;color:var(--muted);letter-spacing:.02em}
+.ptline{font-size:15px;font-weight:500;color:var(--muted);white-space:nowrap}
+.fl-part .pt,.res .pt,.fb .pt{color:var(--bad);font-weight:900;font-size:1.15em;margin:0 2px}
 .fl-en{margin-top:22px;padding-top:16px;border-top:1.5px dashed var(--line);font-size:22px;font-weight:700;min-width:60%;opacity:0;transition:opacity .4s ease}
 .fl-en.show{opacity:1}
 /* "why it's that word" + example sentence, under the English */
@@ -1094,6 +1098,7 @@ function fillCard(word, kanaEl, kanjiEl, stampEl) {
   kanaEl.textContent = word.kana;
   kanjiEl.textContent = word.kanji || "";
   stampEl.textContent = `第${word.lesson}課`;
+  showParticlesOnCard(word, kanaEl);   // e.g. "〜を" under the word
 }
 
 function startSlideshow() {
@@ -1164,7 +1169,7 @@ function showSlide() {
       const english = makeUtterance(englishLine, "en-US", englishRate());
       japanese.onstart = () => { speechHeard = true; $("#sl-sound").style.display = "none"; };
       english.onstart = revealEnglish;
-      const extras = noteLinesFor(word).map(line => makeUtterance(line.text, line.lang, line.rate));
+      const extras = particleLinesFor(word).concat(noteLinesFor(word)).map(line => makeUtterance(line.text, line.lang, line.rate));
       const lastLine = extras.length ? extras[extras.length - 1] : english;
       lastLine.onend = whenVoiceFinishes;
       lastLine.onerror = whenVoiceFinishes;
@@ -1395,7 +1400,7 @@ function showListenCard() {
     if (!isStillCurrent()) return;
     revealAnswer();
     speakLinesThen(
-      [{ text: speakableKana(word.kana), lang: "ja-JP", rate: japaneseRate() }],
+      [{ text: speakableKana(word.kana), lang: "ja-JP", rate: japaneseRate() }].concat(particleLinesFor(word)),
       isStillCurrent,
       spoke => listen.timers.push(setTimeout(goToNextCard, (spoke ? 0 : SOUND_OFF_READ_MS) + answerSeconds() * 1000))
     );
@@ -1516,7 +1521,9 @@ $("#q-input").addEventListener("input", event => {
 });
 
 function kanaWithKanjiHtml(word) {
-  return `${escapeHtml(word.kana)}${word.kanji ? `<span class="kj">${escapeHtml(word.kanji)}</span>` : ""}`;
+  const pattern = particlesFor(word);
+  return `${escapeHtml(word.kana)}${word.kanji ? `<span class="kj">${escapeHtml(word.kanji)}</span>` : ""}` +
+    (pattern ? ` <span class="ptline">(${particlesHtml(pattern)})</span>` : "");
 }
 
 function finishQuestion(outcome) {
@@ -2195,6 +2202,55 @@ function noteReadingMs(word) {
 
 // Story time's engine also parses example sentences; load it even if Story time isn't opened.
 if (!window.StoryEngine) loadLessonScript("stories/story-engine.js");
+
+/* =========================================================================
+   13. Particles — which particle goes with a verb/adjective (を, に, が…).
+       Data lives in vocab-particles.js next to this page:
+         window.VOCAB_PARTICLES["あげる|"] = "person 「に」 thing 「を」"
+       Shown under the word on every card, and said after "means …".
+   ========================================================================= */
+window.VOCAB_PARTICLES = window.VOCAB_PARTICLES || {};
+loadLessonScript("vocab-particles.js");   // optional — nothing shows without it
+const particlesFor = word => window.VOCAB_PARTICLES[wordKey(word)] || "";
+
+// "person 「に」 thing 「を」" → "person に thing を" with the particles highlighted.
+function particlesHtml(pattern) {
+  return pattern.split(/(「[^」]*」)/).map(part => {
+    const particle = part.match(/^「([^」]*)」$/);
+    return particle ? `<b class="pt">${escapeHtml(particle[1])}</b>` : escapeHtml(part);
+  }).join("");
+}
+
+// What to say: "Used with に." / "Used with person に, thing を."
+function particleLinesFor(word) {
+  const pattern = particlesFor(word);
+  if (!pattern) return [];
+  const lines = [{ text: "Used with", lang: "en-US", rate: englishRate() }];
+  pattern.replace(/〜/g, "").split(/(「[^」]*」)/).forEach(part => {
+    const particle = part.match(/^「([^」]*)」$/);
+    if (particle) particle[1].split("/").forEach((p, i) => {
+      if (i > 0) lines.push({ text: "or", lang: "en-US", rate: englishRate() });
+      lines.push({ text: p, lang: "ja-JP", rate: japaneseRate() });
+    });
+    else if (/[A-Za-z]/.test(part)) lines.push({ text: part.trim(), lang: "en-US", rate: englishRate() });
+  });
+  return lines;
+}
+
+// Put the particle line on a card, right under the word.
+function showParticlesOnCard(word, kanaEl) {
+  const holder = kanaEl.parentElement;
+  let line = holder.querySelector(".fl-part");
+  if (!line) {
+    line = document.createElement("div");
+    line.className = "fl-part";
+    const kanjiEl = holder.querySelector(".fl-kanji");
+    (kanjiEl || kanaEl).insertAdjacentElement("afterend", line);
+  }
+  const pattern = particlesFor(word);
+  line.innerHTML = pattern ? particlesHtml(pattern) : "";
+  line.style.display = pattern ? "" : "none";
+}
 </script>
 </body>
 </html>

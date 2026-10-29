@@ -191,6 +191,7 @@
     .target .frame { flex:1 1 auto; min-height:0; border-radius:8px; }
     .target .cap { flex:0 0 auto; min-height:0; font-size:.72rem; padding-top:3px; line-height:1.14; }
     .target .en-cap { flex:0 0 auto; min-height:0; font-size:.6rem; line-height:1.1; }
+    .target .pt-cap { flex:0 0 auto; font-size:.58rem; line-height:1.1; }
 
     .tile { padding:6px; border-width:2px; aspect-ratio:auto; min-height:0;
       box-shadow:2px 3px 0 rgba(43,58,103,.2); }
@@ -201,6 +202,9 @@
   .target .en-cap { text-align:center; font-size:clamp(.6rem,1.3vw,.78rem); color:var(--pencil); line-height:1.15; margin-top:1px; min-height:1.1em; }
   .target.solved .en-cap { color:var(--good); opacity:.85; }
   #game.en-off .en-cap { display:none; }
+  /* ---------- particles that go with the word (from vocab-particles.js) ---------- */
+  .target .pt-cap { text-align:center; font-size:clamp(.6rem,1.25vw,.76rem); color:var(--pencil); line-height:1.15; margin-top:1px; }
+  .target .pt-cap b { color:var(--accent); font-size:1.15em; margin:0 1px; }
 
   /* ---------- topbar controls ---------- */
   .topbar .ctrls { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
@@ -508,6 +512,8 @@
   };
 })();
 </script>
+<!-- Which particles go with each verb/adjective (を, に, が…). Optional. -->
+<script src="vocab-particles.js" onerror="this.remove()"></script>
 <script>
 /* =========================================================
    LESSON LOADER — vocabulary now lives in per-lesson files
@@ -888,7 +894,12 @@ function startRound(a, b) {
     t.className = "target";
     t.dataset.id = w.id;
     const cap = w.kanji ? `${w.kana}（${w.kanji}）` : w.kana;
-    t.innerHTML = `<div class="frame"></div><div class="cap">${cap}</div><div class="en-cap">${w.en}</div>`;
+    // Particles that go with this word, e.g. "person に thing を" — particles in red.
+    const pattern = (window.VOCAB_PARTICLES || {})[w.kana + "|" + (w.kanji || "")];
+    const particleCap = pattern
+      ? `<div class="pt-cap">${pattern.replace(/「([^」]*)」/g, "<b>$1</b>")}</div>`
+      : "";
+    t.innerHTML = `<div class="frame"></div><div class="cap">${cap}</div>${particleCap}<div class="en-cap">${w.en}</div>`;
     board.appendChild(t);
   });
 
