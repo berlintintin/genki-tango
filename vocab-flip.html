@@ -118,7 +118,21 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 .extras{grid-column:2 / -1;display:flex;gap:7px;flex-wrap:wrap}
 .extras .lp{padding:5px 11px;font-size:13px;font-weight:700;border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--muted)}
 .extras .lp.on{border-color:var(--ink);background:var(--hi-soft);color:var(--ink)}
+.fl-notes .why-tag{display:inline-block;margin-bottom:4px;font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+/* English → 日本語 slideshow: English on top, the Japanese hidden until the answer */
+#sl-card .ask,#sl-card .thinkbar{display:none}
+#sl-card.ej .ask{display:block;order:0}
+#sl-card.ej .thinkbar{display:block;order:2}
+#sl-card.ej .fl-en{order:1;margin-top:0;padding-top:0;border-top:0;font-size:clamp(24px,6.5vw,34px);font-weight:900;line-height:1.25}
+#sl-card.ej .fl-kana{order:3;margin-top:22px;padding-top:16px;border-top:1.5px dashed var(--line);min-width:60%}
+#sl-card.ej .fl-kanji{order:4}
+#sl-card.ej .fl-part{order:5}
+#sl-card.ej .fl-notes{order:6}
+#sl-card.ej:not(.revealed) .fl-kana,#sl-card.ej:not(.revealed) .fl-kanji,#sl-card.ej:not(.revealed) .fl-part{visibility:hidden}
+#sl-card.ej:not(.revealed) .fl-notes{opacity:0}
+#sl-card.ej.revealed .fl-kana{animation:pop .45s ease-out}
 .flash.in .fl-kana{animation:pop .45s ease-out}
+#sl-card.ej.in:not(.revealed) .fl-kana{animation:none}
 @keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 .counter{text-align:center;color:var(--muted);font-size:13px;margin-top:12px;font-variant-numeric:tabular-nums}
 
@@ -273,7 +287,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
   </div>
   <div class="count" id="wordcount"></div>
   <div class="modes">
-    <button class="mode" id="btn-slides"><span class="ic">🎧</span><span><b>Slideshow</b><span>Words flip by in random order and get read aloud with their meaning. Just watch and listen.</span></span></button>
+    <button class="mode" id="btn-slides"><span class="ic">🎧</span><span><b>Slideshow</b><span>Words flip by in random order and get read aloud with their meaning — or flip it to English → 日本語 and answer in your head. Just watch and listen.</span></span></button>
     <button class="mode" id="btn-listen"><span class="ic">🚌</span><span><b>Listen &amp; answer</b><span>Hands-free quiz. Hears "How do you say …?", gives you time to answer in your head, then says the Japanese.</span></span></button>
     <button class="mode" id="btn-stories"><span class="ic">📚</span><span><b>Story time</b><span>Long, silly stories made from the lesson vocab. Read along while it's read aloud — tap any sentence to jump there.</span></span></button>
     <button class="mode" id="btn-quiz"><span class="ic">⌨️</span><span><b>Quiz</b><span>See the English, type the word in hiragana or katakana. Ten words a round, graded at the end.</span></span></button>
@@ -291,6 +305,8 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
   </div>
   <div class="flash" id="sl-card">
     <span class="stamp" id="sl-stamp"></span>
+    <div class="ask">How do you say</div>
+    <div class="thinkbar" id="sl-bar"><i></i></div>
     <div class="fl-kana" id="sl-kana"></div>
     <div class="fl-kanji kj" id="sl-kanji"></div>
     <div class="fl-en" id="sl-en"></div>
@@ -1061,8 +1077,28 @@ function clearSlideTimers() {
   slideshow.timers = [];
 }
 
+/* Which way the slideshow goes:
+   "je" — 日本語 → English: say the word, then "means …" (the original).
+   "ej" — English → 日本語: "How do you say …?", wait the Answer time, then the word. */
+const slideDirection = () => saved.slideDirection === "ej" ? "ej" : "je";
+const slideThinkSeconds = () => { const s = Number(saved.slideThink); return clamp(Number.isFinite(s) ? Math.round(s) : 3, 1, 10); };
+
 function renderSlideOptions() {
+  const ej = slideDirection() === "ej";
   $("#slopts").innerHTML = `
+    <div class="slrow">
+      <span class="sllab">Mode</span>
+      <div class="extras">
+        <button class="lp${!ej ? " on" : ""}" id="sldir-je" aria-pressed="${!ej}">日本語 → English</button>
+        <button class="lp${ej ? " on" : ""}" id="sldir-ej" aria-pressed="${ej}">English → 日本語</button>
+      </div>
+    </div>
+    ${ej ? `<div class="slrow">
+      <span class="sllab">Answer</span><span class="slend">1s</span>
+      <input type="range" id="slthink" min="1" max="10" step="1" value="${slideThinkSeconds()}" aria-label="Seconds to answer in your head before the Japanese is said">
+      <span class="slend">10s</span>
+      <span class="pacenum" id="slthinknum">${slideThinkSeconds()}s <i>to answer</i></span>
+    </div>` : ""}
     <div class="slrow">
       <span class="sllab">Voice</span><span class="slend">🐢</span>
       <input type="range" id="slvoice" min="${VOICE_MIN}" max="${VOICE_MAX}" step="0.05" value="${voiceSpeed()}" aria-label="Voice speed">
@@ -1085,6 +1121,19 @@ function renderSlideOptions() {
   // Turning these on/off takes effect from the next card.
   $("#slwhy").onclick = () => { saved.showWhy = !saved.showWhy; persist(); renderSlideOptions(); };
   $("#slexample").onclick = () => { saved.showExample = !saved.showExample; persist(); renderSlideOptions(); };
+  // Switching direction restarts the current card in the new direction.
+  const setDirection = dir => {
+    if (slideDirection() === dir) return;
+    saved.slideDirection = dir; persist(); renderSlideOptions();
+    if (slideshow) showSlide();
+  };
+  $("#sldir-je").onclick = () => setDirection("je");
+  $("#sldir-ej").onclick = () => setDirection("ej");
+  const thinkSlider = $("#slthink");
+  if (thinkSlider) {
+    thinkSlider.oninput = () => { saved.slideThink = Number(thinkSlider.value); $("#slthinknum").innerHTML = `${slideThinkSeconds()}s <i>to answer</i>`; };
+    thinkSlider.onchange = persist;
+  }
   const voiceSlider = $("#slvoice"), paceSlider = $("#slpace");
   voiceSlider.oninput = () => { saved.voiceRate = Number(voiceSlider.value); $("#slvoicenum").innerHTML = `${voiceSpeed().toFixed(2)}× <i>${voiceLabel()}</i>`; };
   paceSlider.oninput  = () => { saved.cardWait = Number(paceSlider.value); $("#slpacenum").innerHTML = waitLabel(); };
@@ -1123,17 +1172,24 @@ function showSlide() {
   const token = ++slideshow.token; // any older timers/speech for a previous card are ignored
   const card = $("#sl-card"), englishEl = $("#sl-en");
 
+  const ej = slideDirection() === "ej";
   fillCard(word, $("#sl-kana"), $("#sl-kanji"), $("#sl-stamp"));
   englishEl.textContent = word.english;
-  englishEl.classList.remove("show");
-  fillNotes(word);   // explanation / example sentence, if those are turned on
+  englishEl.classList.toggle("show", ej);  // English → 日本語 starts with the English up
+  card.classList.toggle("ej", ej);
+  card.classList.remove("revealed");
+  hideThinkBar($("#sl-bar"));
+  pickMiniLesson(word);   // which of this word's mini-lessons plays this time
+  fillNotes(word);        // explanation / example sentence, if those are turned on
   card.classList.remove("in"); void card.offsetWidth; card.classList.add("in");
   $("#sl-count").textContent = `${slideshow.index + 1} / ${slideshow.order.length}`;
 
-  if (slideshow.paused) { englishEl.classList.add("show"); return; }
+  if (slideshow.paused) { englishEl.classList.add("show"); card.classList.add("revealed"); return; }
 
   const stillCurrent = () => slideshow && slideshow.token === token && !slideshow.paused;
   const later = (fn, ms) => slideshow.timers.push(setTimeout(fn, ms));
+
+  if (ej) { runEnglishToJapaneseSlide(word, stillCurrent, later); return; }
   const revealEnglish = () => { if (stillCurrent()) englishEl.classList.add("show"); };
 
   // Step 3: the voice is done → wait the "Cards" time, then flip to the next card.
@@ -1201,11 +1257,44 @@ function showSlide() {
   }, 160);
 }
 
+/* English → 日本語 card:
+     1. "How do you say, <English>?"
+     2. the Answer wait (thin bar runs down) — answer it in your head
+     3. show + say the Japanese (and its particles)
+     4. example sentence, then the mini-lesson, if those are on
+     5. the Cards wait, then the next card */
+function runEnglishToJapaneseSlide(word, stillCurrent, later) {
+  const card = $("#sl-card"), bar = $("#sl-bar");
+  const goToNextCard = () => { if (!stillCurrent()) return; slideshow.index++; showSlide(); };
+  const speak = (lines, whenDone) => speakLinesThen(lines, stillCurrent, whenDone, slideshow, "#sl-sound");
+
+  const sayTheAnswer = () => {
+    if (!stillCurrent()) return;
+    hideThinkBar(bar);
+    card.classList.add("revealed");
+    const lines = [{ text: speakableKana(word.kana), lang: "ja-JP", rate: japaneseRate() }]
+      .concat(particleLinesFor(word), noteLinesFor(word));
+    speak(lines, spoke => later(goToNextCard, (spoke ? 0 : SOUND_OFF_READ_MS + noteReadingMs(word)) + cardWaitMs()));
+  };
+
+  speak(
+    [{ text: "How do you say, " + speakableEnglish(word.english) + "?", lang: "en-US", rate: englishRate() }],
+    spoke => {
+      const thinkMs = slideThinkSeconds() * 1000;
+      later(() => {
+        if (!stillCurrent()) return;
+        runThinkBar(thinkMs, bar);
+        later(sayTheAnswer, thinkMs);
+      }, spoke ? 0 : SOUND_OFF_READ_MS);
+    }
+  );
+}
+
 function pauseSlideshow(paused) {
   if (!slideshow) return;
   slideshow.paused = paused;
   $("#sl-play").textContent = paused ? "▶ Play" : "⏸ Pause";
-  if (paused) { clearSlideTimers(); stopSpeaking(); $("#sl-en").classList.add("show"); }
+  if (paused) { clearSlideTimers(); stopSpeaking(); $("#sl-en").classList.add("show"); $("#sl-card").classList.add("revealed"); hideThinkBar($("#sl-bar")); }
   else showSlide();
 }
 
@@ -1262,20 +1351,20 @@ function clearListenTimers() {
    really finished. Uses the utterance's end event, plus a check every quarter
    second in case iOS never sends that event. whenDone(false) means nothing was
    spoken (sound off, or speech blocked), so the caller can allow reading time. */
-function speakLinesThen(lines, isStillCurrent, whenDone) {
+function speakLinesThen(lines, isStillCurrent, whenDone, owner = listen, soundButton = "#ls-sound") {
   let finished = false;
   const finish = spoke => { if (finished || !isStillCurrent()) return; finished = true; whenDone(spoke); };
   if (!GameVoice.enabled || !("speechSynthesis" in window)) { finish(false); return; }
 
   stopSpeaking();
-  listen.timers.push(setTimeout(() => {
+  owner.timers.push(setTimeout(() => {
     if (!isStillCurrent()) return;
     let lastUtterance = null;
     try {
       speechSynthesis.resume();
       lines.forEach((line, i) => {
         const utterance = makeUtterance(line.text, line.lang, line.rate);
-        if (i === 0) utterance.onstart = () => { speechHeard = true; $("#ls-sound").style.display = "none"; };
+        if (i === 0) utterance.onstart = () => { speechHeard = true; $(soundButton).style.display = "none"; };
         lastUtterance = utterance;
         speechSynthesis.speak(utterance);
       });
@@ -1291,20 +1380,20 @@ function speakLinesThen(lines, isStillCurrent, whenDone) {
       const neverStarted = !heardTalking && Date.now() - watchStartedAt > 4000;
       if (heardTalking && !talking) finish(true);
       else if (neverStarted) finish(false);
-      else listen.timers.push(setTimeout(checkVoice, 250));
+      else owner.timers.push(setTimeout(checkVoice, 250));
     };
-    listen.timers.push(setTimeout(checkVoice, 400));
+    owner.timers.push(setTimeout(checkVoice, 400));
 
     // iOS only allows speech that starts from a tap — offer one if nothing is heard.
-    listen.timers.push(setTimeout(() => {
-      if (isStillCurrent() && !speechHeard && GameVoice.enabled) $("#ls-sound").style.display = "";
+    owner.timers.push(setTimeout(() => {
+      if (isStillCurrent() && !speechHeard && GameVoice.enabled) $(soundButton).style.display = "";
     }, 1800));
   }, 160));
 }
 
 // Run the thin "thinking" bar from full to empty over `ms`.
-function runThinkBar(ms) {
-  const bar = $("#ls-bar"), fill = bar.querySelector("i");
+function runThinkBar(ms, bar = $("#ls-bar")) {
+  const fill = bar.querySelector("i");
   bar.classList.add("on");
   fill.style.transition = "none";
   fill.style.transform = "scaleX(1)";
@@ -1312,8 +1401,8 @@ function runThinkBar(ms) {
   fill.style.transition = `transform ${ms}ms linear`;
   fill.style.transform = "scaleX(0)";
 }
-function hideThinkBar() {
-  const bar = $("#ls-bar"), fill = bar.querySelector("i");
+function hideThinkBar(bar = $("#ls-bar")) {
+  const fill = bar.querySelector("i");
   bar.classList.remove("on");
   fill.style.transition = "none";
   fill.style.transform = "scaleX(1)";
@@ -2120,7 +2209,45 @@ loadLessonScript("vocab-notes.js");   // optional — the buttons just do nothin
 
 if (saved.showWhy === undefined) saved.showWhy = false;
 if (saved.showExample === undefined) saved.showExample = false;
+saved.miniLessonTurn = saved.miniLessonTurn || {}; // word key → how many of its mini-lessons have played
 const notesFor = word => window.VOCAB_NOTES[wordKey(word)] || null;
+
+/* Mini-lessons. Every word has its first one in vocab-notes.js (explain).
+   vocab-lessons.js adds more angles on the same word:
+     window.VOCAB_LESSONS["がくせい|学生"] = [ { tag: "Sound-alikes", explain: "…" }, … ]
+   Each time a card comes up the next one in line plays, so over a few passes
+   you hear every angle — kanji, word family, mnemonics, culture, traps… */
+window.VOCAB_LESSONS = window.VOCAB_LESSONS || {};
+loadLessonScript("vocab-lessons.js");   // optional — without it each word has its one mini-lesson
+
+function miniLessonsFor(word) {
+  const notes = notesFor(word);
+  const list = [];
+  if (notes && notes.explain) list.push({ tag: "The basics", explain: notes.explain });
+  (window.VOCAB_LESSONS[wordKey(word)] || []).forEach(lesson => { if (lesson && lesson.explain) list.push(lesson); });
+  return list;
+}
+
+// Choose this card's mini-lesson (and move the word's turn along for next time).
+let currentMiniLesson = null; // { key, lesson, number, of }
+function pickMiniLesson(word) {
+  const key = wordKey(word), list = miniLessonsFor(word);
+  if (!list.length) { currentMiniLesson = null; return; }
+  // Same card again (resumed, mode switched, toggled 💡): replay the same one.
+  if (currentMiniLesson && currentMiniLesson.key === key && currentMiniLesson.of === list.length) return;
+  const turn = Number(saved.miniLessonTurn[key]) || 0;
+  const index = turn % list.length;
+  currentMiniLesson = { key, lesson: list[index], number: index + 1, of: list.length };
+  if (saved.showWhy && list.length > 1 && !(slideshow && slideshow.paused)) {
+    saved.miniLessonTurn[key] = turn + 1;
+    persist();
+  }
+}
+function miniLessonNow(word) {
+  if (currentMiniLesson && currentMiniLesson.key === wordKey(word)) return currentMiniLesson;
+  const list = miniLessonsFor(word);
+  return list.length ? { key: wordKey(word), lesson: list[0], number: 1, of: list.length } : null;
+}
 
 /* Split an explanation into pieces for the two voices:
    "「大|だい」 means big" → [{lang:"ja", show:"大", say:"だい"}, {lang:"en", say:" means big"}] */
@@ -2149,49 +2276,55 @@ function noteRuby(surface, reading) {
   return escapeHtml(surface.slice(0, start)) + `<ruby>${escapeHtml(surface.slice(start, endS))}<rt>${escapeHtml(reading.slice(start, endR))}</rt></ruby>` + escapeHtml(surface.slice(endS));
 }
 
-/* Draw the notes area on the slideshow card (hidden until the English shows). */
+// English → 日本語 plays the example sentence first, then the mini-lesson.
+const exampleFirst = () => slideDirection() === "ej";
+
+/* Draw the notes area on the slideshow card (hidden until the answer shows). */
 function fillNotes(word) {
   const notesEl = $("#sl-notes");
   const notes = notesFor(word);
-  let html = "";
-  if (notes && saved.showWhy && notes.explain) {
-    html += `<div class="why">💡 ${explanationPieces(notes.explain).map(p =>
+  const mini = miniLessonNow(word);
+  let whyHtml = "", exHtml = "";
+  if (mini && saved.showWhy) {
+    const tag = mini.of > 1 ? `<span class="why-tag">💡 ${mini.number} of ${mini.of} · ${escapeHtml(mini.lesson.tag || "Mini-lesson")}</span><br>` : "💡 ";
+    whyHtml = `<div class="why">${tag}${explanationPieces(mini.lesson.explain).map(p =>
       p.lang === "ja" ? `<span class="jp kj">${noteRuby(p.show, p.say)}</span>` : escapeHtml(p.show)).join("")}</div>`;
   }
   if (notes && saved.showExample && notes.ja && window.StoryEngine) {
     const { units } = StoryEngine.parseSentence(notes.ja);
-    html += `<div class="ex"><div class="ex-ja kj">${units.map(u =>
+    exHtml = `<div class="ex"><div class="ex-ja kj">${units.map(u =>
       `<span class="${u.kind === "vocab" ? "target" : ""}">${noteRuby(u.surface, u.reading)}</span>`).join("")}</div>
       <div class="ex-en">${escapeHtml(notes.en || "")}</div></div>`;
   }
+  const html = exampleFirst() ? exHtml + (exHtml && whyHtml ? `<div style="height:12px"></div>` : "") + whyHtml : whyHtml + exHtml;
   notesEl.innerHTML = html;
   notesEl.style.display = html ? "" : "none";
 }
 
-/* The extra things to say after "means …", as {text, lang, rate} lines. */
+/* The extra things to say after the word, as {text, lang, rate} lines. */
 function noteLinesFor(word) {
   const notes = notesFor(word);
-  const lines = [];
-  if (!notes) return lines;
-  if (saved.showWhy && notes.explain) {
-    explanationPieces(notes.explain).forEach(piece => {
-      if (piece.lang === "ja") lines.push({ text: piece.say, lang: "ja-JP", rate: japaneseRate() });
+  const mini = miniLessonNow(word);
+  const whyLines = [], exLines = [];
+  if (mini && saved.showWhy) {
+    explanationPieces(mini.lesson.explain).forEach(piece => {
+      if (piece.lang === "ja") whyLines.push({ text: piece.say, lang: "ja-JP", rate: japaneseRate() });
       // Long English stretches are split into sentences: some browsers cut off
       // a single utterance after about 15 seconds.
       else piece.say.split(/(?<=[.!?;:])\s+/).forEach(chunk => {
         // A piece that starts right after Japanese often begins with ", " — the
         // English voice reads a leading comma out loud ("comma"), so trim it off.
         const cleaned = chunk.replace(/^[\s,.;:!?)\]、。\-–—]+/, "").replace(/[\s,;:(]+$/, "");
-        if (/[A-Za-z0-9]/.test(cleaned)) lines.push({ text: cleaned, lang: "en-US", rate: englishRate() });
+        if (/[A-Za-z0-9]/.test(cleaned)) whyLines.push({ text: cleaned, lang: "en-US", rate: englishRate() });
       });
     });
   }
-  if (saved.showExample && notes.ja && window.StoryEngine) {
+  if (notes && saved.showExample && notes.ja && window.StoryEngine) {
     const { units } = StoryEngine.parseSentence(notes.ja);
-    lines.push({ text: units.map(u => u.reading).join(""), lang: "ja-JP", rate: japaneseRate() });
-    if (notes.en) lines.push({ text: notes.en, lang: "en-US", rate: englishRate() });
+    exLines.push({ text: units.map(u => u.reading).join(""), lang: "ja-JP", rate: japaneseRate() });
+    if (notes.en) exLines.push({ text: notes.en, lang: "en-US", rate: englishRate() });
   }
-  return lines;
+  return exampleFirst() ? exLines.concat(whyLines) : whyLines.concat(exLines);
 }
 
 // With sound off: roughly how long to leave the notes up for reading.
