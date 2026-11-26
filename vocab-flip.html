@@ -106,38 +106,46 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 .fl-en{margin-top:22px;padding-top:16px;border-top:1.5px dashed var(--line);font-size:22px;font-weight:700;min-width:60%;opacity:0;transition:opacity .4s ease}
 .fl-en.show{opacity:1}
 /* "why it's that word" + example sentence, under the English */
-.fl-notes{margin-top:14px;max-width:520px;text-align:left;font-size:15.5px;line-height:1.6;opacity:0;transition:opacity .4s ease}
+.fl-notes{--read-scale-local:var(--read-scale,1);margin-top:14px;max-width:560px;width:100%;text-align:left;font-size:calc(15.5px * var(--read-scale-local));line-height:1.65;opacity:0;transition:opacity .4s ease}
 .fl-en.show ~ .fl-notes{opacity:1}
+/* EN → 日本語: the word (and its notes) stay hidden until revealed */
+.flash.ask-first:not(.revealed) .fl-kana,.flash.ask-first:not(.revealed) .fl-kanji,
+.flash.ask-first:not(.revealed) .fl-part{visibility:hidden}
+.flash.ask-first:not(.revealed) .fl-notes{display:none !important}
+.flash.ask-first .fl-en,.flash.ask-first .thinkbar{order:-1}
+.fl-notes .lesson-title{display:block;font-size:calc(12px * var(--read-scale-local));font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
 .fl-notes .why{color:var(--ink)}
-.fl-notes .jp{font-weight:700;color:var(--bad)}
+/* Japanese inside explanations: accent colour, ~1.3× the English, serif */
+.fl-notes .jp{font-family:"Noto Serif JP","Hiragino Mincho ProN",serif;font-size:1.3em;font-weight:600;color:var(--bad)}
 .fl-notes rt{font-size:.6em;color:var(--muted)}
 .fl-notes .ex{margin-top:10px;padding:8px 12px;border-left:3px solid var(--hi);background:var(--hi-soft);border-radius:0 8px 8px 0}
-.fl-notes .ex-ja{font-size:19px;line-height:2}
+.fl-notes .ex-ja{font-size:calc(19px * var(--read-scale-local));line-height:2}
 .fl-notes .ex-ja .target{color:var(--bad);font-weight:700}
-.fl-notes .ex-en{font-size:14px;color:var(--muted)}
+.fl-notes .ex-en{font-size:calc(14px * var(--read-scale-local));color:var(--muted)}
+/* the piece being read right now */
+.fl-notes .np{border-radius:4px;transition:background-color .2s}
+.fl-notes .np.speaking{background:var(--hi-soft);box-shadow:0 0 0 2px var(--hi-soft)}
+.fl-notes .ex .np.speaking{background:var(--card)}
 .extras{grid-column:2 / -1;display:flex;gap:7px;flex-wrap:wrap}
 .extras .lp{padding:5px 11px;font-size:13px;font-weight:700;border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--muted)}
 .extras .lp.on{border-color:var(--ink);background:var(--hi-soft);color:var(--ink)}
-.fl-notes .why-tag{display:inline-block;margin-bottom:4px;font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
-/* English → 日本語 slideshow: English on top, the Japanese hidden until the answer */
-#sl-card .ask,#sl-card .thinkbar{display:none}
-#sl-card.ej .ask{display:block;order:0}
-#sl-card.ej .thinkbar{display:block;order:2}
-#sl-card.ej .fl-en{order:1;margin-top:0;padding-top:0;border-top:0;font-size:clamp(24px,6.5vw,34px);font-weight:900;line-height:1.25}
-#sl-card.ej .fl-kana{order:3;margin-top:22px;padding-top:16px;border-top:1.5px dashed var(--line);min-width:60%}
-#sl-card.ej .fl-kanji{order:4}
-#sl-card.ej .fl-part{order:5}
-#sl-card.ej .fl-notes{order:6}
-#sl-card.ej:not(.revealed) .fl-kana,#sl-card.ej:not(.revealed) .fl-kanji,#sl-card.ej:not(.revealed) .fl-part{visibility:hidden}
-#sl-card.ej:not(.revealed) .fl-notes{opacity:0}
-#sl-card.ej.revealed .fl-kana{animation:pop .45s ease-out}
 .flash.in .fl-kana{animation:pop .45s ease-out}
-#sl-card.ej.in:not(.revealed) .fl-kana{animation:none}
 @keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 .counter{text-align:center;color:var(--muted);font-size:13px;margin-top:12px;font-variant-numeric:tabular-nums}
 
 /* slideshow controls */
 .slidebar{padding-bottom:12px;border-bottom:1.5px solid var(--line)}
+/* slideshow top bar: always-visible switches */
+.sltop{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.btn.tog{border-color:var(--line);color:var(--muted);font-weight:700}
+.btn.tog.on{border-color:var(--ink);background:var(--hi-soft);color:var(--ink)}
+.slwarn{margin-top:8px;font-size:13px;color:var(--bad);font-weight:700}
+.slopts[hidden]{display:none}
+.testresult{font-size:12.5px;color:var(--muted);min-height:1em}
+.slend.big{font-size:18px}
+/* "ask about just this word" buttons under the English */
+.askwhy{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.askwhy[hidden]{display:none}
 #sl-sound{margin-left:8px;border-color:var(--bad);color:var(--bad)}
 .slopts{display:grid;gap:7px;margin-top:10px}
 .slrow{display:grid;grid-template-columns:44px 26px minmax(80px,1fr) 26px auto;align-items:center;gap:7px;max-width:460px}
@@ -254,6 +262,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
 .logo b{font-weight:900}
 .logo small{font-size:8px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;opacity:.72;margin-top:2px}
 .sig .yr{font-size:12px;font-weight:600;color:var(--muted)}
+.sig .ver{font-size:11px;color:var(--muted);opacity:.8}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo{background:transparent}}
 :root[data-theme="dark"] .logo{background:transparent}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -287,29 +296,39 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
   </div>
   <div class="count" id="wordcount"></div>
   <div class="modes">
-    <button class="mode" id="btn-slides"><span class="ic">🎧</span><span><b>Slideshow</b><span>Words flip by in random order and get read aloud with their meaning — or flip it to English → 日本語 and answer in your head. Just watch and listen.</span></span></button>
+    <button class="mode" id="btn-slides"><span class="ic">🎧</span><span><b>Slideshow</b><span>Words flip by in random order and get read aloud with their meaning. Just watch and listen.</span></span></button>
     <button class="mode" id="btn-listen"><span class="ic">🚌</span><span><b>Listen &amp; answer</b><span>Hands-free quiz. Hears "How do you say …?", gives you time to answer in your head, then says the Japanese.</span></span></button>
     <button class="mode" id="btn-stories"><span class="ic">📚</span><span><b>Story time</b><span>Long, silly stories made from the lesson vocab. Read along while it's read aloud — tap any sentence to jump there.</span></span></button>
     <button class="mode" id="btn-quiz"><span class="ic">⌨️</span><span><b>Quiz</b><span>See the English, type the word in hiragana or katakana. Ten words a round, graded at the end.</span></span></button>
   </div>
   <div class="stats" id="stats"></div>
-  <div class="foot">Audio uses your device's Japanese voice. <button id="btn-test">Test voice</button> · <button id="btn-reset">Reset progress</button></div>
+  <div class="foot">Audio uses your device's Japanese voice. <button id="btn-test">🔊 Test sound</button> · <button id="btn-reset">Reset progress</button></div>
 </section>
 
 <!-- ============================ SLIDESHOW ============================ -->
 <section class="screen" id="s-slide">
   <div class="slidebar">
-    <button class="btn quiet small" id="sl-close">✕ Close</button>
+    <div class="sltop">
+      <button class="btn quiet small" id="sl-close">✕ Close</button>
+      <button class="btn small tog" id="sl-ex" aria-pressed="false">📝 Example</button>
+      <button class="btn small tog" id="sl-short" aria-pressed="false">💡 Short why</button>
+      <button class="btn small tog" id="sl-long" aria-pressed="false">📖 Long why</button>
+      <button class="btn small tog" id="sl-settings" aria-label="Settings">⚙</button>
+    </div>
+    <div class="slwarn" id="sl-warn" hidden>⚠ Explanations file not found (vocab-notes.js)</div>
     <button class="btn small" id="sl-sound" style="display:none">🔊 Tap to turn on sound</button>
-    <div class="slopts" id="slopts"></div>
+    <div class="slopts" id="slopts" hidden></div>
   </div>
   <div class="flash" id="sl-card">
     <span class="stamp" id="sl-stamp"></span>
-    <div class="ask">How do you say</div>
-    <div class="thinkbar" id="sl-bar"><i></i></div>
     <div class="fl-kana" id="sl-kana"></div>
     <div class="fl-kanji kj" id="sl-kanji"></div>
     <div class="fl-en" id="sl-en"></div>
+    <div class="thinkbar" id="sl-bar"><i></i></div>
+    <div class="askwhy" id="sl-askwhy" hidden>
+      <button class="btn small tog" id="sl-ask-short">💡 Short explanation</button>
+      <button class="btn small tog" id="sl-ask-long">📖 Long explanation</button>
+    </div>
     <div class="fl-notes" id="sl-notes" style="display:none"></div>
   </div>
   <div class="counter" id="sl-count"></div>
@@ -410,7 +429,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
   <div class="results" id="d-list"></div>
 </section>
 
-<div class="sig"><span class="logo"><span class="brand">ハインゼの<b>楽</b>しさ</span><small>Fun by Heinze</small></span><span class="yr">2026</span></div>
+<div class="sig"><span class="logo"><span class="brand">ハインゼの<b>楽</b>しさ</span><small>Fun by Heinze</small></span><span class="yr">2026</span><span class="ver" title="Build label — if a phone shows an older one, it has a saved copy">v11.26a</span></div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -920,12 +939,103 @@ function makeUtterance(text, lang, rate) {
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = lang;
   utterance.rate = rate;
-  if (lang === "ja-JP" && japaneseVoice) utterance.voice = japaneseVoice;
+  // On iPhone/iPad, never pick a voice automatically — an undownloaded one is silent.
+  if (lang === "ja-JP" && japaneseVoice && !isAppleTouch) utterance.voice = japaneseVoice;
   return utterance;
 }
 function stopSpeaking() {
   try { if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel(); } catch (err) {}
 }
+
+/* ---------- Phones: voices, sound unlock, silent switch, screen wake ----------
+   Lessons learned getting speech to work on iPhone (same as Yomikata):
+   • iPhone/iPad list voices that aren't downloaded; speaking with one is silent
+     and can jam the queue. So on Apple touch devices we never pick a voice —
+     we set only the language and let iOS use its default.
+   • Resuming speech on iPhone: only when it's actually paused.
+   • Speech must start inside a tap. The start tap says a short real phrase
+     (「はじめます」) — a blank " " gets skipped and unlocks nothing — and the
+     first card doesn't clear the queue, which would undo the unlock.
+   • The side switch on silent mutes web speech completely. iOS 17+ lets a page
+     play through it: navigator.audioSession.type = "playback".               */
+const isAppleTouch = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+function safeResume() {
+  // (Written as speechSynthesis["resume"] so the page-wide swap to safeResume() can't make this call itself.)
+  try { if (!isAppleTouch || speechSynthesis.paused) speechSynthesis["resume"](); } catch (err) {}
+}
+
+// "🔔 Play even on silent" — on by default. Applied on load and in start taps.
+if (saved.playOnSilent === undefined) saved.playOnSilent = true;
+function applyAudioSession() {
+  try { if (navigator.audioSession) navigator.audioSession.type = saved.playOnSilent ? "playback" : "auto"; } catch (err) {}
+}
+applyAudioSession();
+
+// Say 「はじめます」 straight from a start tap (once per page) so iOS allows speech.
+let speechUnlockedThisPage = false;
+let skipNextCancel = false;   // the first card must not clear the queue right after the unlock
+function unlockSpeechFromTap() {
+  applyAudioSession();
+  GameVoice.unlock();
+  if (speechUnlockedThisPage || !GameVoice.enabled || !("speechSynthesis" in window)) return;
+  try {
+    const hello = makeUtterance("はじめます", "ja-JP", japaneseRate());
+    hello.onstart = () => { speechHeard = true; };
+    speechSynthesis.speak(hello);
+    speechUnlockedThisPage = true;
+    skipNextCancel = true;
+  } catch (err) {}
+}
+
+/* Keep the screen awake while something is reading aloud (a locked phone stops
+   speaking). One function compares "should be awake" with "is awake" and fixes
+   the difference; it's called after every play / pause / stop / screen change
+   and when the tab is hidden or shown (the browser drops the lock on its own
+   when hidden). Browsers without the Wake Lock API just skip it. */
+let screenWakeLock = null;
+const slideshowPlaying = () => !!(typeof slideshow !== "undefined" && slideshow && !slideshow.paused);
+const listenPlaying    = () => !!(typeof listen !== "undefined" && listen && !listen.paused);
+const storyPlaying     = () => !!(typeof reader !== "undefined" && reader && reader.playing);
+async function updateWakeLock() {
+  if (!("wakeLock" in navigator)) return;
+  const wantAwake = (slideshowPlaying() || listenPlaying() || storyPlaying()) && !document.hidden;
+  try {
+    if (wantAwake && !screenWakeLock) {
+      screenWakeLock = await navigator.wakeLock.request("screen");
+      screenWakeLock.addEventListener("release", () => { screenWakeLock = null; });
+    } else if (!wantAwake && screenWakeLock) {
+      const lock = screenWakeLock; screenWakeLock = null;
+      await lock.release();
+    }
+  } catch (err) { screenWakeLock = null; }   // e.g. Low Power Mode refused — carry on without it
+}
+document.addEventListener("visibilitychange", updateWakeLock);
+
+/* "🔊 Test sound": speak a line straight from the tap and report what happened. */
+function testSound(reportEl) {
+  applyAudioSession();
+  const report = message => { if (reportEl) reportEl.textContent = message; else toast(message); };
+  if (!("speechSynthesis" in window)) { report("This browser has no speech support."); return; }
+  if (!GameVoice.enabled) { GameVoice.setEnabled(true); $("#btnSound").textContent = "♪ ON"; }
+  let started = false, errorCode = "";
+  try {
+    const test = makeUtterance("テストです。", "ja-JP", japaneseRate());
+    test.onstart = () => { started = true; speechHeard = true; };
+    test.onerror = event => { errorCode = event.error || "unknown"; };
+    speechSynthesis.speak(test);
+    speechSynthesis.speak(makeUtterance("This is a sound test.", "en-US", englishRate()));
+  } catch (err) { errorCode = String(err.message || err); }
+  report("Testing…");
+  setTimeout(() => {
+    const state = `speaking ${speechSynthesis.speaking}, pending ${speechSynthesis.pending}, paused ${speechSynthesis.paused}`;
+    if (started) report(`✓ Sound started (${state}).`);
+    else if (isAppleTouch) report(`Nothing started. Check the side switch first — orange showing means silent. ${errorCode ? "Error: " + errorCode + ". " : ""}(${state})`);
+    else report(`Nothing started. ${errorCode ? "Error: " + errorCode + ". " : ""}Check the volume and that a Japanese voice is installed. (${state})`);
+  }, 2500);
+}
+
 
 /* Say one Japanese word right now (quiz pronunciation button, reveals). */
 function sayWord(word) {
@@ -1058,18 +1168,31 @@ function renderHome() {
   }
 }
 
-$("#btn-test").onclick = () => sayWord({ kana: "たんごめくり、はじめましょう" });
+$("#btn-test").onclick = () => testSound();   // reports what happened (side switch hint on iPhone)
 $("#btn-reset").onclick = () => {
   if (!confirm("Erase your quiz history and missed-word tracking?")) return;
   saved.rounds = []; saved.missCounts = {}; persist(); renderHome(); toast("Progress reset");
 };
 
 /* =========================================================================
-   7. Slideshow — random order, reads the kana, then "means …" in English.
-      The English line fades in as it's spoken, so there's a beat to recall it.
+   7. Slideshow — random order, read aloud.
+      Two directions (Settings → Order):
+        日本語 → EN  the word, "means …"
+        EN → 日本語  "How do you say …?", THINK seconds to answer in your head,
+                     then the word
+      Then (if on) the particles, the 📝 example sentence and a 💡 short or
+      📖 long explanation, then the "Cards" wait, then the next word.
    ========================================================================= */
-let slideshow = null; // { order, index, paused, timers, token }
+let slideshow = null;    // { words, order, index, paused, timers, token, advanceOnPlay, askedWhy }
 let speechHeard = false; // flips true once any utterance actually starts (iOS check)
+
+/* Saved choices for this screen */
+const slideDirection    = () => saved.slideDirection === "en-ja" ? "en-ja" : "ja-en";
+const slideThinkSeconds = () => { const s = Number(saved.slideThink); return clamp(Number.isFinite(s) ? Math.round(s) : 3, 1, 10); };
+const readScale         = () => { const s = Number(saved.readScale); return clamp(Number.isFinite(s) ? s : 1, 0.8, 2); };
+// Explanations: "off", "short" or "long". An old saved true/false (showWhy) becomes short/off.
+if (!["off", "short", "long"].includes(saved.whyMode)) saved.whyMode = saved.showWhy ? "short" : "off";
+const whyMode = () => saved.whyMode;
 
 function clearSlideTimers() {
   if (!slideshow) return;
@@ -1077,25 +1200,52 @@ function clearSlideTimers() {
   slideshow.timers = [];
 }
 
-/* Which way the slideshow goes:
-   "je" — 日本語 → English: say the word, then "means …" (the original).
-   "ej" — English → 日本語: "How do you say …?", wait the Answer time, then the word. */
-const slideDirection = () => saved.slideDirection === "ej" ? "ej" : "je";
-const slideThinkSeconds = () => { const s = Number(saved.slideThink); return clamp(Number.isFinite(s) ? Math.round(s) : 3, 1, 10); };
+/* ---------- top bar: 📝 Example · 💡 Short why · 📖 Long why · ⚙ ---------- */
+function renderSlideTopBar() {
+  const mode = whyMode();
+  $("#sl-ex").classList.toggle("on", !!saved.showExample);
+  $("#sl-short").classList.toggle("on", mode === "short");
+  $("#sl-long").classList.toggle("on", mode === "long");
+  $("#sl-ex").setAttribute("aria-pressed", !!saved.showExample);
+  $("#sl-short").setAttribute("aria-pressed", mode === "short");
+  $("#sl-long").setAttribute("aria-pressed", mode === "long");
+  $("#sl-settings").classList.toggle("on", !$("#slopts").hidden);
+}
+// Short and Long are one three-way choice: tap one to pick it, tap the lit one to turn explanations off.
+function chooseWhyMode(mode) {
+  saved.whyMode = whyMode() === mode ? "off" : mode;
+  persist();
+  renderSlideTopBar();
+  updateAskButtons();          // the "ask about this word" buttons show only when explanations are off
+  redrawCurrentSlideQuietly();
+}
+$("#sl-ex").onclick = () => { saved.showExample = !saved.showExample; persist(); renderSlideTopBar(); redrawCurrentSlideQuietly(); };
+$("#sl-short").onclick = () => chooseWhyMode("short");
+$("#sl-long").onclick = () => chooseWhyMode("long");
+$("#sl-settings").onclick = () => { $("#slopts").hidden = !$("#slopts").hidden; renderSlideTopBar(); };
 
+/* While paused, a change of switches shows up straight away (silently).
+   While playing, it takes effect from the next word. */
+function redrawCurrentSlideQuietly() {
+  if (!slideshow || !slideshow.paused) return;
+  const word = slideshow.order[slideshow.index];
+  drawNotes(word, slideshow.askedWhy || whyMode(), slideshow.lessonIndex, !!saved.showExample || !!slideshow.askedWhy);
+  updateAskButtons();
+}
+
+/* ---------- Settings (⚙): sliders and sound ---------- */
 function renderSlideOptions() {
-  const ej = slideDirection() === "ej";
   $("#slopts").innerHTML = `
     <div class="slrow">
-      <span class="sllab">Mode</span>
+      <span class="sllab">Order</span>
       <div class="extras">
-        <button class="lp${!ej ? " on" : ""}" id="sldir-je" aria-pressed="${!ej}">日本語 → English</button>
-        <button class="lp${ej ? " on" : ""}" id="sldir-ej" aria-pressed="${ej}">English → 日本語</button>
+        <button class="lp${slideDirection() === "ja-en" ? " on" : ""}" data-dir="ja-en">日本語 → EN</button>
+        <button class="lp${slideDirection() === "en-ja" ? " on" : ""}" data-dir="en-ja">EN → 日本語</button>
       </div>
     </div>
-    ${ej ? `<div class="slrow">
-      <span class="sllab">Answer</span><span class="slend">1s</span>
-      <input type="range" id="slthink" min="1" max="10" step="1" value="${slideThinkSeconds()}" aria-label="Seconds to answer in your head before the Japanese is said">
+    ${slideDirection() === "en-ja" ? `<div class="slrow">
+      <span class="sllab">Think</span><span class="slend">1s</span>
+      <input type="range" id="slthink" min="1" max="10" step="1" value="${slideThinkSeconds()}" aria-label="Seconds to think before the answer">
       <span class="slend">10s</span>
       <span class="pacenum" id="slthinknum">${slideThinkSeconds()}s <i>to answer</i></span>
     </div>` : ""}
@@ -1112,35 +1262,40 @@ function renderSlideOptions() {
       <span class="pacenum" id="slpacenum">${waitLabel()}</span>
     </div>
     <div class="slrow">
-      <span class="sllab">Extras</span>
+      <span class="sllab">Text</span><span class="slend">A</span>
+      <input type="range" id="slscale" min="0.8" max="2" step="0.1" value="${readScale()}" aria-label="Size of the example and explanation text">
+      <span class="slend big">A</span>
+      <span class="pacenum" id="slscalenum">${Math.round(readScale() * 100)}% <i>text</i></span>
+    </div>
+    <div class="slrow">
+      <span class="sllab">Sound</span>
       <div class="extras">
-        <button class="lp${saved.showWhy ? " on" : ""}" id="slwhy" aria-pressed="${!!saved.showWhy}">💡 Mini-lesson</button>
-        <button class="lp${saved.showExample ? " on" : ""}" id="slexample" aria-pressed="${!!saved.showExample}">📝 Example sentence</button>
+        <button class="lp${saved.playOnSilent ? " on" : ""}" id="slsilent" aria-pressed="${!!saved.playOnSilent}">🔔 Play even on silent</button>
+        <button class="lp" id="sltest">🔊 Test sound</button>
       </div>
-    </div>`;
-  // Turning these on/off takes effect from the next card.
-  $("#slwhy").onclick = () => { saved.showWhy = !saved.showWhy; persist(); renderSlideOptions(); };
-  $("#slexample").onclick = () => { saved.showExample = !saved.showExample; persist(); renderSlideOptions(); };
-  // Switching direction restarts the current card in the new direction.
-  const setDirection = dir => {
-    if (slideDirection() === dir) return;
-    saved.slideDirection = dir; persist(); renderSlideOptions();
-    if (slideshow) showSlide();
-  };
-  $("#sldir-je").onclick = () => setDirection("je");
-  $("#sldir-ej").onclick = () => setDirection("ej");
+    </div>
+    <div class="testresult" id="sltestresult"></div>`;
+
+  $("#slopts").querySelectorAll("[data-dir]").forEach(button => button.onclick = () => {
+    saved.slideDirection = button.dataset.dir; persist(); renderSlideOptions();   // from the next word
+  });
   const thinkSlider = $("#slthink");
   if (thinkSlider) {
     thinkSlider.oninput = () => { saved.slideThink = Number(thinkSlider.value); $("#slthinknum").innerHTML = `${slideThinkSeconds()}s <i>to answer</i>`; };
     thinkSlider.onchange = persist;
   }
-  const voiceSlider = $("#slvoice"), paceSlider = $("#slpace");
+  const voiceSlider = $("#slvoice"), paceSlider = $("#slpace"), scaleSlider = $("#slscale");
   voiceSlider.oninput = () => { saved.voiceRate = Number(voiceSlider.value); $("#slvoicenum").innerHTML = `${voiceSpeed().toFixed(2)}× <i>${voiceLabel()}</i>`; };
   paceSlider.oninput  = () => { saved.cardWait = Number(paceSlider.value); $("#slpacenum").innerHTML = waitLabel(); };
-  voiceSlider.onchange = paceSlider.onchange = persist;
+  scaleSlider.oninput = () => { saved.readScale = Number(scaleSlider.value); applyReadScale(); $("#slscalenum").innerHTML = `${Math.round(readScale() * 100)}% <i>text</i>`; };
+  voiceSlider.onchange = paceSlider.onchange = scaleSlider.onchange = persist;
+  $("#slsilent").onclick = () => { saved.playOnSilent = !saved.playOnSilent; persist(); applyAudioSession(); renderSlideOptions(); };
+  $("#sltest").onclick = () => testSound($("#sltestresult"));
 }
+// One CSS variable scales the example and explanation text (not the big word).
+function applyReadScale() { $("#sl-card").style.setProperty("--read-scale", readScale()); }
 
-/* Fill a flashcard element set with one word. */
+/* Fill a flashcard element set with one word. (Also used by Listen & answer.) */
 function fillCard(word, kanaEl, kanjiEl, stampEl) {
   // Kana sets the size; the kanji line is drawn at about 60% of it.
   kanaEl.parentElement.style.setProperty("--len", Math.max(word.kana.length, (word.kanji || "").length / 1.6, 3));
@@ -1154,170 +1309,232 @@ function startSlideshow() {
   const words = chosenWords();
   if (!words.length) return;
   $("#sl-sound").style.display = "none";
-  slideshow = { words, order: shuffle(words), index: 0, paused: false, timers: [], token: 0 };
+  slideshow = { words, order: shuffle(words), index: 0, paused: false, timers: [], token: 0, advanceOnPlay: false, askedWhy: null };
   $("#sl-play").textContent = "⏸ Pause";
+  $("#slopts").hidden = true;
   renderSlideOptions();
+  renderSlideTopBar();
+  applyReadScale();
+  notesFileChecked.then(found => { $("#sl-warn").hidden = found; });
   showScreen("s-slide");
   showSlide();
+  updateWakeLock();
 }
 
+/* ---------- speaking ---------- */
+/* Speak a list of {text, lang, rate, onStart?} lines in order, then call
+   whenDone(spoke). Finishes on the last line's end event, or — because iOS
+   doesn't always send it — when a quarter-second check sees the voice has
+   stopped. whenDone(false) means nothing was spoken (sound off or blocked).
+   `rightNow` speaks without the usual short delay (used straight from a tap). */
+function slideSpeak(lines, isCurrent, whenDone, rightNow) {
+  let finished = false;
+  const finish = spoke => { if (finished || !isCurrent()) return; finished = true; whenDone(spoke); };
+  const later = (fn, ms) => slideshow.timers.push(setTimeout(fn, ms));
+  if (!lines.length) { finish(true); return; }
+  if (!GameVoice.enabled || !("speechSynthesis" in window)) { finish(false); return; }
+  const begin = () => {
+    if (!isCurrent()) return;
+    try {
+      safeResume();
+      const utterances = lines.map(line => {
+        const utterance = makeUtterance(line.text, line.lang, line.rate);
+        utterance.onstart = () => {
+          speechHeard = true; $("#sl-sound").style.display = "none";
+          if (line.onStart && isCurrent()) line.onStart();
+        };
+        return utterance;
+      });
+      const last = utterances[utterances.length - 1];
+      last.onend = last.onerror = () => finish(true);
+      utterances.forEach(u => speechSynthesis.speak(u));
+    } catch (err) { finish(false); return; }
+    const watchStartedAt = Date.now();
+    let heardTalking = false;
+    const checkVoice = () => {
+      if (finished || !isCurrent()) return;
+      const talking = speechSynthesis.speaking || speechSynthesis.pending;
+      if (talking) heardTalking = true;
+      if (heardTalking && !talking) finish(true);
+      else if (!heardTalking && Date.now() - watchStartedAt > 4000) finish(false);   // never started
+      else later(checkVoice, 250);
+    };
+    later(checkVoice, 400);
+    // iOS only allows speech that starts from a tap — offer one if nothing is heard.
+    later(() => { if (isCurrent() && !speechHeard && GameVoice.enabled) $("#sl-sound").style.display = ""; }, 1800);
+  };
+  if (rightNow) begin(); else later(begin, 160);
+}
+
+// Reading-time estimate when nothing is spoken: ~300 ms per English word, ~150 ms per kana.
+function readingMs(lines) {
+  return 1200 + lines.reduce((ms, line) => ms + (line.lang === "ja-JP"
+    ? line.text.length * 150
+    : line.text.split(/\s+/).filter(Boolean).length * 300), 0);
+}
+
+/* ---------- following along on a phone ---------- */
+const BOTTOM_TOOLBAR_ROOM = 110;   // phone browsers' bottom toolbar
+const scrollBehavior = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+// Scroll just enough to show `element`, never past its top.
+function followElement(element) {
+  if (!element || element.offsetParent === null) return;
+  const rect = element.getBoundingClientRect();
+  const visibleBottom = window.innerHeight - BOTTOM_TOOLBAR_ROOM;
+  let move = 0;
+  if (rect.bottom > visibleBottom) move = Math.min(rect.bottom - visibleBottom, rect.top - 8);
+  else if (rect.top < 0) move = rect.top - 8;
+  if (Math.abs(move) > 2) window.scrollBy({ top: move, behavior: scrollBehavior() });
+}
+// New word: back to the top — or, with Settings open, to the card so they don't push it off screen.
+function scrollToNewWord() {
+  const settingsOpen = !$("#slopts").hidden;
+  const top = settingsOpen ? $("#sl-card").getBoundingClientRect().top + window.scrollY - 8 : 0;
+  window.scrollTo({ top, behavior: settingsOpen ? scrollBehavior() : "auto" });
+}
+
+/* ---------- one card ---------- */
 function showSlide() {
   if (!slideshow) return;
   clearSlideTimers();
-  stopSpeaking();
+  if (skipNextCancel) skipNextCancel = false;   // right after the unlock: don't clear 「はじめます」
+  else stopSpeaking();
   if (slideshow.index >= slideshow.order.length) { slideshow.order = shuffle(slideshow.words); slideshow.index = 0; }
   if (slideshow.index < 0) slideshow.index = slideshow.order.length - 1;
 
   const word = slideshow.order[slideshow.index];
   const token = ++slideshow.token; // any older timers/speech for a previous card are ignored
   const card = $("#sl-card"), englishEl = $("#sl-en");
+  const askFirst = slideDirection() === "en-ja";
+  const mode = whyMode();
+  slideshow.askedWhy = null;
+  slideshow.advanceOnPlay = false;
+  slideshow.lessonIndex = pickLessonIndex(word);   // which of the word's explanations this time
 
-  const ej = slideDirection() === "ej";
+  // Draw the card.
   fillCard(word, $("#sl-kana"), $("#sl-kanji"), $("#sl-stamp"));
   englishEl.textContent = word.english;
-  englishEl.classList.toggle("show", ej);  // English → 日本語 starts with the English up
-  card.classList.toggle("ej", ej);
+  const notes = drawNotes(word, mode, slideshow.lessonIndex, !!saved.showExample);
+  updateAskButtons();
+  hideThinkBar("#sl-bar");
+  card.classList.toggle("ask-first", askFirst);   // EN → 日本語: the word stays hidden for now
   card.classList.remove("revealed");
-  hideThinkBar($("#sl-bar"));
-  pickMiniLesson(word);   // which of this word's mini-lessons plays this time
-  fillNotes(word);        // explanation / example sentence, if those are turned on
+  englishEl.classList.toggle("show", askFirst);    // EN → 日本語 shows the English straight away
   card.classList.remove("in"); void card.offsetWidth; card.classList.add("in");
   $("#sl-count").textContent = `${slideshow.index + 1} / ${slideshow.order.length}`;
+  scrollToNewWord();
 
-  if (slideshow.paused) { englishEl.classList.add("show"); card.classList.add("revealed"); return; }
-
-  const stillCurrent = () => slideshow && slideshow.token === token && !slideshow.paused;
-  const later = (fn, ms) => slideshow.timers.push(setTimeout(fn, ms));
-
-  if (ej) { runEnglishToJapaneseSlide(word, stillCurrent, later); return; }
-  const revealEnglish = () => { if (stillCurrent()) englishEl.classList.add("show"); };
-
-  // Step 3: the voice is done → wait the "Cards" time, then flip to the next card.
-  let voiceFinished = false;
-  const whenVoiceFinishes = () => {
-    if (voiceFinished || !stillCurrent()) return;
-    voiceFinished = true;
-    revealEnglish();
-    later(() => {
-      if (!stillCurrent()) return;
-      slideshow.index++;
-      showSlide();
-    }, cardWaitMs());
+  const reveal = () => {
+    card.classList.add("revealed"); englishEl.classList.add("show"); hideThinkBar("#sl-bar");
+    followElement(englishEl);
   };
+  if (slideshow.paused) { reveal(); return; }
 
-  // Sound off (or no speech support): give a short beat to read the word,
-  // show the English, and treat that as the "voice finishing".
-  if (!GameVoice.enabled || !("speechSynthesis" in window)) {
-    later(revealEnglish, 1500);
-    later(whenVoiceFinishes, 1500 + noteReadingMs(word));
+  const isCurrent = () => slideshow && slideshow.token === token && !slideshow.paused;
+  const later = (fn, ms) => slideshow.timers.push(setTimeout(fn, ms));
+  const nextCard = () => { if (!isCurrent()) return; slideshow.index++; showSlide(); };
+  // After the last thing is said: wait the "Cards" time, then the next word.
+  const thenWaitCards = lines => spoke => later(nextCard, (spoke ? 0 : readingMs(lines)) + cardWaitMs());
+
+  const japaneseWord = { text: speakableKana(word.kana), lang: "ja-JP", rate: japaneseRate() };
+  const afterWord = particleLinesFor(word).concat(notes.lines);   // particles, example, explanation
+
+  if (!askFirst) {
+    // 日本語 → EN: the word, "means …", then the rest.
+    reveal();
+    const lines = [japaneseWord, { text: "means " + speakableEnglish(word.english), lang: "en-US", rate: englishRate() }].concat(afterWord);
+    slideSpeak(lines, isCurrent, thenWaitCards(lines));
     return;
   }
 
-  // Step 1: say the Japanese, then "means …" in English — then the explanation
-  // and example sentence if they're on. The "Cards" wait starts after the LAST line.
-  const kanaLine = speakableKana(word.kana);
-  const englishLine = "means " + speakableEnglish(word.english);
-  later(() => {
-    if (!stillCurrent()) return;
-    try {
-      speechSynthesis.resume();
-      const japanese = makeUtterance(kanaLine, "ja-JP", japaneseRate());
-      const english = makeUtterance(englishLine, "en-US", englishRate());
-      japanese.onstart = () => { speechHeard = true; $("#sl-sound").style.display = "none"; };
-      english.onstart = revealEnglish;
-      const extras = particleLinesFor(word).concat(noteLinesFor(word)).map(line => makeUtterance(line.text, line.lang, line.rate));
-      const lastLine = extras.length ? extras[extras.length - 1] : english;
-      lastLine.onend = whenVoiceFinishes;
-      lastLine.onerror = whenVoiceFinishes;
-      speechSynthesis.speak(japanese);
-      speechSynthesis.speak(english);
-      extras.forEach(line => speechSynthesis.speak(line));
-    } catch (err) { whenVoiceFinishes(); return; }
-
-    // Step 2: notice when the voice stops. The onend event above usually does
-    // it, but iOS sometimes never fires it, so also check every quarter second
-    // whether the browser is still talking. Because this watches the real
-    // voice, a slow voice simply keeps the card up longer — it never gets cut off.
-    const watchStartedAt = Date.now();
-    let heardTalking = false;
-    const checkVoice = () => {
-      if (!stillCurrent() || voiceFinished) return;
-      const talking = speechSynthesis.speaking || speechSynthesis.pending;
-      if (talking) heardTalking = true;
-      const waitedForStart = Date.now() - watchStartedAt > 4000; // voice never started (blocked)
-      if ((heardTalking && !talking) || (!heardTalking && waitedForStart)) whenVoiceFinishes();
-      else later(checkVoice, 250);
-    };
-    later(checkVoice, 400);
-
-    // If nothing has been heard yet, offer a tap — iOS only allows speech from a tap.
+  // EN → 日本語: ask, give THINK seconds (the bar empties), then reveal and say it.
+  const question = [{ text: "How do you say, " + speakableEnglish(word.english) + "?", lang: "en-US", rate: englishRate() }];
+  slideSpeak(question, isCurrent, spoke => {
     later(() => {
-      if (stillCurrent() && !speechHeard && GameVoice.enabled) $("#sl-sound").style.display = "";
-    }, 1800);
-  }, 160);
-}
-
-/* English → 日本語 card:
-     1. "How do you say, <English>?"
-     2. the Answer wait (thin bar runs down) — answer it in your head
-     3. show + say the Japanese (and its particles)
-     4. example sentence, then the mini-lesson, if those are on
-     5. the Cards wait, then the next card */
-function runEnglishToJapaneseSlide(word, stillCurrent, later) {
-  const card = $("#sl-card"), bar = $("#sl-bar");
-  const goToNextCard = () => { if (!stillCurrent()) return; slideshow.index++; showSlide(); };
-  const speak = (lines, whenDone) => speakLinesThen(lines, stillCurrent, whenDone, slideshow, "#sl-sound");
-
-  const sayTheAnswer = () => {
-    if (!stillCurrent()) return;
-    hideThinkBar(bar);
-    card.classList.add("revealed");
-    const lines = [{ text: speakableKana(word.kana), lang: "ja-JP", rate: japaneseRate() }]
-      .concat(particleLinesFor(word), noteLinesFor(word));
-    speak(lines, spoke => later(goToNextCard, (spoke ? 0 : SOUND_OFF_READ_MS + noteReadingMs(word)) + cardWaitMs()));
-  };
-
-  speak(
-    [{ text: "How do you say, " + speakableEnglish(word.english) + "?", lang: "en-US", rate: englishRate() }],
-    spoke => {
+      if (!isCurrent()) return;
       const thinkMs = slideThinkSeconds() * 1000;
+      runThinkBar(thinkMs, "#sl-bar");
       later(() => {
-        if (!stillCurrent()) return;
-        runThinkBar(thinkMs, bar);
-        later(sayTheAnswer, thinkMs);
-      }, spoke ? 0 : SOUND_OFF_READ_MS);
-    }
-  );
+        if (!isCurrent()) return;
+        reveal();
+        const lines = [japaneseWord].concat(afterWord);
+        slideSpeak(lines, isCurrent, thenWaitCards(lines));
+      }, thinkMs);
+    }, spoke ? 0 : 1500);
+  });
 }
 
+/* ---------- "Ask about just this word" (when explanations are off) ---------- */
+function updateAskButtons() {
+  const word = slideshow && slideshow.order[slideshow.index];
+  const hasNotes = !!(word && notesFor(word));
+  $("#sl-askwhy").hidden = whyMode() !== "off" || !hasNotes;
+  $("#sl-ask-short").classList.toggle("on", slideshow && slideshow.askedWhy === "short");
+  $("#sl-ask-long").classList.toggle("on", slideshow && slideshow.askedWhy === "long");
+}
+function askAboutThisWord(mode) {
+  if (!slideshow) return;
+  unlockSpeechFromTap();
+  // Pause on this word and show everything for it.
+  slideshow.paused = true;
+  slideshow.advanceOnPlay = true;     // ▶ Play afterwards goes on to the NEXT word
+  slideshow.askedWhy = mode;
+  clearSlideTimers();
+  stopSpeaking();
+  skipNextCancel = false;
+  $("#sl-play").textContent = "▶ Play";
+  $("#sl-card").classList.add("revealed");
+  $("#sl-en").classList.add("show");
+  hideThinkBar("#sl-bar");
+  const word = slideshow.order[slideshow.index];
+  const notes = drawNotes(word, mode, slideshow.lessonIndex, true);
+  updateAskButtons();
+  updateWakeLock();
+  // Read just the explanation, straight from the tap.
+  const token = ++slideshow.token;
+  const isCurrent = () => slideshow && slideshow.token === token;
+  slideSpeak(notes.whyLines, isCurrent, () => {}, true);
+}
+$("#sl-ask-short").onclick = () => askAboutThisWord("short");
+$("#sl-ask-long").onclick = () => askAboutThisWord("long");
+
+/* ---------- play / pause / move ---------- */
 function pauseSlideshow(paused) {
   if (!slideshow) return;
   slideshow.paused = paused;
   $("#sl-play").textContent = paused ? "▶ Play" : "⏸ Pause";
-  if (paused) { clearSlideTimers(); stopSpeaking(); $("#sl-en").classList.add("show"); $("#sl-card").classList.add("revealed"); hideThinkBar($("#sl-bar")); }
-  else showSlide();
+  if (paused) {
+    // Pause shows everything at once, silently, to read at your own pace.
+    clearSlideTimers(); stopSpeaking();
+    $("#sl-en").classList.add("show"); $("#sl-card").classList.add("revealed"); hideThinkBar("#sl-bar");
+  } else {
+    unlockSpeechFromTap();
+    if (slideshow.advanceOnPlay) slideshow.index++;   // after asking about a word, carry on to the next one
+    showSlide();
+  }
+  updateWakeLock();
 }
 
 function closeSlideshow() {
   clearSlideTimers(); stopSpeaking(); slideshow = null;
+  updateWakeLock();
   renderHome(); showScreen("s-home");
 }
 
-$("#btn-slides").onclick = () => { GameVoice.unlock(); startSlideshow(); };
+$("#btn-slides").onclick = () => { unlockSpeechFromTap(); startSlideshow(); };
 $("#sl-close").onclick = closeSlideshow;
 $("#sl-play").onclick = () => pauseSlideshow(!slideshow.paused);
-$("#sl-next").onclick = () => { if (!slideshow) return; slideshow.index++; showSlide(); };
-$("#sl-prev").onclick = () => { if (!slideshow) return; slideshow.index--; showSlide(); };
+$("#sl-next").onclick = () => { if (!slideshow) return; slideshow.index++; showSlide(); updateWakeLock(); };
+$("#sl-prev").onclick = () => { if (!slideshow) return; slideshow.index--; showSlide(); updateWakeLock(); };
 $("#sl-sound").onclick = () => {
   // Called straight from a tap, which iOS always lets speak.
   speechHeard = false;
-  if (!GameVoice.enabled) {
-    GameVoice.setEnabled(true);
-    $("#btnSound").textContent = "♪ ON";
-  }
+  speechUnlockedThisPage = false;
+  if (!GameVoice.enabled) { GameVoice.setEnabled(true); $("#btnSound").textContent = "♪ ON"; }
   if (slideshow) { slideshow.paused = false; $("#sl-play").textContent = "⏸ Pause"; }
-  try { speechSynthesis.cancel(); speechSynthesis.speak(makeUtterance(" ", "en-US", 1)); } catch (err) {}
+  unlockSpeechFromTap();
   showSlide();
+  updateWakeLock();
 };
 // Pause when the tab is hidden so it doesn't keep talking in the background.
 document.addEventListener("visibilitychange", () => {
@@ -1351,20 +1568,20 @@ function clearListenTimers() {
    really finished. Uses the utterance's end event, plus a check every quarter
    second in case iOS never sends that event. whenDone(false) means nothing was
    spoken (sound off, or speech blocked), so the caller can allow reading time. */
-function speakLinesThen(lines, isStillCurrent, whenDone, owner = listen, soundButton = "#ls-sound") {
+function speakLinesThen(lines, isStillCurrent, whenDone) {
   let finished = false;
   const finish = spoke => { if (finished || !isStillCurrent()) return; finished = true; whenDone(spoke); };
   if (!GameVoice.enabled || !("speechSynthesis" in window)) { finish(false); return; }
 
   stopSpeaking();
-  owner.timers.push(setTimeout(() => {
+  listen.timers.push(setTimeout(() => {
     if (!isStillCurrent()) return;
     let lastUtterance = null;
     try {
-      speechSynthesis.resume();
+      safeResume();
       lines.forEach((line, i) => {
         const utterance = makeUtterance(line.text, line.lang, line.rate);
-        if (i === 0) utterance.onstart = () => { speechHeard = true; $(soundButton).style.display = "none"; };
+        if (i === 0) utterance.onstart = () => { speechHeard = true; $("#ls-sound").style.display = "none"; };
         lastUtterance = utterance;
         speechSynthesis.speak(utterance);
       });
@@ -1380,20 +1597,20 @@ function speakLinesThen(lines, isStillCurrent, whenDone, owner = listen, soundBu
       const neverStarted = !heardTalking && Date.now() - watchStartedAt > 4000;
       if (heardTalking && !talking) finish(true);
       else if (neverStarted) finish(false);
-      else owner.timers.push(setTimeout(checkVoice, 250));
+      else listen.timers.push(setTimeout(checkVoice, 250));
     };
-    owner.timers.push(setTimeout(checkVoice, 400));
+    listen.timers.push(setTimeout(checkVoice, 400));
 
     // iOS only allows speech that starts from a tap — offer one if nothing is heard.
-    owner.timers.push(setTimeout(() => {
-      if (isStillCurrent() && !speechHeard && GameVoice.enabled) $(soundButton).style.display = "";
+    listen.timers.push(setTimeout(() => {
+      if (isStillCurrent() && !speechHeard && GameVoice.enabled) $("#ls-sound").style.display = "";
     }, 1800));
   }, 160));
 }
 
 // Run the thin "thinking" bar from full to empty over `ms`.
-function runThinkBar(ms, bar = $("#ls-bar")) {
-  const fill = bar.querySelector("i");
+function runThinkBar(ms, barSelector = "#ls-bar") {
+  const bar = $(barSelector), fill = bar.querySelector("i");
   bar.classList.add("on");
   fill.style.transition = "none";
   fill.style.transform = "scaleX(1)";
@@ -1401,8 +1618,8 @@ function runThinkBar(ms, bar = $("#ls-bar")) {
   fill.style.transition = `transform ${ms}ms linear`;
   fill.style.transform = "scaleX(0)";
 }
-function hideThinkBar(bar = $("#ls-bar")) {
-  const fill = bar.querySelector("i");
+function hideThinkBar(barSelector = "#ls-bar") {
+  const bar = $(barSelector), fill = bar.querySelector("i");
   bar.classList.remove("on");
   fill.style.transition = "none";
   fill.style.transform = "scaleX(1)";
@@ -1435,18 +1652,6 @@ function renderListenOptions() {
   voiceSlider.onchange = thinkSlider.onchange = nextSlider.onchange = persist;
 }
 
-/* Keep the phone screen awake while this runs, where the browser allows it
-   (a locked screen stops the voice). Quietly does nothing elsewhere. */
-let screenWakeLock = null;
-async function keepScreenAwake() {
-  try { if ("wakeLock" in navigator && !screenWakeLock) screenWakeLock = await navigator.wakeLock.request("screen"); } catch (err) {}
-  if (screenWakeLock) screenWakeLock.addEventListener("release", () => { screenWakeLock = null; });
-}
-function letScreenSleep() {
-  try { if (screenWakeLock) screenWakeLock.release(); } catch (err) {}
-  screenWakeLock = null;
-}
-
 function startListen() {
   const words = chosenWords();
   if (!words.length) return;
@@ -1455,7 +1660,7 @@ function startListen() {
   $("#ls-play").textContent = "⏸ Pause";
   renderListenOptions();
   showScreen("s-listen");
-  keepScreenAwake();
+  updateWakeLock();
   showListenCard();
 }
 
@@ -1516,10 +1721,11 @@ function pauseListen(paused) {
   $("#ls-play").textContent = paused ? "▶ Play" : "⏸ Pause";
   if (paused) { clearListenTimers(); stopSpeaking(); revealAnswer(); }
   else showListenCard();
+  updateWakeLock();
 }
 
 function closeListen() {
-  clearListenTimers(); stopSpeaking(); listen = null; letScreenSleep();
+  clearListenTimers(); stopSpeaking(); listen = null; updateWakeLock();
   renderHome(); showScreen("s-home");
 }
 
@@ -1539,7 +1745,7 @@ $("#ls-sound").onclick = () => {
 document.addEventListener("visibilitychange", () => {
   if (!listen) return;
   if (document.hidden && !listen.paused) pauseListen(true);   // locked or switched away: pause
-  else if (!document.hidden) keepScreenAwake();               // the wake lock drops when hidden
+  else if (!document.hidden) updateWakeLock();               // the wake lock drops when hidden
 });
 
 /* =========================================================================
@@ -1989,7 +2195,7 @@ function playStory() {
   if (!reader) return;
   if (reader.index >= reader.sentences.length) reader.index = 0;
   reader.playing = true;
-  keepScreenAwake();
+  updateWakeLock();
   updateStoryControls();
   readSentence(reader.index);
 }
@@ -1999,7 +2205,7 @@ function pauseStory() {
   reader.token++;
   clearStoryTimers();
   stopSpeaking();
-  letScreenSleep();
+  updateWakeLock();
   updateStoryControls();
 }
 function jumpToSentence(index, startReading) {
@@ -2034,7 +2240,7 @@ function readSentence(index) {
   if (index >= reader.sentences.length) { // the end
     reader.playing = false; reader.index = reader.sentences.length - 1;
     saved.storyPlace[reader.number] = 0; persist();
-    letScreenSleep(); updateStoryControls(); toast("おわり — the end!");
+    updateWakeLock(); updateStoryControls(); toast("おわり — the end!");
     return;
   }
   reader.index = index;
@@ -2073,7 +2279,7 @@ function speakThen(utterance, isCurrent, whenDone, onStarted) {
   reader.timers.push(setTimeout(() => {
     if (!isCurrent()) return;
     try {
-      speechSynthesis.resume();
+      safeResume();
       utterance.onstart = () => { speechHeard = true; $("#st-sound").style.display = "none"; if (onStarted) onStarted(); };
       utterance.onend = utterance.onerror = () => finish(true);
       speechSynthesis.speak(utterance);
@@ -2197,60 +2403,44 @@ document.addEventListener("visibilitychange", () => {
 <script>
 "use strict";
 /* =========================================================================
-   12. Word notes — "why it's that word" explanations and example sentences
-       for the slideshow. They live in vocab-notes.js next to this page:
+   12. Word notes — explanations and example sentences for the slideshow.
+       They live in vocab-notes.js next to this page:
          window.VOCAB_NOTES["がくせい|学生"] = {
-           explain: "English, with 「学|がく」 Japanese bits in 「」",
-           ja: "example sentence in Story-time markup", en: "its translation" }
-       Turned on with the two buttons under the slideshow's sliders.
+           explain: [{title, text}, …]   📖 long explanations (2–5 angles)
+           short:   ["…", …]             💡 a short version of each, same order
+           ja, en:                       📝 example sentence + translation }
+       Each time a word comes up, one explanation is picked at random (never the
+       same one twice in a row), so a word you see often teaches you something
+       different. A plain string instead of an array counts as a list of one.
    ========================================================================= */
 window.VOCAB_NOTES = window.VOCAB_NOTES || {};
-loadLessonScript("vocab-notes.js");   // optional — the buttons just do nothing without it
-
-if (saved.showWhy === undefined) saved.showWhy = false;
-if (saved.showExample === undefined) saved.showExample = false;
-saved.miniLessonTurn = saved.miniLessonTurn || {}; // word key → how many of its mini-lessons have played
+const notesFileChecked = loadLessonScript("vocab-notes.js");   // resolves false if the file is missing
 const notesFor = word => window.VOCAB_NOTES[wordKey(word)] || null;
+const asList = value => Array.isArray(value) ? value : (value ? [value] : []);
 
-/* Mini-lessons. Every word has its first one in vocab-notes.js (explain).
-   vocab-lessons.js adds more angles on the same word:
-     window.VOCAB_LESSONS["がくせい|学生"] = [ { tag: "Sound-alikes", explain: "…" }, … ]
-   Each time a card comes up the next one in line plays, so over a few passes
-   you hear every angle — kanji, word family, mnemonics, culture, traps… */
-window.VOCAB_LESSONS = window.VOCAB_LESSONS || {};
-loadLessonScript("vocab-lessons.js");   // optional — without it each word has its one mini-lesson
+// Long explanations as {title, text}; short ones line up with them by position.
+function longExplanations(notes) {
+  return asList(notes && notes.explain).map(item => typeof item === "string" ? { title: "", text: item } : item);
+}
+function shortExplanations(notes) {
+  return asList(notes && notes.short).map(item => typeof item === "string" ? item : item.text);
+}
 
-function miniLessonsFor(word) {
+saved.lastLesson = saved.lastLesson || {};   // word → which explanation was used last time
+function pickLessonIndex(word) {
   const notes = notesFor(word);
-  const list = [];
-  if (notes && notes.explain) list.push({ tag: "The basics", explain: notes.explain });
-  (window.VOCAB_LESSONS[wordKey(word)] || []).forEach(lesson => { if (lesson && lesson.explain) list.push(lesson); });
-  return list;
+  const count = Math.max(longExplanations(notes).length, shortExplanations(notes).length);
+  if (!count) return 0;
+  const key = wordKey(word);
+  let choice = Math.floor(Math.random() * count);
+  if (count > 1 && choice === saved.lastLesson[key]) choice = (choice + 1 + Math.floor(Math.random() * (count - 1))) % count;
+  saved.lastLesson[key] = choice;
+  persist();
+  return choice;
 }
 
-// Choose this card's mini-lesson (and move the word's turn along for next time).
-let currentMiniLesson = null; // { key, lesson, number, of }
-function pickMiniLesson(word) {
-  const key = wordKey(word), list = miniLessonsFor(word);
-  if (!list.length) { currentMiniLesson = null; return; }
-  // Same card again (resumed, mode switched, toggled 💡): replay the same one.
-  if (currentMiniLesson && currentMiniLesson.key === key && currentMiniLesson.of === list.length) return;
-  const turn = Number(saved.miniLessonTurn[key]) || 0;
-  const index = turn % list.length;
-  currentMiniLesson = { key, lesson: list[index], number: index + 1, of: list.length };
-  if (saved.showWhy && list.length > 1 && !(slideshow && slideshow.paused)) {
-    saved.miniLessonTurn[key] = turn + 1;
-    persist();
-  }
-}
-function miniLessonNow(word) {
-  if (currentMiniLesson && currentMiniLesson.key === wordKey(word)) return currentMiniLesson;
-  const list = miniLessonsFor(word);
-  return list.length ? { key: wordKey(word), lesson: list[0], number: 1, of: list.length } : null;
-}
-
-/* Split an explanation into pieces for the two voices:
-   "「大|だい」 means big" → [{lang:"ja", show:"大", say:"だい"}, {lang:"en", say:" means big"}] */
+/* Split explanation text for the two voices:
+   "「大|だい」 means big" → [{lang:"ja", show:"大", say:"だい"}, {lang:"en", show:" means big", say:" means big"}] */
 function explanationPieces(text) {
   const pieces = [];
   const pattern = /「([^」]*)」|([^「」]+)/g;
@@ -2266,7 +2456,7 @@ function explanationPieces(text) {
   return pieces;
 }
 
-// Furigana over just the kanji part (same idea as Story time).
+// Furigana over just the kanji part.
 function noteRuby(surface, reading) {
   const isKanji = ch => /[㐀-鿿々]/.test(ch);
   if (![...surface].some(isKanji) || !reading || reading === surface) return escapeHtml(surface);
@@ -2276,61 +2466,70 @@ function noteRuby(surface, reading) {
   return escapeHtml(surface.slice(0, start)) + `<ruby>${escapeHtml(surface.slice(start, endS))}<rt>${escapeHtml(reading.slice(start, endR))}</rt></ruby>` + escapeHtml(surface.slice(endS));
 }
 
-// English → 日本語 plays the example sentence first, then the mini-lesson.
-const exampleFirst = () => slideDirection() === "ej";
-
-/* Draw the notes area on the slideshow card (hidden until the answer shows). */
-function fillNotes(word) {
+/* Draw the example and explanation on the card, and return what to say:
+     { lines: example + explanation lines, whyLines: just the explanation }
+   Every spoken line has its own piece on screen; while it's read, that piece
+   gets a soft background and the page scrolls just enough to show it. */
+function drawNotes(word, mode, lessonIndex, showExample) {
   const notesEl = $("#sl-notes");
   const notes = notesFor(word);
-  const mini = miniLessonNow(word);
-  let whyHtml = "", exHtml = "";
-  if (mini && saved.showWhy) {
-    const tag = mini.of > 1 ? `<span class="why-tag">💡 ${mini.number} of ${mini.of} · ${escapeHtml(mini.lesson.tag || "Mini-lesson")}</span><br>` : "💡 ";
-    whyHtml = `<div class="why">${tag}${explanationPieces(mini.lesson.explain).map(p =>
-      p.lang === "ja" ? `<span class="jp kj">${noteRuby(p.show, p.say)}</span>` : escapeHtml(p.show)).join("")}</div>`;
-  }
-  if (notes && saved.showExample && notes.ja && window.StoryEngine) {
-    const { units } = StoryEngine.parseSentence(notes.ja);
-    exHtml = `<div class="ex"><div class="ex-ja kj">${units.map(u =>
-      `<span class="${u.kind === "vocab" ? "target" : ""}">${noteRuby(u.surface, u.reading)}</span>`).join("")}</div>
-      <div class="ex-en">${escapeHtml(notes.en || "")}</div></div>`;
-  }
-  const html = exampleFirst() ? exHtml + (exHtml && whyHtml ? `<div style="height:12px"></div>` : "") + whyHtml : whyHtml + exHtml;
-  notesEl.innerHTML = html;
-  notesEl.style.display = html ? "" : "none";
-}
+  const exampleLines = [], whyLines = [];
+  let html = "", pieceCount = 0;
+  const pieceId = () => `np${pieceCount++}`;
+  const lightUp = id => () => {
+    notesEl.querySelectorAll(".np.speaking").forEach(el => el.classList.remove("speaking"));
+    const el = document.getElementById(id);
+    if (el) { el.classList.add("speaking"); followElement(el); }
+  };
 
-/* The extra things to say after the word, as {text, lang, rate} lines. */
-function noteLinesFor(word) {
-  const notes = notesFor(word);
-  const mini = miniLessonNow(word);
-  const whyLines = [], exLines = [];
-  if (mini && saved.showWhy) {
-    explanationPieces(mini.lesson.explain).forEach(piece => {
-      if (piece.lang === "ja") whyLines.push({ text: piece.say, lang: "ja-JP", rate: japaneseRate() });
-      // Long English stretches are split into sentences: some browsers cut off
-      // a single utterance after about 15 seconds.
-      else piece.say.split(/(?<=[.!?;:])\s+/).forEach(chunk => {
-        // A piece that starts right after Japanese often begins with ", " — the
-        // English voice reads a leading comma out loud ("comma"), so trim it off.
-        const cleaned = chunk.replace(/^[\s,.;:!?)\]、。\-–—]+/, "").replace(/[\s,;:(]+$/, "");
-        if (/[A-Za-z0-9]/.test(cleaned)) whyLines.push({ text: cleaned, lang: "en-US", rate: englishRate() });
+  // 📝 example sentence: Japanese, then English
+  if (notes && showExample && notes.ja && window.StoryEngine) {
+    const { units } = StoryEngine.parseSentence(notes.ja);
+    const jaId = pieceId(), enId = pieceId();
+    html += `<div class="ex"><div class="ex-ja kj np" id="${jaId}">${units.map(u =>
+      `<span class="${u.kind === "vocab" ? "target" : ""}">${noteRuby(u.surface, u.reading)}</span>`).join("")}</div>
+      <div class="ex-en np" id="${enId}">${escapeHtml(notes.en || "")}</div></div>`;
+    exampleLines.push({ text: units.map(u => u.reading).join(""), lang: "ja-JP", rate: japaneseRate(), onStart: lightUp(jaId) });
+    if (notes.en) exampleLines.push({ text: notes.en, lang: "en-US", rate: englishRate(), onStart: lightUp(enId) });
+  }
+
+  // 💡 short / 📖 long explanation
+  const longList = longExplanations(notes), shortList = shortExplanations(notes);
+  const index = clamp(lessonIndex || 0, 0, Math.max(0, Math.max(longList.length, shortList.length) - 1));
+  const chosen = mode === "short" ? (shortList[index] || (longList[index] || {}).text)
+               : mode === "long"  ? (longList[index] || {}).text || shortList[index]
+               : null;
+  if (chosen) {
+    const title = (longList[index] && longList[index].title) || "";
+    const count = Math.max(longList.length, shortList.length);
+    let body = "";
+    explanationPieces(chosen).forEach(piece => {
+      if (piece.lang === "ja") {
+        const id = pieceId();
+        body += `<span class="np jp kj" id="${id}">${noteRuby(piece.show, piece.say)}</span>`;
+        whyLines.push({ text: piece.say, lang: "ja-JP", rate: japaneseRate(), onStart: lightUp(id) });
+        return;
+      }
+      // English: one piece per sentence (some browsers cut a single utterance
+      // off after about 15 seconds). Leading commas/dashes/colons are trimmed
+      // from what's SPOKEN, or the voice says "comma".
+      piece.show.split(/(?<=[.!?;:])(\s+)/).forEach(chunk => {
+        if (!chunk) return;
+        if (!chunk.trim()) { body += escapeHtml(chunk); return; }
+        const spoken = chunk.replace(/^[\s,.;:!?)\]、。\-–—]+/, "").replace(/[\s,;:(]+$/, "");
+        if (!/[A-Za-z0-9]/.test(spoken)) { body += escapeHtml(chunk); return; }
+        const id = pieceId();
+        body += `<span class="np" id="${id}">${escapeHtml(chunk)}</span>`;
+        whyLines.push({ text: spoken, lang: "en-US", rate: englishRate(), onStart: lightUp(id) });
       });
     });
+    const icon = mode === "short" ? "💡" : "📖";
+    html += `<div class="why"><span class="lesson-title">${icon} ${mode === "short" ? "Short why" : "Long why"}${title ? " · " + escapeHtml(title) : ""}${count > 1 ? ` · ${index + 1} of ${count}` : ""}</span>${body}</div>`;
   }
-  if (notes && saved.showExample && notes.ja && window.StoryEngine) {
-    const { units } = StoryEngine.parseSentence(notes.ja);
-    exLines.push({ text: units.map(u => u.reading).join(""), lang: "ja-JP", rate: japaneseRate() });
-    if (notes.en) exLines.push({ text: notes.en, lang: "en-US", rate: englishRate() });
-  }
-  return exampleFirst() ? exLines.concat(whyLines) : whyLines.concat(exLines);
-}
 
-// With sound off: roughly how long to leave the notes up for reading.
-function noteReadingMs(word) {
-  const lines = noteLinesFor(word);
-  return lines.reduce((ms, line) => ms + line.text.length * (line.lang === "ja-JP" ? 140 : 55), 0);
+  notesEl.innerHTML = html;
+  notesEl.style.display = html ? "" : "none";
+  return { lines: exampleLines.concat(whyLines), whyLines };
 }
 
 // Story time's engine also parses example sentences; load it even if Story time isn't opened.
