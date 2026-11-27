@@ -429,7 +429,7 @@ h2{font-size:18px;font-weight:700;margin:0 0 4px}
   <div class="results" id="d-list"></div>
 </section>
 
-<div class="sig"><span class="logo"><span class="brand">ハインゼの<b>楽</b>しさ</span><small>Fun by Heinze</small></span><span class="yr">2026</span><span class="ver" title="Build label — if a phone shows an older one, it has a saved copy">v11.26a</span></div>
+<div class="sig"><span class="logo"><span class="brand">ハインゼの<b>楽</b>しさ</span><small>Fun by Heinze</small></span><span class="yr">2026</span><span class="ver" title="Build label — if a phone shows an older one, it has a saved copy">v11.26b</span></div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -1183,7 +1183,7 @@ $("#btn-reset").onclick = () => {
       Then (if on) the particles, the 📝 example sentence and a 💡 short or
       📖 long explanation, then the "Cards" wait, then the next word.
    ========================================================================= */
-let slideshow = null;    // { words, order, index, paused, timers, token, advanceOnPlay, askedWhy }
+let slideshow = null;    // { words, order, index, paused, timers, token, request, readModes, phase, lessonIndex }
 let speechHeard = false; // flips true once any utterance actually starts (iOS check)
 
 /* Saved choices for this screen */
@@ -1216,7 +1216,6 @@ function chooseWhyMode(mode) {
   saved.whyMode = whyMode() === mode ? "off" : mode;
   persist();
   renderSlideTopBar();
-  updateAskButtons();          // the "ask about this word" buttons show only when explanations are off
   redrawCurrentSlideQuietly();
 }
 $("#sl-ex").onclick = () => { saved.showExample = !saved.showExample; persist(); renderSlideTopBar(); redrawCurrentSlideQuietly(); };
@@ -1229,7 +1228,7 @@ $("#sl-settings").onclick = () => { $("#slopts").hidden = !$("#slopts").hidden; 
 function redrawCurrentSlideQuietly() {
   if (!slideshow || !slideshow.paused) return;
   const word = slideshow.order[slideshow.index];
-  drawNotes(word, slideshow.askedWhy || whyMode(), slideshow.lessonIndex, !!saved.showExample || !!slideshow.askedWhy);
+  drawNotes(word, explanationModeForThisSlide(), slideshow.lessonIndex, !!saved.showExample);
   updateAskButtons();
 }
 
@@ -1309,7 +1308,7 @@ function startSlideshow() {
   const words = chosenWords();
   if (!words.length) return;
   $("#sl-sound").style.display = "none";
-  slideshow = { words, order: shuffle(words), index: 0, paused: false, timers: [], token: 0, advanceOnPlay: false, askedWhy: null };
+  slideshow = { words, order: shuffle(words), index: 0, paused: false, timers: [], token: 0, request: null, readModes: new Set(), phase: "main", lessonIndex: 0 };
   $("#sl-play").textContent = "⏸ Pause";
   $("#slopts").hidden = true;
   renderSlideOptions();
@@ -1322,48 +1321,102 @@ function startSlideshow() {
 }
 
 /* ---------- speaking ---------- */
-/* Speak a list of {text, lang, rate, onStart?} lines in order, then call
-   whenDone(spoke). Finishes on the last line's end event, or — because iOS
-   doesn't always send it — when a quarter-second check sees the voice has
-   stopped. whenDone(false) means nothing was spoken (sound off or blocked).
-   `rightNow` speaks without the usual short delay (used straight from a tap). */
+/* Long text jams the iPhone engine (it reports "speaking" forever and even
+   survives a refresh), so:
+   1. English longer than ~140 characters is split at sentence ends, then commas.
+   2. Parts are spoken ONE AT A TIME — the next starts from the previous one's end —
+      with a watchdog on each part: not started after 3 s → cancel + resume and
+      retry once; started but still "speaking" well past its expected length
+      (~90 ms per character + 4 s) → cancel + resume and move on.
+   3. Starting the slideshow clears a jam left over from before (see the start tap). */
+const MAX_PART_LENGTH = 140;
+function splitLongEnglish(text) {
+  if (text.length <= MAX_PART_LENGTH) return [text];
+  // Sentences first; a sentence that's still too long is split at commas.
+  const pieces = text.split(/(?<=[.!?;:])\s+/).flatMap(sentence =>
+    sentence.length <= MAX_PART_LENGTH ? [sentence] : sentence.split(/(?<=,)\s+/));
+  const parts = [];
+  let current = "";
+  pieces.forEach(piece => {
+    // A piece with no comma that's still too long is cut at a space.
+    while (piece.length > MAX_PART_LENGTH) {
+      const space = piece.lastIndexOf(" ", MAX_PART_LENGTH);
+      const cutAt = space > 40 ? space : MAX_PART_LENGTH;
+      if (current) { parts.push(current); current = ""; }
+      parts.push(piece.slice(0, cutAt));
+      piece = piece.slice(cutAt).trim();
+    }
+    // Join short neighbours back together while they still fit.
+    const joined = (current + " " + piece).trim();
+    if (joined.length <= MAX_PART_LENGTH) current = joined;
+    else { if (current) parts.push(current); current = piece; }
+  });
+  if (current) parts.push(current);
+  return parts;
+}
+function clearSpeechJam() {
+  try { if (speechSynthesis.speaking || speechSynthesis.pending) { speechSynthesis.cancel(); speechSynthesis["resume"](); } } catch (err) {}
+}
+
+/* Speak {text, lang, rate, onStart?} lines one part at a time, then call
+   whenDone(spoke). whenDone(false) means nothing was heard (sound off/blocked).
+   `rightNow` starts without the usual short delay (used straight from a tap). */
 function slideSpeak(lines, isCurrent, whenDone, rightNow) {
-  let finished = false;
+  let finished = false, anythingStarted = false;
   const finish = spoke => { if (finished || !isCurrent()) return; finished = true; whenDone(spoke); };
   const later = (fn, ms) => slideshow.timers.push(setTimeout(fn, ms));
-  if (!lines.length) { finish(true); return; }
+  // Expand long English lines into short parts (only the first part lights up its piece).
+  const parts = [];
+  lines.forEach(line => {
+    const texts = line.lang === "en-US" ? splitLongEnglish(line.text) : [line.text];
+    texts.forEach((text, i) => parts.push({ ...line, text, onStart: i === 0 ? line.onStart : null }));
+  });
+  if (!parts.length) { finish(true); return; }
   if (!GameVoice.enabled || !("speechSynthesis" in window)) { finish(false); return; }
-  const begin = () => {
-    if (!isCurrent()) return;
+
+  const speakPart = (number, isRetry) => {
+    if (finished || !isCurrent()) return;
+    if (number >= parts.length) { finish(anythingStarted); return; }
+    const part = parts[number];
+    let started = false, ended = false;
+    const goOn = () => { if (ended) return; ended = true; speakPart(number + 1, false); };
     try {
       safeResume();
-      const utterances = lines.map(line => {
-        const utterance = makeUtterance(line.text, line.lang, line.rate);
-        utterance.onstart = () => {
-          speechHeard = true; $("#sl-sound").style.display = "none";
-          if (line.onStart && isCurrent()) line.onStart();
+      const utterance = makeUtterance(part.text, part.lang, part.rate);
+      utterance.onstart = () => {
+        if (ended) return;
+        started = true; anythingStarted = true; speechHeard = true;
+        $("#sl-sound").style.display = "none";
+        if (part.onStart && isCurrent()) part.onStart();
+        // Watchdog 2: still "speaking" far longer than this part should take → unstick and move on.
+        later(() => {
+          if (ended || !isCurrent()) return;
+          try { speechSynthesis.cancel(); speechSynthesis["resume"](); } catch (err) {}
+          goOn();
+        }, part.text.length * 90 / Math.max(0.3, part.rate) + 4000);
+        // iOS doesn't always send onend: also notice when the engine stops talking.
+        const checkStopped = () => {
+          if (ended || !isCurrent()) return;
+          if (!speechSynthesis.speaking && !speechSynthesis.pending) goOn(); else later(checkStopped, 250);
         };
-        return utterance;
-      });
-      const last = utterances[utterances.length - 1];
-      last.onend = last.onerror = () => finish(true);
-      utterances.forEach(u => speechSynthesis.speak(u));
-    } catch (err) { finish(false); return; }
-    const watchStartedAt = Date.now();
-    let heardTalking = false;
-    const checkVoice = () => {
-      if (finished || !isCurrent()) return;
-      const talking = speechSynthesis.speaking || speechSynthesis.pending;
-      if (talking) heardTalking = true;
-      if (heardTalking && !talking) finish(true);
-      else if (!heardTalking && Date.now() - watchStartedAt > 4000) finish(false);   // never started
-      else later(checkVoice, 250);
-    };
-    later(checkVoice, 400);
-    // iOS only allows speech that starts from a tap — offer one if nothing is heard.
-    later(() => { if (isCurrent() && !speechHeard && GameVoice.enabled) $("#sl-sound").style.display = ""; }, 1800);
+        later(checkStopped, 400);
+      };
+      utterance.onend = utterance.onerror = () => { if (started) goOn(); };
+      speechSynthesis.speak(utterance);
+    } catch (err) { goOn(); return; }
+    // Watchdog 1: not started after 3 s → cancel + resume and try once more, then skip it.
+    later(() => {
+      if (started || ended || !isCurrent()) return;
+      ended = true;
+      try { speechSynthesis.cancel(); speechSynthesis["resume"](); } catch (err) {}
+      if (!isRetry) speakPart(number, true);
+      else if (!anythingStarted && number === 0) finish(false);   // nothing works: treat it as sound off
+      else speakPart(number + 1, false);
+    }, 3000);
   };
-  if (rightNow) begin(); else later(begin, 160);
+  if (rightNow) speakPart(0, false); else later(() => speakPart(0, false), 160);
+  // iOS only allows speech that starts from a tap — offer one if nothing is heard.
+  later(() => { if (isCurrent() && !speechHeard && GameVoice.enabled) $("#sl-sound").style.display = ""; }, 1800);
 }
 
 // Reading-time estimate when nothing is spoken: ~300 ms per English word, ~150 ms per kana.
@@ -1394,6 +1447,15 @@ function scrollToNewWord() {
 }
 
 /* ---------- one card ---------- */
+/* Which explanation to read on this slide: the top-bar setting, otherwise a
+   request made with the buttons under the English — but only one made on THIS
+   slide. Checked when the explanation step is reached, not when the slide starts. */
+function explanationModeForThisSlide() {
+  if (whyMode() !== "off") return whyMode();
+  const request = slideshow && slideshow.request;
+  return request && request.wordIndex === slideshow.index ? request.mode : null;
+}
+
 function showSlide() {
   if (!slideshow) return;
   clearSlideTimers();
@@ -1406,15 +1468,16 @@ function showSlide() {
   const token = ++slideshow.token; // any older timers/speech for a previous card are ignored
   const card = $("#sl-card"), englishEl = $("#sl-en");
   const askFirst = slideDirection() === "en-ja";
-  const mode = whyMode();
-  slideshow.askedWhy = null;
-  slideshow.advanceOnPlay = false;
+  // A new word starts with nothing queued and no buttons lit.
+  slideshow.request = null;
+  slideshow.readModes = new Set();   // explanations already read on this slide
+  slideshow.phase = "main";
   slideshow.lessonIndex = pickLessonIndex(word);   // which of the word's explanations this time
 
-  // Draw the card.
+  // Draw the card. The explanation appears only when its turn comes.
   fillCard(word, $("#sl-kana"), $("#sl-kanji"), $("#sl-stamp"));
   englishEl.textContent = word.english;
-  const notes = drawNotes(word, mode, slideshow.lessonIndex, !!saved.showExample);
+  const exampleOnly = drawNotes(word, null, slideshow.lessonIndex, !!saved.showExample);
   updateAskButtons();
   hideThinkBar("#sl-bar");
   card.classList.toggle("ask-first", askFirst);   // EN → 日本語: the word stays hidden for now
@@ -1428,22 +1491,58 @@ function showSlide() {
     card.classList.add("revealed"); englishEl.classList.add("show"); hideThinkBar("#sl-bar");
     followElement(englishEl);
   };
-  if (slideshow.paused) { reveal(); return; }
+  if (slideshow.paused) { showEverythingQuietly(); return; }
 
   const isCurrent = () => slideshow && slideshow.token === token && !slideshow.paused;
   const later = (fn, ms) => slideshow.timers.push(setTimeout(fn, ms));
-  const nextCard = () => { if (!isCurrent()) return; slideshow.index++; showSlide(); };
-  // After the last thing is said: wait the "Cards" time, then the next word.
-  const thenWaitCards = lines => spoke => later(nextCard, (spoke ? 0 : readingMs(lines)) + cardWaitMs());
-
   const japaneseWord = { text: speakableKana(word.kana), lang: "ja-JP", rate: japaneseRate() };
-  const afterWord = particleLinesFor(word).concat(notes.lines);   // particles, example, explanation
+  const afterWord = particleLinesFor(word).concat(exampleOnly.lines);   // particles, then the example
+
+  // Read one explanation (drawn now), remember it was read, then carry on.
+  const readExplanation = (mode, then) => {
+    slideshow.phase = "explaining";
+    slideshow.readModes.add(mode);
+    const notes = drawNotes(word, mode, slideshow.lessonIndex, !!saved.showExample);
+    updateAskButtons();
+    slideSpeak(notes.whyLines, isCurrent, spoke => {
+      if (!isCurrent()) return;
+      if (spoke) then(); else later(then, readingMs(notes.whyLines));
+    });
+  };
+  // The "Cards" wait. Every ~200 ms it checks for a new request from the buttons;
+  // one that hasn't been read yet is read right away, and the wait starts over.
+  const finalWait = () => {
+    if (!isCurrent()) return;
+    slideshow.phase = "waiting";
+    const waitUntil = Date.now() + cardWaitMs();
+    const tick = () => {
+      if (!isCurrent()) return;
+      const request = slideshow.request;
+      if (request && request.wordIndex === slideshow.index && !slideshow.readModes.has(request.mode)) {
+        readExplanation(request.mode, finalWait);
+        return;
+      }
+      if (Date.now() >= waitUntil) { slideshow.index++; showSlide(); return; }
+      later(tick, 200);
+    };
+    tick();
+  };
+  // The explanation step: the top-bar choice, else this slide's request, else straight to the wait.
+  const explanationStep = () => {
+    if (!isCurrent()) return;
+    const mode = explanationModeForThisSlide();
+    if (mode) readExplanation(mode, finalWait); else finalWait();
+  };
+  // Speak the main lines, then go on to the explanation step.
+  const speakThenExplain = lines => slideSpeak(lines, isCurrent, spoke => {
+    if (!isCurrent()) return;
+    if (spoke) explanationStep(); else later(explanationStep, readingMs(lines));
+  });
 
   if (!askFirst) {
-    // 日本語 → EN: the word, "means …", then the rest.
+    // 日本語 → EN: the word, "means …", particles, example.
     reveal();
-    const lines = [japaneseWord, { text: "means " + speakableEnglish(word.english), lang: "en-US", rate: englishRate() }].concat(afterWord);
-    slideSpeak(lines, isCurrent, thenWaitCards(lines));
+    speakThenExplain([japaneseWord, { text: "means " + speakableEnglish(word.english), lang: "en-US", rate: englishRate() }].concat(afterWord));
     return;
   }
 
@@ -1457,43 +1556,60 @@ function showSlide() {
       later(() => {
         if (!isCurrent()) return;
         reveal();
-        const lines = [japaneseWord].concat(afterWord);
-        slideSpeak(lines, isCurrent, thenWaitCards(lines));
+        speakThenExplain([japaneseWord].concat(afterWord));
       }, thinkMs);
     }, spoke ? 0 : 1500);
   });
 }
 
-/* ---------- "Ask about just this word" (when explanations are off) ---------- */
-function updateAskButtons() {
-  const word = slideshow && slideshow.order[slideshow.index];
-  const hasNotes = !!(word && notesFor(word));
-  $("#sl-askwhy").hidden = whyMode() !== "off" || !hasNotes;
-  $("#sl-ask-short").classList.toggle("on", slideshow && slideshow.askedWhy === "short");
-  $("#sl-ask-long").classList.toggle("on", slideshow && slideshow.askedWhy === "long");
-}
-function askAboutThisWord(mode) {
-  if (!slideshow) return;
-  unlockSpeechFromTap();
-  // Pause on this word and show everything for it.
-  slideshow.paused = true;
-  slideshow.advanceOnPlay = true;     // ▶ Play afterwards goes on to the NEXT word
-  slideshow.askedWhy = mode;
-  clearSlideTimers();
-  stopSpeaking();
-  skipNextCancel = false;
-  $("#sl-play").textContent = "▶ Play";
+/* Pause shows everything at once, silently: reading, meaning, example and the
+   explanation (if it's on, or was asked for on this slide). */
+function showEverythingQuietly() {
   $("#sl-card").classList.add("revealed");
   $("#sl-en").classList.add("show");
   hideThinkBar("#sl-bar");
   const word = slideshow.order[slideshow.index];
-  const notes = drawNotes(word, mode, slideshow.lessonIndex, true);
+  drawNotes(word, explanationModeForThisSlide(), slideshow.lessonIndex, !!saved.showExample);
   updateAskButtons();
-  updateWakeLock();
-  // Read just the explanation, straight from the tap.
-  const token = ++slideshow.token;
-  const isCurrent = () => slideshow && slideshow.token === token;
-  slideSpeak(notes.whyLines, isCurrent, () => {}, true);
+}
+
+/* ---------- "Ask about just this word" (when explanations are off) ----------
+   Tapping a button doesn't stop anything. It lights up and queues that
+   explanation for THIS slide, stored as {wordIndex, mode}. It's read in the
+   explanation's usual place, or straight away if that point has passed (during
+   the wait); then the wait starts over and the slideshow moves on by itself.
+   Tap the lit button again to un-queue it; tap the other to switch (if one was
+   already read, the other is read too). While paused, a tap shows and reads it
+   at once, straight from the tap, and stays paused. */
+function updateAskButtons() {
+  const word = slideshow && slideshow.order[slideshow.index];
+  const hasNotes = !!(word && notesFor(word));
+  $("#sl-askwhy").hidden = whyMode() !== "off" || !hasNotes;
+  const request = slideshow && slideshow.request;
+  const litMode = request && request.wordIndex === slideshow.index ? request.mode : null;
+  $("#sl-ask-short").classList.toggle("on", litMode === "short");
+  $("#sl-ask-long").classList.toggle("on", litMode === "long");
+}
+function askAboutThisWord(mode) {
+  if (!slideshow) return;
+  const current = slideshow.request;
+  const sameAsQueued = current && current.wordIndex === slideshow.index && current.mode === mode;
+  slideshow.request = sameAsQueued ? null : { wordIndex: slideshow.index, mode };
+  updateAskButtons();
+  if (!slideshow.paused) return;   // playing: the explanation step or the final wait picks it up
+  if (slideshow.request) {
+    // Paused: show it and read it right now, straight from the tap; stay paused.
+    unlockSpeechFromTap();
+    stopSpeaking();
+    skipNextCancel = false;
+    const word = slideshow.order[slideshow.index];
+    const notes = drawNotes(word, mode, slideshow.lessonIndex, !!saved.showExample);
+    const token = ++slideshow.token;
+    slideSpeak(notes.whyLines, () => slideshow && slideshow.token === token, () => {}, true);
+  } else {
+    stopSpeaking();
+    showEverythingQuietly();
+  }
 }
 $("#sl-ask-short").onclick = () => askAboutThisWord("short");
 $("#sl-ask-long").onclick = () => askAboutThisWord("long");
@@ -1506,11 +1622,10 @@ function pauseSlideshow(paused) {
   if (paused) {
     // Pause shows everything at once, silently, to read at your own pace.
     clearSlideTimers(); stopSpeaking();
-    $("#sl-en").classList.add("show"); $("#sl-card").classList.add("revealed"); hideThinkBar("#sl-bar");
+    showEverythingQuietly();
   } else {
     unlockSpeechFromTap();
-    if (slideshow.advanceOnPlay) slideshow.index++;   // after asking about a word, carry on to the next one
-    showSlide();
+    showSlide();   // picks this word up again from the start
   }
   updateWakeLock();
 }
@@ -1521,7 +1636,11 @@ function closeSlideshow() {
   renderHome(); showScreen("s-home");
 }
 
-$("#btn-slides").onclick = () => { unlockSpeechFromTap(); startSlideshow(); };
+$("#btn-slides").onclick = () => {
+  clearSpeechJam();        // a jam left from before (iPhone): clear it before anything else
+  unlockSpeechFromTap();
+  startSlideshow();
+};
 $("#sl-close").onclick = closeSlideshow;
 $("#sl-play").onclick = () => pauseSlideshow(!slideshow.paused);
 $("#sl-next").onclick = () => { if (!slideshow) return; slideshow.index++; showSlide(); updateWakeLock(); };
